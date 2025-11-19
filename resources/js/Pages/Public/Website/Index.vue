@@ -19,7 +19,6 @@
                 
                 <div class="d-flex gap-2">
                     <Link href="/login" class="btn btn-outline-light btn-sm px-4">Masuk</Link>
-                    <Link href="/register" class="btn btn-warning btn-sm px-4 fw-bold">Daftar</Link>
                 </div>
             </div>
         </nav>

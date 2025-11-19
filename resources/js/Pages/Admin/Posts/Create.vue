@@ -15,17 +15,11 @@
            </Link>
         </div>
 
-        <div v-if="$page.props.session?.success || $page.props.session?.error"
-             class="alert alert-dismissible fade show shadow-sm border-0 mb-4"
-             :class="{
-                'alert-success bg-success-subtle text-success-emphasis': $page.props.session?.success,
-                'alert-danger bg-danger-subtle text-danger-emphasis': $page.props.session?.error
-             }"
+        <div v-if="$page.props.session?.error"
+             class="alert alert-danger bg-danger-subtle text-danger-emphasis alert-dismissible fade show shadow-sm border-0 mb-4"
              role="alert">
-             
-             <i class="bi me-2" :class="$page.props.session?.error ? 'bi-exclamation-triangle-fill' : 'bi-check-circle-fill'"></i>
-             {{ $page.props.session?.success || $page.props.session?.error }}
-             
+             <i class="bi bi-exclamation-triangle-fill me-2"></i>
+             {{ $page.props.session?.error }}
              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
 
@@ -83,8 +77,12 @@
                 </div>
               </div>
 
-              <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                <button type="reset" class="btn btn-light border me-md-2">Reset</button>
+              <div class="d-flex justify-content-between align-items-center mt-4 pt-2 border-top">
+                
+                <button type="button" @click="form.reset()" class="btn btn-link text-danger text-decoration-none px-0">
+                    <i class="bi bi-arrow-counterclockwise me-1"></i> Reset Form
+                </button>
+
                 <button type="submit" class="btn btn-navy px-4 py-2" :disabled="form.processing">
                     <span v-if="form.processing">
                         <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
@@ -107,18 +105,32 @@
 
 <script setup>
 import { Head, Link, useForm } from '@inertiajs/inertia-vue3'
+// 1. Import SweetAlert2
+import Swal from 'sweetalert2'
 
 // Inisialisasi form termasuk image
 const form = useForm({
     title: '',
     body: '',
-    image: null // Field untuk file upload
+    image: null
 })
 
 const submit = () => {
-    // Inertia otomatis menghandle FormData saat ada file
     form.post('/admin/posts', {
-        onSuccess: () => form.reset('title', 'body', 'image'),
+        // 2. Event onSuccess
+        onSuccess: () => {
+            // Tampilkan SweetAlert
+            Swal.fire({
+                title: 'Berhasil!',
+                text: 'Data post berhasil disimpan.',
+                icon: 'success',
+                confirmButtonColor: '#003366', // Warna Navy
+                confirmButtonText: 'OK'
+            });
+            
+            // Reset form
+            form.reset('title', 'body', 'image');
+        }
     })
 }
 </script>

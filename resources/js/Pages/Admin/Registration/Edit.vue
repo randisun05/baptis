@@ -5,100 +5,140 @@
     <div class="row justify-content-center">
       <div class="col-lg-8">
 
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <h2 class="fs-3 fw-bold">Edit Data Peserta</h2>
-          <Link href="/admin/registration" class="btn btn-outline-secondary btn-sm">
+        <!-- Header Section -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <div>
+            <h2 class="fs-3 fw-bold text-navy mb-0">Edit Data Peserta</h2>
+            <p class="text-muted small mb-0">Perbarui informasi pendaftaran peserta.</p>
+          </div>
+          <Link href="/admin/registration" class="btn btn-outline-navy btn-sm shadow-sm">
             <i class="bi bi-arrow-left me-1"></i> Kembali
           </Link>
         </div>
 
-        <div class="card shadow-sm border-0">
-          <div class="card-header bg-white py-3">
-            <h5 class="mb-0 text-muted">Formulir Data Diri</h5>
-          </div>
-          <div class="card-body p-4">
+        <!-- Alert Error -->
+        <div v-if="$page.props.session?.error"
+             class="alert alert-danger bg-danger-subtle text-danger-emphasis alert-dismissible fade show shadow-sm border-0 mb-4"
+             role="alert">
+             <i class="bi bi-exclamation-triangle-fill me-2"></i>
+             {{ $page.props.session?.error }}
+             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
 
-            <!--
-              Form @submit.prevent="submit"
-              Inertia akan mengirim _method: 'PUT' via POST
-              karena ada file upload.
+        <!-- Form Card -->
+        <div class="card shadow-sm border-0 rounded-4">
+          <div class="card-body p-4">
+            
+            <!-- 
+              Menggunakan _method: 'PUT' di dalam data form
+              dan mengirim via POST agar konsisten dengan Inertia.
             -->
             <form @submit.prevent="submit">
 
-              <div class="row">
-                <!-- NIK -->
-                <div class="col-md-6 mb-3">
-                  <label for="nik" class="form-label fw-semibold">NIK (No. KTP)</label>
-                  <input type="text" class="form-control" :class="{ 'is-invalid': form.errors.nik }" id="nik" v-model="form.nik">
-                  <div v-if="form.errors.nik" class="invalid-feedback">{{ form.errors.nik }}</div>
-                </div>
+              <h5 class="fw-bold text-navy mb-4 border-bottom pb-2">Informasi Data Diri</h5>
 
+              <div class="row">
                 <!-- Nama Lengkap -->
                 <div class="col-md-6 mb-3">
-                  <label for="name" class="form-label fw-semibold">Nama Lengkap</label>
-                  <input type="text" class="form-control" :class="{ 'is-invalid': form.errors.name }" id="name" v-model="form.name">
+                  <label for="name" class="form-label fw-bold text-navy">Nama Lengkap</label>
+                  <input 
+                    type="text" 
+                    class="form-control input-cantik" 
+                    :class="{ 'is-invalid': form.errors.name }" 
+                    id="name" 
+                    v-model="form.name" 
+                    placeholder="Contoh: Budi Santoso"
+                  >
                   <div v-if="form.errors.name" class="invalid-feedback">{{ form.errors.name }}</div>
+                </div>
+
+                <!-- Jenis Kelamin (Select) -->
+                <div class="col-md-6 mb-3">
+                  <label for="gender" class="form-label fw-bold text-navy">Jenis Kelamin</label>
+                  <select 
+                    class="form-select input-cantik" 
+                    :class="{ 'is-invalid': form.errors.gender }" 
+                    id="gender" 
+                    v-model="form.gender"
+                  >
+                    <option value="" disabled>-- Pilih Jenis Kelamin --</option>
+                    <option value="Laki-laki">Laki-laki</option>
+                    <option value="Perempuan">Perempuan</option>
+                  </select>
+                  <div v-if="form.errors.gender" class="invalid-feedback">{{ form.errors.gender }}</div>
                 </div>
               </div>
 
               <div class="row">
                 <!-- Email -->
                 <div class="col-md-6 mb-3">
-                  <label for="email" class="form-label fw-semibold">Alamat Email</label>
-                  <input type="email" class="form-control" :class="{ 'is-invalid': form.errors.email }" id="email" v-model="form.email">
+                  <label for="email" class="form-label fw-bold text-navy">Alamat Email</label>
+                  <input 
+                    type="email" 
+                    class="form-control input-cantik" 
+                    :class="{ 'is-invalid': form.errors.email }" 
+                    id="email" 
+                    v-model="form.email" 
+                    placeholder="nama@email.com"
+                  >
                   <div v-if="form.errors.email" class="invalid-feedback">{{ form.errors.email }}</div>
                 </div>
 
-                <!-- Contact (Pengganti Phone) -->
+                <!-- No Telepon -->
                 <div class="col-md-6 mb-3">
-                  <label for="contact" class="form-label fw-semibold">Nomor WhatsApp/HP</label>
-                  <input type="text" class="form-control" :class="{ 'is-invalid': form.errors.contact }" id="contact" v-model="form.contact">
+                  <label for="contact" class="form-label fw-bold text-navy">No. Telepon / WhatsApp</label>
+                  <input 
+                    type="number" 
+                    class="form-control input-cantik" 
+                    :class="{ 'is-invalid': form.errors.contact }" 
+                    id="contact" 
+                    v-model="form.contact" 
+                    placeholder="08123xxxx"
+                  >
                   <div v-if="form.errors.contact" class="invalid-feedback">{{ form.errors.contact }}</div>
                 </div>
               </div>
 
               <div class="row">
-                <!-- Document (File Upload) -->
+                <!-- Kelompok Katekese (Select) -->
                 <div class="col-12 mb-3">
-                  <label for="document" class="form-label fw-semibold">Upload Dokumen Baru (Opsional)</label>
-
-                  <input type="file" class="form-control" :class="{ 'is-invalid': form.errors.document }" id="document" @input="form.document = $event.target.files[0]">
-
-                  <div v-if="form.errors.document" class="invalid-feedback">{{ form.errors.document }}</div>
-                  <div class="form-text">Kosongkan jika tidak ingin mengganti dokumen.</div>
-
-                  <!-- Menampilkan Dokumen Saat Ini -->
-                  <div v-if="register.document_url" class="mt-3">
-                    <span class="form-text">Dokumen saat ini:</span><br>
-                    <a :href="register.document_url" target="_blank" class="btn btn-sm btn-outline-dark">
-                      <i class="bi bi-file-earmark-text me-1"></i>
-                      Lihat Dokumen
-                    </a>
-                  </div>
-
-                  <!-- Progress Bar untuk File Upload (diubah jadi warning) -->
-                  <div v-if="form.progress" class="progress mt-2" style="height: 8px;">
-                    <div class="progress-bar progress-bar-striped bg-warning"
-                         role="progressbar"
-                         :style="{ width: form.progress.percentage + '%' }"
-                         :aria-valuenow="form.progress.percentage"
-                         aria-valuemin="0"
-                         aria-valuemax="100">
-                    </div>
-                  </div>
-
+                  <label for="kelompok" class="form-label fw-bold text-navy">Kelompok Katekese</label>
+                  <select 
+                    class="form-select input-cantik" 
+                    :class="{ 'is-invalid': form.errors.kelompok }" 
+                    id="kelompok" 
+                    v-model="form.kelompok"
+                  >
+                    <option value="" disabled>-- Pilih Kelompok Pelayanan --</option>
+                    <option value="Katekumen">Katekumen (Dewasa/Anak)</option>
+                    <option value="Sakramen Baptis Bayi">Sakramen Baptis Bayi</option>
+                  </select>
+                  <div v-if="form.errors.kelompok" class="invalid-feedback">{{ form.errors.kelompok }}</div>
+                  <div class="form-text text-muted small">Pilih jenis pelayanan yang diikuti peserta.</div>
                 </div>
               </div>
 
-              <hr class="my-4">
-
-              <div class="d-flex justify-content-end gap-2">
-                <Link href="/admin/registration" class="btn btn-light">Batal</Link>
-                <!-- Tombol Update -->
-                <button type="submit" class="btn btn-warning px-4" :disabled="form.processing">
-                  <i class="bi bi-pencil-square me-1"></i>
-                  {{ form.processing ? 'Menyimpan Perubahan...' : 'Update Data' }}
+              <!-- Tombol Aksi -->
+              <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top">
+                
+                <!-- Tombol Reset (Mengembalikan ke data awal DB) -->
+                <button type="button" @click="form.reset()" class="btn btn-link text-danger text-decoration-none px-0">
+                    <i class="bi bi-arrow-counterclockwise me-1"></i> Reset Perubahan
                 </button>
+
+                <!-- Tombol Batal & Update -->
+                <div class="d-flex gap-2">
+                    <Link href="/admin/registration" class="btn btn-light border">Batal</Link>
+                    <button type="submit" class="btn btn-navy px-4 shadow-sm" :disabled="form.processing">
+                    <span v-if="form.processing">
+                            <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                            Menyimpan...
+                        </span>
+                        <span v-else>
+                            <i class="bi bi-pencil-square me-1"></i> Update Data
+                        </span>
+                    </button>
+                </div>
               </div>
 
             </form>
@@ -112,36 +152,38 @@
 
 <script setup>
 import { Head, Link, useForm } from '@inertiajs/inertia-vue3'
+// 1. Import SweetAlert2
+import Swal from 'sweetalert2'
 
-// Menerima props 'register' dari controller
+// Menerima props 'register' dari controller (Data lama)
 const props = defineProps({
     register: Object
 })
 
-// Mengisi form dengan data yang ada
+// Inisialisasi Form dengan Data Lama
 const form = useForm({
-    _method: 'PUT', // Penting untuk routing update
-    nik: props.register.nik,
+    _method: 'PUT', // Penting untuk routing update Laravel
     name: props.register.name,
+    gender: props.register.gender,
     email: props.register.email,
     contact: props.register.contact,
-    document: null     // Diisi null, hanya diisi jika ada file baru
+    kelompok: props.register.kelompok,
 })
 
-// Fungsi submit
 const submit = () => {
-    // Gunakan form.post untuk update jika ada file (multipart/form-data)
-    // Inertia akan membaca _method: 'PUT' dan mengirimkannya dengan benar
+    // Kirim request ke route update
     form.post(`/admin/registration/${props.register.id}`, {
-        // Hapus file dari form jika error
-        onError: () => {
-            if (form.errors.document) {
-                form.reset('document');
-            }
-        },
-        // Jaga scroll position saat validasi error
-        preserveScroll: true,
-    })
+        // 2. Event onSuccess untuk menampilkan Alert
+        onSuccess: () => {
+            Swal.fire({
+                title: 'Berhasil!',
+                text: 'Data peserta berhasil diperbarui.',
+                icon: 'success',
+                confirmButtonColor: '#003366', // Warna Navy sesuai tema
+                confirmButtonText: 'OK'
+            });
+        }
+    });
 }
 </script>
 
@@ -149,3 +191,74 @@ const submit = () => {
 import LayoutAdmin from '../../../Layouts/Admin.vue';
 export default { layout: LayoutAdmin };
 </script>
+
+<style scoped>
+/* --- Theme Variables & Styles --- */
+:root {
+    --navy-primary: #003366;
+    --navy-hover: #002244;
+}
+
+.text-navy { color: #003366; }
+.bg-navy { background-color: #003366; }
+
+/* --- Input Cantik & Modern --- */
+.input-cantik {
+    border: 1px solid #b0b8c4; /* Abu-abu kebiruan, lebih elegan */
+    border-radius: 8px;        /* Sudut membulat */
+    padding: 0.7rem 1rem;      /* Ruang lebih lega */
+    font-size: 0.95rem;
+    background-color: #fcfcfc;
+    transition: all 0.3s ease;
+}
+
+.input-cantik:hover {
+    border-color: #859bb3;
+    background-color: #ffffff;
+}
+
+.input-cantik:focus {
+    border-color: #003366;     /* Warna Navy saat aktif */
+    box-shadow: 0 0 0 4px rgba(0, 51, 102, 0.1); /* Efek glow Navy */
+    background-color: #ffffff;
+    outline: none;
+}
+
+select.input-cantik {
+    cursor: pointer;
+}
+
+/* Button Custom Navy */
+.btn-navy {
+    background-color: #003366;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0.6rem 1.2rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+.btn-navy:hover {
+    background-color: #002244;
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 51, 102, 0.25);
+}
+
+/* Button Outline Navy */
+.btn-outline-navy {
+    color: #003366;
+    border-color: #003366;
+    background-color: transparent;
+    border-radius: 6px;
+}
+.btn-outline-navy:hover {
+    color: white;
+    background-color: #003366;
+}
+
+/* Utils */
+.card { border-radius: 16px; }
+.bg-danger-subtle { background-color: #f8d7da; }
+.text-danger-emphasis { color: #842029; }
+</style>

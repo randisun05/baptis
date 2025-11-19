@@ -2,301 +2,191 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Carbon\Carbon;
-use App\Models\Member;
-use App\Models\instansi;
-use Illuminate\Support\Str;
+use App\Http\Controllers\Controller;
 use App\Models\Registration;
 use Illuminate\Http\Request;
-use App\Mail\SendEmailReject;
-use GuzzleHttp\Handler\Proxy;
-use App\Mail\SendEmailAprrove;
-use App\Mail\SendEmailConfirm;
-use App\Models\ProfileDataMain;
-use Illuminate\Validation\Rule;
-use App\Exports\RegistrationPaid;
-use App\Models\RegistrationGroup;
-use Illuminate\Support\Facades\DB;
-use App\Exports\RegistrationExport;
-use App\Imports\RegistrationImport;
-use App\Mail\SendEmailRegistration;
-use App\Models\ProfileDataPosition;
-use Illuminate\Support\Facades\Log;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
-use Maatwebsite\Excel\Facades\Excel;
-use Intervention\Image\Colors\Rgb\Channels\Red;
+use Illuminate\Support\Facades\Redirect;
 
 class RegistrationController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * Menampilkan daftar peserta.
      */
     public function index()
     {
-        $registers = Registration::when(request()->q, function($registers) {
-            $registers = $registers->where('name', 'like', '%'. request()->q . '%');
-        }) ->orderBy('created_at', 'asc')->paginate(10);
-        //render with inertia
+        // Mengambil data dengan pencarian nama/email dan pagination
+        $registers = Registration::query()
+            ->when(request()->q, function($query) {
+                $query->where('name', 'like', '%'. request()->q . '%')
+                      ->orWhere('email', 'like', '%'. request()->q . '%');
+            })
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        // Memformat data agar mudah dibaca di Vue (Convert Boolean ke String Label)
+        $registers->getCollection()->transform(function ($reg) {
+            return [
+                'id' => $reg->id,
+                'name' => $reg->name,
+                'email' => $reg->email,
+                'contact' => $reg->contact,
+                // Ubah boolean DB ke string untuk tampilan tabel
+                'gender' => $reg->gender ? 'Laki-laki' : 'Perempuan',
+                'kelompok' => $reg->group ? 'Katekumen' : 'Sakramen Baptis Bayi',
+                'status' => $reg->status,
+                'created_at' => $reg->created_at
+            ];
+        });
+
         return inertia('Admin/Registration/Index', [
             'registers' => $registers,
         ]);
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
+     * Menampilkan form tambah peserta.
      */
     public function create()
     {
-
-        return inertia('Admin/Registration/Create', [
-
-        ]);
+        return inertia('Admin/Registration/Create');
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * Menyimpan data peserta baru.
      */
     public function store(Request $request)
     {
-
-  // Validate request including file validation
-      $validatedData = $request->validate([
-         'nik' => 'required|string|unique:registrations,nik',
-        'name' => 'required|string',
-        'email' => 'required|email|unique:registrations,email',
-        'contact' => 'required|string|unique:registrations,contact',
-        'document' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
-        'status' => 'nullable|string',
-        'info' => 'nullable|string',
-        'emailstatus' => 'nullable|string',
-        'by' => 'nullable|string',
-
-    ],
-    [
-
-    ]);
-
-     // Store the file using Laravel's file storage system
-     $document = $request->file('document');
-     $document = $document->storePublicly('/document');
-
-    if ($document) {
-         $registration = Registration::create(array_merge($validatedData, [ 'status' => '1',
-         'document' => $document
-         ]));
-     } else { // Create registration
-        $registration = Registration::create(array_merge($validatedData, ['document' => '']));
-    }
-
-     //redirect
-     return redirect()->route('admin.registration.index');
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        $user = auth()->user()->name;
-
-        $register = Registration::findOrFail($id);
-
-        // Lanjutkan ke halaman jika telah melalui verifikasi
-        return inertia('Admin/Registration/Show', [
-            'register' => $register,
+        // 1. Validasi Input dari Vue
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'gender' => 'required|in:Laki-laki,Perempuan',
+            'email' => 'required|email|unique:registrations,email',
+            'contact' => 'required|unique:registrations,contact',
+            'kelompok' => 'required|in:Katekumen,Sakramen Baptis Bayi',
+        ], [
+            'name.required' => 'Nama lengkap wajib diisi.',
+            'email.unique' => 'Email sudah terdaftar.',
+            'contact.unique' => 'Nomor telepon sudah terdaftar.',
+            'kelompok.required' => 'Silakan pilih kelompok katekese.'
         ]);
+
+        // 2. Mapping Data (String Vue -> Boolean DB)
+        // Sesuai migration: $table->boolean('gender'); $table->boolean('group');
+        $isMale = $request->gender === 'Laki-laki' ? true : false;
+        $isCatechumen = $request->kelompok === 'Katekumen' ? true : false;
+
+        // 3. Simpan ke Database
+        Registration::create([
+            'name' => $request->name,
+            'gender' => $isMale,
+            'email' => $request->email,
+            'contact' => $request->contact,
+            'group' => $isCatechumen, // Masuk ke kolom 'group' di DB
+            'status' => 'wait',       // Default status sesuai enum migration
+        ]);
+
+        // 4. Redirect dengan pesan sukses
+        return Redirect::route('admin.registration.index')->with('success', 'Data peserta berhasil ditambahkan.');
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * Menampilkan form edit.
      */
     public function edit($id)
     {
         $register = Registration::findOrFail($id);
-        //render with inertia
-       return inertia('Admin/Registration/Edit', [
-        'register' => $register,
+
+        // Format data agar sesuai dengan v-model di Vue Edit
+        $formattedData = [
+            'id' => $register->id,
+            'name' => $register->name,
+            'email' => $register->email,
+            'contact' => $register->contact,
+            'gender' => $register->gender ? 'Laki-laki' : 'Perempuan',
+            'kelompok' => $register->group ? 'Katekumen' : 'Sakramen Baptis Bayi',
+        ];
+
+        return inertia('Admin/Registration/Edit', [
+            'register' => $formattedData,
         ]);
     }
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * Update data peserta.
      */
     public function update(Request $request, $id)
     {
-        // Validate request including file validation
-       $validatedData = $request->validate([
-        'nik' => 'required|string',
-        'name' => 'required|string',
-        'email' => 'required|email',
-        'contact' => 'required|string',
-        'document' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
-        'status' => 'nullable|string',
-        'info' => 'nullable|string',
-        'emailstatus' => 'nullable|string',
-        'by' => 'nullable|string',
-    ], [
-        'nik.required' => 'NIK harus diisi.',
-    ]);
-            // Store the file using Laravel's file storage system
-            $document = $request->file('document');
+        $register = Registration::findOrFail($id);
 
-            if ($document) {
-                // Jika keduanya diisi, update semua
-                $document = $document->storePublicly('/document');
-                Registration::where('id',$id)->update(array_merge($validatedData, [
-                    'document' => $document,
-                    'status' => "updated"
-                ]));
-            }
+        // 1. Validasi (Unique ignore current ID)
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'gender' => 'required|in:Laki-laki,Perempuan',
+            'email' => 'required|email|unique:registrations,email,' . $id,
+            'contact' => 'required|unique:registrations,contact,' . $id,
+            'kelompok' => 'required|in:Katekumen,Sakramen Baptis Bayi',
+        ]);
 
-            // Buat registration
-            Registration::where('id',$id)->update(array_merge($validatedData, [
-            ]));
+        // 2. Mapping Data
+        $isMale = $request->gender === 'Laki-laki' ? true : false;
+        $isCatechumen = $request->kelompok === 'Katekumen' ? true : false;
 
-       //redirect
-       return redirect()->route('admin.registration.index');
+        // 3. Update Database
+        $register->update([
+            'name' => $request->name,
+            'gender' => $isMale,
+            'email' => $request->email,
+            'contact' => $request->contact,
+            'group' => $isCatechumen,
+        ]);
+
+        return Redirect::route('admin.registration.index')->with('success', 'Data peserta berhasil diperbarui.');
     }
 
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * Hapus data peserta.
      */
     public function destroy($id)
     {
-        //get
         $register = Registration::findOrFail($id);
-
-        //delete
         $register->delete();
 
-        //redirect
-        return redirect()->route('admin.registration.index');
+        return Redirect::route('admin.registration.index')->with('success', 'Data peserta berhasil dihapus.');
     }
 
-    public function paid($id)
-    {
-        //get
-        Registration::where('id', $id)->update([
-            'status' => "paid"
-        ]);
-
-        //redirect
-        return redirect()->route('admin.registration.index');
-    }
-
-    public function hadlecode()
-    {
-
-
-    }
-
-    public function approve($id, Request $request)
+    /**
+     * Menyetujui Pendaftaran (Approve)
+     * Mengubah status menjadi 'accept'
+     */
+    public function approve($id)
     {
         $register = Registration::findOrFail($id);
-
-         $password = Hash::make($register->nik);
-
-         $code = Str::random(10);
-
-
-        Member::create([
-            'nip'            => $register->nip,
-            'name'           => $register->name,
-            'email'          => $register->email,
-            'nomember'         => $code,
-            'password'       => $password,
+        
+        $register->update([
+            'status' => 'accept'
         ]);
 
-        $today = Carbon::now()->format('Y-m-d H:i:s');
-          //create data profile
+        // Opsional: Kirim Email Notifikasi di sini (Anda bisa uncomment jika mailer sudah siap)
+        // Mail::to($register->email)->send(new SendEmailApprove($register));
 
-
-        $email = Member::where('nik',$register->nik)->first();
-
-        //email
-        Mail::to($register['email'])->send(new SendEmailAprrove($email));
-
-        Registration::where('id', $id)->update([
-            'status'        => "approved",
-        ]);
-
-        Registration::where('id', $id)->increment('emailstatus');
-
-        //redirect
-        return redirect()->route('admin.registration.index');
+        return Redirect::back()->with('success', 'Pendaftaran peserta telah disetujui.');
     }
 
-
-
+    /**
+     * Menolak Pendaftaran (Reject)
+     * Mengubah status menjadi 'reject'
+     */
     public function reject($id)
     {
-
         $register = Registration::findOrFail($id);
-
-        Mail::to($register['email'])->send(new SendEmailReject($register));
-
-        Registration::where('id', $id)->update([
-            'status' => "rejected",
-        ]);
-        Registration::where('id', $id)->increment('emailstatus');
-
-        //redirect
-        return redirect()->route('admin.registration.index');
-    }
-
-    public function sendEmail($id)
-    {
-        $register = Registration::findOrFail($id);
-
-        Mail::to($register['email'])->send(new SendEmailRegistration($register));
-
-        Registration::where('id', $id)->increment('emailstatus');
-        //redirect
-        return redirect()->route('admin.registration.index');
-    }
-
-    public function confirm($id, Request $request)
-    {
-        $request->validate([
-            'email' => 'required|email',
+        
+        $register->update([
+            'status' => 'reject'
         ]);
 
-        $register = Registration::findOrFail($id);
+        // Opsional: Kirim Email Notifikasi Reject
+        // Mail::to($register->email)->send(new SendEmailReject($register));
 
-        Mail::to($request['email'])->send(new SendEmailConfirm($register));
-
-        Registration::where('id', $id)->update([
-            'status' => "confirm",
-            'info' => $request->info,
-            // 'emailstatus'      => 1,
-        ]);
-        Registration::where('id', $id)->increment('emailstatus');
-
-        //redirect
-        return redirect()->route('admin.registration.index');
+        return Redirect::back()->with('success', 'Pendaftaran peserta ditolak.');
     }
-
-
 }

@@ -107,6 +107,8 @@
 <script setup>
 import { Head, Link, useForm } from '@inertiajs/inertia-vue3'
 import { Inertia } from '@inertiajs/inertia'
+// 1. Import SweetAlert2
+import Swal from 'sweetalert2'
 
 // Mengambil props post yang dikirim dari controller
 const props = defineProps({
@@ -115,19 +117,24 @@ const props = defineProps({
 
 // Inisialisasi form
 const form = useForm({
-    // Trik Laravel Multipart: method POST tapi kirim _method: PUT
     _method: 'PUT', 
     title: props.post.title,
     body: props.post.body,
-    image: null, // Mulai null, jika user tidak pilih file, controller abaikan
+    image: null, 
 })
 
 const submit = () => {
-    // PENTING: Gunakan form.post (bukan form.put) karena kita mengirim file
-    // Laravel akan membaca _method: 'PUT' dan memprosesnya sebagai update
     form.post(`/admin/posts/${props.post.id}`, {
+        // 2. Tambahkan Alert di onSuccess
         onSuccess: () => {
-            // Opsi: Reset field image setelah sukses
+            Swal.fire({
+                title: 'Berhasil!',
+                text: 'Data post berhasil diperbarui.',
+                icon: 'success',
+                confirmButtonColor: '#003366', // Warna Navy
+                confirmButtonText: 'OK'
+            });
+            
             form.image = null;
         }
     })

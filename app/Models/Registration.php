@@ -10,44 +10,49 @@ class Registration extends Model
 {
     use HasFactory;
 
+    /**
+     * Atribut yang bisa diisi secara massal (Mass Assignment).
+     * Disesuaikan dengan kolom yang ada di file migration.
+     */
     protected $fillable = [
-        'nik',
-        'year_number',
-        'place_birth',
-        'date_birth',
-        'gender',
-        'address',
-        'education',
-        'father_name',
-        'father_religion',
-        'father_address',
-        'mother_name',
-        'mother_religion',
-        'mother_address',
-        'guardian_name',
         'name',
+        'gender',
         'email',
         'contact',
-        'document',
+        'group',      // Di migration tipe boolean
+        'publish_at',
         'status',
-        'info',
-        'emailstatus',
-        'user_id',
     ];
 
-    protected $keyType = 'string'; // Menetapkan tipe kunci ke string
-    protected $primaryKey = 'id'; // Menetapkan nama primary key
-    public $incrementing = false; // Menonaktifkan auto increment
+    /**
+     * Konfigurasi Primary Key UUID.
+     */
+    protected $keyType = 'string'; 
+    protected $primaryKey = 'id'; 
+    public $incrementing = false; 
 
+    /**
+     * Casting tipe data otomatis.
+     * Penting karena di migration 'gender' dan 'group' adalah boolean (0/1),
+     * tapi kita ingin Laravel menganggapnya true/false.
+     */
+    protected $casts = [
+        'gender' => 'boolean',
+        'group'  => 'boolean',
+        'publish_at' => 'datetime',
+    ];
+
+    /**
+     * Boot function untuk generate UUID otomatis saat create.
+     */
     protected static function boot()
     {
         parent::boot();
 
-        
         static::creating(function ($model) {
-            // Menggunakan ULID saat membuat instance baru
-            $model->id = (string) Str::orderedUuid();
+            if (empty($model->{$model->getKeyName()})) {
+                $model->id = (string) Str::orderedUuid();
+            }
         });
     }
-
 }

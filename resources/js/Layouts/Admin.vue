@@ -1,58 +1,37 @@
-<template>
-<div class="wrapper">
-
-
-
-      <div class="d-flex" id="wrapper">
-
-        <Sidebar />
-        <div id="page-content-wrapper" class="w-100 bg-light">
-        <Navbar />
-        <slot />
-
-
-        </div>
-    </div>
-
-
-</div>
-
-
-</template>
-
-<script>
-    //import navbar
+<script setup>
+    // Import components
     import Navbar from "../Components/Navbar.vue";
-
-    // //import sidebar
-    import Sidebar from '../Components/Sidebar.vue';
-
-    export default {
-
-        //register components
-        components: {
-            Navbar,
-            Sidebar
-        },
-    }
-
+    import Sidebar from "../Components/Sidebar.vue";
 </script>
 
-<style>
-        /* ... Paste CSS Anda yang sangat panjang di sini ... */
-        /* Untuk mempermudah, kode ini mengasumsikan CSS Bootstrap 5 sudah dimuat */
+<template>
+    <div class="d-flex" style="min-height: 100vh; overflow-x: hidden; background-color: #f8f9fa;">
+        
+        <Sidebar />
 
-        /* Sedikit style tambahan agar sidebar full height */
-        body {
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-        #wrapper {
-            min-height: 100vh;
-        }
-        #sidebar-wrapper {
-            min-width: 250px;
-            max-width: 250px;
-            min-height: 100vh;
-        }
-    </style>
+        <div class="d-flex flex-column flex-grow-1" style="min-width: 0;">
+            
+            <Navbar />
+
+            <main class="flex-grow-1">
+                <slot />
+            </main>
+
+            <footer class="bg-white text-center py-3 border-top text-muted small mt-auto">
+                &copy; 2025 Paroki Santa Melania - Admin System
+            </footer>
+            
+        </div>
+
+    </div>
+</template>
+
+<style>
+    /* Tidak perlu CSS tambahan yang rumit. 
+       Sidebar.vue sudah mengatur lebarnya sendiri (280px).
+       Bootstrap classes (d-flex, flex-grow-1) menangani sisanya.
+    */
+    body {
+        background-color: #f8f9fa;
+    }
+</style>
