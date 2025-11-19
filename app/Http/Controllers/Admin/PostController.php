@@ -21,38 +21,14 @@ class PostController extends Controller
     public function index()
     {
         $this->cekAuth();
-        $posts = Post::where('status', 'submission')
-             ->when(request()->q, function($query) {
-                 $query->where('title', 'like', '%' . request()->q . '%');
-             })
-             ->with('member','category','react')
-             ->latest()
-             ->paginate(10);
-
-             $publishs = PublicPost::with('post','post.category','post.member','post.react')
-             ->latest()
-             ->paginate(10);
-
-             $limiteds = Post::where('status', 'limited')
-             ->when(request()->q, function($query) {
-                 $query->where('title', 'like', '%' . request()->q . '%');
-             })
-
-             ->with('member','category','react')
-             ->latest()
-             ->paginate(10);
-
-             $categories = Category::latest()
-             ->paginate(10);
+        $posts = Post::paginate(10);
 
         //append query string to pagination links
         $posts->appends(['q' => request()->q]);
 
         return inertia('Admin/Posts/Index', [
             'posts' => $posts,
-            'publishs' => $publishs,
-            'categories' => $categories,
-            'limiteds' => $limiteds
+
          ]);
     }
 
@@ -65,9 +41,8 @@ class PostController extends Controller
     {
         $this->cekAuth();
 
-        $categories = Category::get();
         return inertia('Admin/Posts/Create', [
-           'categories' => $categories
+
          ]);
     }
 
@@ -88,7 +63,7 @@ class PostController extends Controller
         'body' => 'required|',
         'document' => 'file|mimes:pdf|max:2048|nullable',
         'image' => '|image|mimes:jpeg,png,jpg,gif,svg|max:2048|nullable',
-    ]);
+        ]);
 
     // Generate initial slug from title
     $slug = strtolower(str_replace(' ', '-', $request->title));
@@ -130,14 +105,13 @@ class PostController extends Controller
 
         Post::create([
             'title' => $request->title,
-            'category_id' => $request->category,
             'body' =>  $request->body,
             'slug' => $slug,
             'excerpt' => $excerpt,
             'image' => $image,
             'document' => $document,
             'publish_at' => $today,
-            'member_id' => 1,
+            'user_id' => 1,
             'status' => 'submission',
         ]);
 
@@ -157,7 +131,7 @@ class PostController extends Controller
     {
 
         $this->cekAuth();
-        $post = Post::with('member','category','react')->findOrFail($id);
+        $post = Post::findOrFail($id);
 
         return inertia('Admin/Posts/Show', [
            'post' => $post
@@ -173,11 +147,11 @@ class PostController extends Controller
     public function edit($id)
     {
         $this->cekAuth();
-        $post = Post::with('member','category','react')->findOrFail($id);
-        $categories = Category::get();
+        $post = Post::findOrFail($id);
+
         return inertia('Admin/Posts/Edit', [
            'post' => $post,
-           'categories' => $categories
+
         ]);
     }
 
@@ -192,11 +166,9 @@ class PostController extends Controller
     {
         $this->cekAuth();
        // Validate request including file validation
-      $request->validate([
+    $request->validate([
         'title' => 'required|string',
         'body' => 'required|',
-        'docstatus' => 'required|'
-
     ]);
 
     $slug = strtolower(str_replace(' ', '-', $request->title));
@@ -234,19 +206,16 @@ class PostController extends Controller
 
         Post::where('id', $id)->update([
             'title' => $request->title,
-            'category_id' => $request->category,
             'body' =>  $request->body,
             'slug' => $slug,
             'excerpt' => $excerpt,
             'image' => $image,
             'document' => $document,
             'publish_at' => $today,
-            'member_id' => 1,
+            'user_id' => 1,
             'status' => 'submission',
-            'docstatus' => $request->docstatus,
+
         ]);
-
-
 
      //redirect
      return redirect()->route('admin.posts.index');
@@ -289,20 +258,6 @@ class PostController extends Controller
         return redirect()->route('admin.posts.index');
     }
 
-    public function return($id)
-    {
-
-        $this->cekAuth();
-
-        $post = Post::findOrFail($id);
-
-        $post->update([
-            'status' => 'perlu ada perbaikan'
-        ]);
-        //redirect
-        return redirect()->route('admin.posts.index');
-    }
-
     public function reject($id)
     {
         $this->cekAuth();
@@ -316,116 +271,7 @@ class PostController extends Controller
         return redirect()->route('admin.posts.index');
     }
 
-    public function cancel($id)
-    {
-        $this->cekAuth();
-        $public = PublicPost::findOrFail($id);
-        $post   = Post::where('id', $public->post_id);
 
-            $post->update([
-                'status' => 'return'
-            ]);
-
-        $public->delete();
-
-        //redirect
-        return redirect()->route('admin.posts.index');
-
-    }
-
-    public function cancelLimited($id)
-    {
-        $this->cekAuth();
-        $post   = Post::where('id', $id)->first();
-
-            $post->update([
-                'status' => 'return'
-            ]);
-
-        //redirect
-        return redirect()->route('admin.posts.index');
-
-    }
-
-    public function limited($id)
-    {
-        $this->cekAuth();
-        $post = Post::findOrFail($id);
-
-        $post->update([
-            'status' => 'limited'
-        ]);
-
-
-        //redirect
-        return redirect()->route('admin.posts.index');
-
-    }
-
-    public function submission($id)
-    {
-        $this->cekAuth();
-        $post = Post::findOrFail($id);
-
-        $post->update([
-            'status' => 'submission'
-        ]);
-
-
-        //redirect
-        return redirect()->route('admin.posts.list');
-
-    }
-
-    public function categoryCreate()
-    {
-        $this->cekAuth();
-        return inertia('Admin/Posts/CreateCategory', [
-         ]);
-        //redirect
-        return redirect()->route('admin.posts.index');
-
-    }
-
-    public function categoryStore(Request $request)
-    {
-        $this->cekAuth();
-        $request->validate([
-            'title' => 'required|unique:categories',
-        ] , [
-            'title.unique' => 'Kategori sudah tersedia'
-        ]);
-
-        Category::create([
-            'title' => $request->title
-        ]);
-
-        return redirect()->route('admin.posts.index');
-
-    }
-
-    public function list()
-    {
-        $this->cekAuth();
-
-        $posts = Post::where('member_id', '1')
-        ->when(request()->q, function($query) {
-            $query->where('title', 'like', '%' . request()->q . '%');
-        })
-        ->with('member','category','react')
-        ->latest()
-        ->paginate(10);
-
-
-
-   //append query string to pagination links
-        $posts->appends(['q' => request()->q]);
-
-        return inertia('Admin/Posts/List', [
-            'posts' => $posts,
-
-            ]);
-    }
 
     public function cekAuth()
     {

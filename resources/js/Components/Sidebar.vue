@@ -1,5 +1,5 @@
 <template>
-     <div class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark" id="sidebar-wrapper">
+     <div class="d-flex flex-column p-3" id="sidebar-wrapper">
             <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
                 <i class="bi bi-bootstrap-fill fs-4 me-2"></i>
                 <span class="fs-4 fw-bold">Admin Panel</span>
@@ -15,40 +15,40 @@
                         Dashboard
                     </a>
                 </li>
-                <li>
-                    <a href="/admin/posts" class="nav-link text-white"
+                <li class="nav-item text-white">
+                    <a href="/admin/posts" class="nav-link"
                     :class="{ 'active': $page.url.startsWith('/admin/posts') }"
                     aria-current="page">
                         <i class="bi bi-table me-2"></i>
                         Warta
                     </a>
                 </li>
-                <li>
-                    <a href="/admin/registration" class="nav-link text-white"
+                <li class="nav-item text-white">
+                    <a href="/admin/registration" class="nav-link"
                     :class="{ 'active': $page.url.startsWith('/admin/registration') }"
                     aria-current="page">
                         <i class="bi bi-grid me-2"></i>
                         Pendaftaran
                     </a>
                 </li>
-                <li>
-                    <a href="/admin/refevents" class="nav-link text-white"
+                <li class="nav-item text-white">
+                    <a href="/admin/refevents" class="nav-link"
                     :class="{ 'active': $page.url.startsWith('/admin/refevents') }"
                     aria-current="page">
                         <i class="bi bi-people-circle me-2"></i>
                         Ref Kegiatan
                     </a>
                 </li>
-                 <li>
-                    <a href="/admin/events" class="nav-link text-white"
+                 <li class="nav-item text-white">
+                    <a href="/admin/events" class="nav-link"
                     :class="{ 'active': $page.url.startsWith('/admin/events') }"
                     aria-current="page">
                         <i class="bi bi-people-circle me-2"></i>
                         Kegiatan
                     </a>
                 </li>
-                <li>
-                    <a href="/admin/users" class="nav-link text-white"
+                <li class="nav-item text-white">
+                    <a href="/admin/users" class="nav-link"
                     :class="{ 'active': $page.url.startsWith('/admin/users') }"
                     >
                         <i class="bi bi-people-circle me-2"></i>

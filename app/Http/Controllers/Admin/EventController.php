@@ -63,34 +63,15 @@ class EventController extends Controller
         // Validate request including file validation
     $request->validate([
         'title' => 'required|string',
-        'body' => 'required|',
         'date' => 'required',
-        'participant' => 'required',
-        'enddate' => 'required',
-        'date' => 'required',
-        'place' => 'required',
-        'image' => '|image|mimes:jpeg,png,jpg,gif,svg|max:5048|nullable',
-        'file' => 'required',
     ]);
 
     $slug = strtolower(str_replace(' ', '-', $request->title));
 
-    $image = $request->file('image');
-    if ($image) {
-        $image = $request->file('image')->storePublicly('/images');
-        // Proceed with storing or processing the uploaded file
-    };
         Event::create([
             'title' => $request->title,
             'date' => $request->date,
-            'participant' => $request->participant,
-            'body' =>  $request->body,
             'slug' => $slug,
-            'enddate' => $request->enddate,
-            'image' => $image,
-            'place' => $request->place,
-            'link' => $request->link,
-            'file' => $request->file
         ]);
 
      //redirect
@@ -140,22 +121,6 @@ class EventController extends Controller
         return redirect()->route('admin.events.show', $id)->with('success', 'Data has been saved');
     }
 
-    public function updateRole($id, Request $request)
-    {
-
-        $request->validate([
-            'title' => 'required',
-        ]);
-
-        $detail = DetailEvent::where('id', $id)->first();
-
-        $detail->update([
-            'title' => $request->title,
-        ]);
-
-        return redirect()->route('admin.events.show', $detail->event_id)->with('success', 'Data has been saved');
-    }
-
 
     /**
      * Show the form for editing the specified resource.
@@ -187,36 +152,16 @@ class EventController extends Controller
         // Validate request including file validation
       $request->validate([
         'title' => 'required|string',
-        'body' => 'required|',
         'date' => 'required',
-        'participant' => 'required',
-        'enddate' => 'required',
-        'date' => 'required',
-        'place' => 'required',
-        'file' => 'required',
+
     ]);
 
     $slug = strtolower(str_replace(' ', '-', $request->title));
 
-    $image = $request->file('image');
-    if ($image) {
-        $image = $request->file('image')->storePublicly('/images');
-        // Proceed with storing or processing the uploaded file
-    } else {
-        $image = Event::where('id', $id)->value('image');
-    };
-
         Event::where('id',$id)->update([
             'title' => $request->title,
             'date' => $request->date,
-            'participant' => $request->participant,
-            'body' =>  $request->body,
             'slug' => $slug,
-            'enddate' => $request->enddate,
-            'image' => $image,
-            'place' => $request->place,
-            'link' => $request->link,
-            'file' => $request->file
         ]);
 
 
@@ -240,24 +185,6 @@ class EventController extends Controller
         return redirect()->route('admin.events.index');
     }
 
-    public function change($id)
-    {
-
-        $status = Event::where('id', $id)->value('status');
-
-        if ($status == 'active') {
-            Event::where('id',$id)->update([
-                'status' => "closed",
-            ]);
-        } else {
-            Event::where('id',$id)->update([
-                'status' => "active",
-            ]);
-        }
-
-     //redirect
-     return redirect()->route('admin.events.index');
-    }
 
     public function absen($id)
     {
@@ -276,343 +203,6 @@ class EventController extends Controller
 
      //redirect
      return redirect()->route('admin.events.index');
-    }
-
-
-    public function exportParticipant($id)
-    {
-        $event = Event::findOrFail($id);
-
-        $details = DetailEvent::where('event_id',$id)
-        ->with('member','event')
-        ->when(request()->q, function($query) {
-            $query->where('title', 'like', '%' . request()->q . '%');
-        })
-        ->latest()
-        ->get();
-
-        return Excel::download(new EventParticipantsExport($details), 'participants.xlsx');
-
-    }
-
-    public function certificatesIndex($id)
-    {
-        $event = Event::findOrFail($id);
-        $members = Member::all();
-        $datas = Certificate::where('event_id', $id)
-             ->when(request()->q, function($query) {
-             $query->where('nip', 'like', '%' . request()->q . '%')
-                   ->orWhere('name', 'like', '%' . request()->q . '%')
-                   ->orWhere('no_certificate', 'like', '%' . request()->q . '%');
-             })
-             ->orderBy('no_certificate', 'desc')
-             ->paginate(10);
-
-        $datas->appends(['q' => request()->q]);
-
-        return inertia('Admin/Events/CertificatesIndex', [
-            'event' => $event,
-            'members' => $members,
-            'datas' => $datas,
-         ]);
-    }
-
-    public function certificatesCreate($id)
-    {
-        $event = Event::findOrFail($id);
-        $members = Member::all();
-        $templates = TemplateCertificate::all();
-        return inertia('Admin/Events/Certificates', [
-            'event' => $event,
-            'members' => $members,
-            'templates' => $templates,
-         ]);
-    }
-
-    public function certificatesView($event, $id)
-    {
-
-        $data = Certificate::with('event')->findOrFail($id);
-        $template = TemplateCertificate::where('id',$data->template)->first();
-        $nomor = substr($data->no_certificate, 0, 4);
-        $storagePath = storage_path('app/public/sertifikat');
-
-         // Generate QR Code
-        $qrLink = $data->qr_code;
-        QrCode::format('png')->size(300)->generate($qrLink);
-        // Generate QR Code (variable $qr removed as it was unused)
-        QrCode::generate($qrLink);
-
-         // Build the command
-         $command = "python3 " . escapeshellarg(base_path('resources/py/certificate.py')) .
-        // " " . escapeshellarg('template=' . 'storage/documents/' . $data->template) .
-        " " . escapeshellarg(public_path('storage/' . $template->image)) .
-         " " . escapeshellarg('nomor=' . $data->no_certificate) .
-         " " . escapeshellarg('nama=' . $data->name) .
-         " " . escapeshellarg('qr=' . $qrLink) .
-         " " . escapeshellarg('file=' . 'sertifikat-' . $nomor . '-' . $data->name . '.pdf').
-         " " . escapeshellarg('path=' . $storagePath);
-
-         $output = shell_exec($command);
-
-
-         if ($output === null) {
-             return response()->json(['error' => 'Command execution failed.'], 500);
-         }
-
-        $data->update([
-            'doc' => 'sertifikat/' . 'sertifikat-' . $nomor . '-' . $data->name . '.pdf'
-        ]);
-
-        return response()->download(public_path('storage/' . $data->doc), 'sertifikat-' . $nomor . '-' . $data->name . '.pdf')->deleteFileAfterSend(true);
-
-        //  return response()->json(['success' => 'Certificate generated successfully.']);
-
-         // Return success response
-        //  return redirect()->route('admin.events.certificates.index', $event)->with('success', 'Sertifikat berhasil dihasilkan');
-
-    }
-
-
-    public function certificatesTemplateStore(Request $request)
-    {
-
-        $request->validate([
-            'title' => 'required|unique:template_certificates,title',
-            'image' => 'required',
-        ]);
-
-        $image = $request->file('image')->storePublicly('/template');
-
-        TemplateCertificate::create([
-            'title' => $request->title,
-            'image' => $image,
-            'status' => '1',
-        ]);
-
-        return redirect()->back();
-
-    }
-
-    public function certificatesTemplate(Request $request)
-    {
-
-        $templates = TemplateCertificate::latest()->paginate(10);
-
-        return inertia('Admin/Events/Templates', [
-            'templates' => $templates,
-            'event_id' => $request->event_id,
-        ]);
-    }
-
-    public function certificatesTemplateDelete($id)
-    {
-        $template = TemplateCertificate::findOrFail($id);
-
-        $template->delete();
-
-        return redirect()->back()->with('success', 'Data has been deleted');
-    }
-
-    public function certificatesImport($id)
-    {
-
-        $event = Event::findOrFail($id);
-        return inertia('Admin/Events/CertificatesImport', [
-            'event' => $event,
-         ]);
-    }
-
-    public function certificatesImportCreate($id)
-    {
-        $event = Event::findOrFail($id);
-        $templates = TemplateCertificate::all();
-        $existingCertificateNips = Certificate::where('event_id', $id)
-        ->pluck('nip')
-        ->toArray();
-
-        $users = DetailEvent::with('member')->where('event_id', $id)
-        ->where('status','hadir')
-        ->whereHas('member', function($query) use ($existingCertificateNips) {
-            $query->whereNotIn('nip', $existingCertificateNips);
-        })->when(request()->q, function($query) {
-            $query->whereHas('member', function($subQuery) {
-            $subQuery->where('name', 'like', '%' . request()->q . '%')
-                 ->orWhere('nip', 'like', '%' . request()->q . '%');
-            });
-        })
-        ->latest()
-        ->paginate(20);
-
-        $users->appends(['q' => request()->q]);
-
-        return inertia('Admin/Events/CertificatesImport', [
-            'event' => $event,
-            'templates' => $templates,
-            'users' => $users,
-         ]);
-    }
-
-    public function certificatesImportStore($id, Request $request)
-    {
-        $request->validate([
-            'category' => 'required',
-            'date' => 'required|date',
-            'template' => 'required',
-        ]);
-
-        $event = Event::findOrFail($id);
-        $ids = is_array($request->user_id)
-            ? array_map('trim', $request->user_id)
-            : array_map('trim', explode(',', $request->user_id));
-
-        $members = DetailEvent::with('member')
-            ->where('event_id', $id)
-            ->whereIn('member_id', $ids)
-            ->get();
-
-        if ($members->isEmpty()) {
-            return response()->json(['message' => 'Tidak ada anggota yang ditemukan.'], 404);
-        }
-
-        // Cek yang sudah punya sertifikat
-        $existingCertificates = Certificate::where('category', $request->category)
-            ->where('event_id', $event->id)
-            ->whereIn('nip', $members->pluck('member.nip'))
-            ->pluck('nip')
-            ->toArray();
-
-        $filteredMembers = $members->filter(function ($member) use ($existingCertificates) {
-            return !in_array($member->member->nip, $existingCertificates);
-        });
-
-        if ($filteredMembers->isEmpty()) {
-            return response()->json(['message' => 'Semua anggota sudah memiliki sertifikat.'], 409);
-        }
-
-        // Ambil nomor terakhir
-        $lastCertificate = Certificate::where('category', $request->category)
-            ->whereYear('date', date('Y', strtotime($request->date)))
-            ->whereMonth('date', date('m', strtotime($request->date)))
-            ->orderBy('created_at', 'desc')
-            ->first();
-
-        $lastNumber = $lastCertificate ? intval(explode('/', $lastCertificate->no_certificate)[0]) : 0;
-
-        $errors = [];
-
-        foreach ($filteredMembers as $member) {
-            try {
-                $attempts = 0;
-                do {
-                    $newNumber = str_pad(++$lastNumber, 4, '0', STR_PAD_LEFT);
-                    $kodeKegiatan = $request->category;
-                    $bulan = date('m', strtotime($request->date));
-                    $tahun = date('Y', strtotime($request->date));
-                    $nomor = "{$newNumber}/{$kodeKegiatan}/PP Aspro SDMA/{$bulan}/{$tahun}";
-                    $attempts++;
-                } while (
-                    Certificate::where('no_certificate', $nomor)->exists()
-                    && $attempts < 5
-                );
-
-                if (Certificate::where('no_certificate', $nomor)->exists()) {
-                    $errors[] = [
-                        'nip' => $member->member->nip,
-                        'name' => $member->member->name,
-                        'error' => "Nomor sertifikat {$nomor} sudah digunakan.",
-                    ];
-                    continue;
-                }
-
-                $link = (string) Str::uuid();
-                $qrcode = "https://asprosdma.id/certificates/$link";
-
-                Certificate::create([
-                    'event_id' => $event->id,
-                    'no_certificate' => $nomor,
-                    'category' => $request->category,
-                    'nip' => $member->member->nip,
-                    'name' => $member->member->name,
-                    'body' => $event->title, // Ganti jika ingin dinamis
-                    'date' => $request->date,
-                    'template' => $request->template,
-                    'status' => '1',
-                    'qr_code' => $qrcode,
-                    'link' => $link,
-                    'doc' => $member->member->agency,
-                ]);
-            } catch (\Exception $e) {
-                $errors[] = [
-                    'nip' => $member->member->nip,
-                    'name' => $member->member->name,
-                    'error' => $e->getMessage(),
-                ];
-            }
-        }
-
-        if (count($errors)) {
-            return redirect()->route('admin.events.certificates.index', $id)
-                ->with('warning', 'Sebagian sertifikat gagal disimpan.')
-                ->with('errors_detail', $errors);
-        }
-
-        return redirect()->route('admin.events.certificates.index', $id)
-            ->with('success', 'Semua sertifikat berhasil disimpan.');
-    }
-
-
-    public function certificatesStore($id, Request $request)
-    {
-
-        $event = Event::findOrFail($id);
-        $lastCertificate = Certificate::whereYear('date', date('Y', strtotime($request->date)))
-        ->whereMonth('date', date('m', strtotime($request->date)))
-        ->orderBy('created_at', 'desc')
-        ->first();
-
-        $lastNumber = $lastCertificate ? intval(explode('/', $lastCertificate->no_certificate)[0]) : 0;
-        $newNumber = str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
-        $kodeKegiatan = $request->category; // Replace with actual activity code
-        $bulan = date('m', strtotime($request->date));
-        $tahun = date('Y', strtotime($request->date));
-        $nomor = "{$newNumber}/{$kodeKegiatan}/PP Aspro SDMA/{$bulan}/{$tahun}";
-
-        $link = (string) \Illuminate\Support\Str::uuid();
-
-        $qrcode = "https://asprosdma.id/certificates/$link";
-
-            $request->validate([
-                'category' => 'required',
-                'nip' => 'required|unique:certificates,nip,NULL,id,event_id,' . $id,
-                'name' => 'required',
-                'date' => 'required',
-                'template' => 'required',
-        ]);
-
-        Certificate::create([
-            'event_id' => $event->id,
-            'no_certificate' => $nomor,
-            'category' => $request->category,
-            'nip' => $request->nip,
-            'name' => $request->name,
-            'body' => 'template',
-            'date' => $request->date,
-            'template' => $request->template,
-            'status' => '1',
-            'qr_code' => $qrcode,
-            'link' => $link,
-            'doc' => $request->agency,
-        ]);
-
-        return redirect()->route('admin.events.certificates.index', $id)->with('success', 'Data has been saved');
-    }
-
-    public function certificatesDestroy($id, $certificate)
-    {
-        $certificate = Certificate::findOrFail($certificate);
-        $certificate->delete();
-        return redirect()->back()->with('success', 'Data has been deleted');
     }
 
 
