@@ -14,7 +14,6 @@ class DetailEvent extends Model
         'title',
         'status',
         'doc',
-        'sert',
         'desc',
 
     ];

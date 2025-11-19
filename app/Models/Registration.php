@@ -11,20 +11,28 @@ class Registration extends Model
     use HasFactory;
 
     protected $fillable = [
-        'nip',
+        'nik',
+        'year_number',
+        'place_birth',
+        'date_birth',
+        'gender',
+        'address',
+        'education',
+        'father_name',
+        'father_religion',
+        'father_address',
+        'mother_name',
+        'mother_religion',
+        'mother_address',
+        'guardian_name',
         'name',
         'email',
         'contact',
-        'agency',
-        'position',
-        'level',
-        'document_jab',
+        'document',
         'status',
-        'paid',
         'info',
         'emailstatus',
-        'admin',
-        'from',
+        'user_id',
     ];
 
     protected $keyType = 'string'; // Menetapkan tipe kunci ke string
@@ -35,6 +43,7 @@ class Registration extends Model
     {
         parent::boot();
 
+        
         static::creating(function ($model) {
             // Menggunakan ULID saat membuat instance baru
             $model->id = (string) Str::orderedUuid();

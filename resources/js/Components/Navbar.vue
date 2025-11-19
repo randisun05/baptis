@@ -1,36 +1,17 @@
 <template>
-<header class="site-header userbg">
-    <nav class="navbar navbar-expand-lg">
-        <div class="container">
-            <a class="navbar-brand" href="index.html">
-          <img src="/assets/images/logo.png" alt="logo" style="width: 70%;">
-          </a>
-          <button class="navbar-toggler navbar-toggler-right collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#xenav">
-             <span> </span>
-             <span> </span>
-             <span> </span>
-          </button>
-        </div>
-        <!--side menu open button-->
-        <div class="dropdown">
-            <a href="#" class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="sidemenu_toggle">
-                <div class="media d-flex align-items-center">
-                    <img class="avatar rounded-circle" alt="Image placeholder" :src="`https://ui-avatars.com/api/?name=${$page.props.auth.user.name}&amp;background=4e73df&amp;color=ffffff&amp;size=40`">
-                        <div class="media-body text-dark align-items-center d-none d-lg-block ms-2">
-                            <span class="mb-0 font-small fw-bold text-gray-900">{{ $page.props.auth.user.name }}</span>
-                        </div>
+ <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm px-4 py-3">
+                <div class="container-fluid p-0">
+                    <button class="btn btn-outline-secondary d-lg-none" id="sidebarToggle">Menu</button>
+
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav ms-auto mt-2 mt-lg-0">
+                            <li class="nav-item active"><a class="nav-link" href="#">Home</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#">Notification <span class="badge bg-danger">4</span></a></li>
+                        </ul>
+                    </div>
                 </div>
-            </a>
-                    <ul class="dropdown-menu" aria-labelledby="sidemenu_toggle">
-                        <Link v-if="$page.props.auth.user.role === 'administrator'" href="/admin/setting" class="dropdown-item d-flex align-items-center" role="button">Setting
-                        </Link>
-                        <Link class="dropdown-item d-flex align-items-center" href="/logout" method="POST" as="button" :data="{role : 'admin'}">
-                        Logout
-                        </Link>
-                    </ul>
-        </div>
-   </nav>
-</header>
+            </nav>
+
 
 </template>
 

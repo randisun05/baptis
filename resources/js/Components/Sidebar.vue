@@ -1,166 +1,76 @@
 <template>
-     <nav class="navbar navbar-expand-md sidebar-nav mt-5">
-      <div class="collapse navbar-collapse" id="xenav">
-         <ul class="navbar-nav ms-auto">
-            <li class="nav-item" :class="{ 'active': $page.url.startsWith('/admin/management') }">
-                    <Link href="/admin/management" class="nav-link d-flex justify-content-between">
-                    <span>
-                        <span class="sidebar-icon">
-                            <!-- <i class="fa fa-tachometer fa-lg" aria-hidden="true"></i> -->
-                            <i class="fa fa-tasks fa-lg" aria-hidden="true"></i>
-                        </span>
-                        <span class="sidebar-text ms-3">Management</span>
-                    </span>
-                    </Link>
+     <div class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark" id="sidebar-wrapper">
+            <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+                <i class="bi bi-bootstrap-fill fs-4 me-2"></i>
+                <span class="fs-4 fw-bold">Admin Panel</span>
+            </a>
+            <hr>
+            <ul class="nav nav-pills flex-column mb-auto">
+               <li class="nav-item text-white">
+                    <a href="/admin/dashboard"
+                    class="nav-link"
+                    :class="{ 'active': $page.url.startsWith('/admin/dashboard') }"
+                    aria-current="page">
+                        <i class="bi bi-speedometer2 me-2"></i>
+                        Dashboard
+                    </a>
                 </li>
-
-            <li class="nav-item" :class="{ 'active': $page.url.startsWith('/admin/dashboard') }">
-                    <Link href="/admin/dashboard" class="nav-link d-flex justify-content-between">
-                    <span>
-                        <span class="sidebar-icon">
-                            <i class="fa fa-tachometer fa-lg" aria-hidden="true"></i>
-                        </span>
-                        <span class="sidebar-text ms-3">Dashboard</span>
-                    </span>
-                    </Link>
+                <li>
+                    <a href="/admin/posts" class="nav-link text-white"
+                    :class="{ 'active': $page.url.startsWith('/admin/posts') }"
+                    aria-current="page">
+                        <i class="bi bi-table me-2"></i>
+                        Warta
+                    </a>
                 </li>
-
-                <li v-if="$page.props.auth.user.role === 'keanggotaan' || $page.props.auth.user.role === 'administrator'" class="nav-item" :class="{ 'active': $page.url.startsWith('/admin/registration') }">
-                    <Link href="/admin/registration" class="nav-link d-flex justify-content-between">
-                    <span>
-                        <span class="sidebar-icon">
-                           <i class="fa fa-users fa-lg" aria-hidden="true"></i>
-                        </span>
-                        <span class="sidebar-text ms-3">Pendaftaran</span>
-                    </span>
-                    </Link>
+                <li>
+                    <a href="/admin/registration" class="nav-link text-white"
+                    :class="{ 'active': $page.url.startsWith('/admin/registration') }"
+                    aria-current="page">
+                        <i class="bi bi-grid me-2"></i>
+                        Pendaftaran
+                    </a>
                 </li>
-
-                <li v-if="$page.props.auth.user.role === 'keanggotaan' || $page.props.auth.user.role === 'administrator' || $page.props.auth.user.role === 'pendanaan' || $page.props.auth.user.role === 'humas'" class="nav-item" :class="{ 'active': $page.url.startsWith('/admin/members') }">
-                    <Link href="/admin/members" class="nav-link d-flex justify-content-between">
-                    <span>
-                        <span class="sidebar-icon">
-                           <i class="fa fa-user fa-lg" aria-hidden="true"></i>
-                        </span>
-                        <span class="sidebar-text ms-3">Anggota</span>
-                    </span>
-                    </Link>
+                <li>
+                    <a href="/admin/refevents" class="nav-link text-white"
+                    :class="{ 'active': $page.url.startsWith('/admin/refevents') }"
+                    aria-current="page">
+                        <i class="bi bi-people-circle me-2"></i>
+                        Ref Kegiatan
+                    </a>
                 </li>
-
-                <li v-if="$page.props.auth.user.role === 'humas' || $page.props.auth.user.role === 'administrator'" class="nav-item" :class="{ 'active': $page.url.startsWith('/admin/posts') }">
-                    <Link href="/admin/posts" class="nav-link d-flex justify-content-between">
-                    <span>
-                        <span class="sidebar-icon">
-                           <i class="fa fa-bullhorn fa-lg" aria-hidden="true"></i>
-                        </span>
-                        <span class="sidebar-text ms-3">Posts</span>
-                    </span>
-                    </Link>
+                 <li>
+                    <a href="/admin/events" class="nav-link text-white"
+                    :class="{ 'active': $page.url.startsWith('/admin/events') }"
+                    aria-current="page">
+                        <i class="bi bi-people-circle me-2"></i>
+                        Kegiatan
+                    </a>
                 </li>
-
-                <li v-if="$page.props.auth.user.role === 'humas' || $page.props.auth.user.role === 'administrator'" class="nav-item" :class="{ 'active': $page.url.startsWith('/admin/events') }">
-                    <Link href="/admin/events" class="nav-link d-flex justify-content-between">
-                    <span>
-                        <span class="sidebar-icon">
-                           <i class="fa fa-calendar fa-lg" aria-hidden="true"></i>
-                        </span>
-                        <span class="sidebar-text ms-3">Events</span>
-                    </span>
-                    </Link>
+                <li>
+                    <a href="/admin/users" class="nav-link text-white"
+                    :class="{ 'active': $page.url.startsWith('/admin/users') }"
+                    >
+                        <i class="bi bi-people-circle me-2"></i>
+                        Akun
+                    </a>
                 </li>
+            </ul>
+            <hr>
+            <div class="dropdown">
+                <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img src="https://via.placeholder.com/32" alt="" width="32" height="32" class="rounded-circle me-2">
+                    <strong>Administrator</strong>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
+                    <li><a class="dropdown-item" href="#">Settings</a></li>
+                    <li><a class="dropdown-item" href="#">Profile</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="#">Sign out</a></li>
+                </ul>
+            </div>
+        </div>
 
-                <li v-if="$page.props.auth.user.role === 'humas' || $page.props.auth.user.role === 'administrator'" class="nav-item" :class="{ 'active': $page.url.startsWith('/admin/medias') }">
-                    <Link href="/admin/medias" class="nav-link d-flex justify-content-between">
-                    <span>
-                        <span class="sidebar-icon">
-                           <i class="fa fa-photo fa-lg" aria-hidden="true"></i>
-                        </span>
-                        <span class="sidebar-text ms-3">Media</span>
-                    </span>
-                    </Link>
-                </li>
-
-                <li v-if="$page.props.auth.user.role === 'pendanaan' || $page.props.auth.user.role === 'administrator'" class="nav-item" :class="{ 'active': $page.url.startsWith('/admin/merchans') }">
-                    <Link href="/admin/merchans" class="nav-link d-flex justify-content-between">
-                    <span>
-                        <span class="sidebar-icon">
-                           <i class="fa fa-tags fa-lg" aria-hidden="true"></i>
-                        </span>
-                        <span class="sidebar-text ms-3">Merchans</span>
-                    </span>
-                    </Link>
-                </li>
-
-                <li v-if="$page.props.auth.user.role === 'administrator' || $page.props.auth.user.role === 'sekretariat'" class="nav-item" :class="{ 'active': $page.url.startsWith('/admin/docudigi') }">
-                    <Link href="/admin/docudigi" class="nav-link d-flex justify-content-between">
-                    <span>
-                        <span class="sidebar-icon">
-                           <i class="fa fa-file-text fa-lg" aria-hidden="true"></i>
-                        </span>
-                        <span class="sidebar-text ms-3">Dokumen Digital</span>
-                    </span>
-                    </Link>
-                </li>
-
-                <li v-if="$page.props.auth.user.role === 'administrator'" class="nav-item" :class="{ 'active': $page.url.startsWith('/admin/achievements') }">
-                    <Link href="/admin/achievements" class="nav-link d-flex justify-content-between">
-                    <span>
-                        <span class="sidebar-icon">
-                           <i class="fa fa-trophy fa-lg" aria-hidden="true"></i>
-                        </span>
-                        <span class="sidebar-text ms-3">Achievements</span>
-                    </span>
-                    </Link>
-                </li>
-
-                <li class="nav-item" v-if="$page.props.auth.user.role === 'administrator' || $page.props.auth.user.role === 'sekretariat'" :class="{ 'active': $page.url.startsWith('/admin/archives') }">
-                    <Link href="/admin/archives" class="nav-link d-flex justify-content-between">
-                    <span>
-                        <span class="sidebar-icon">
-                           <i class="fa fa-archive fa-lg" aria-hidden="true"></i>
-                        </span>
-                        <span class="sidebar-text ms-3">Surat Masuk</span>
-                    </span>
-                    </Link>
-                </li>
-
-                <li class="nav-item" v-if="$page.props.auth.user.role != 'administrator' || $page.props.auth.user.role != 'sekretariat'" :class="{ 'active': $page.url.startsWith('/admin/archives') }">
-                    <Link href="/admin/archives/inbox" class="nav-link d-flex justify-content-between">
-                    <span>
-                        <span class="sidebar-icon">
-                           <i class="fa fa-inbox fa-lg" aria-hidden="true"></i>
-                        </span>
-                        <span class="sidebar-text ms-3">Disposisi</span>
-                    </span>
-                    </Link>
-                </li>
-
-                <li class="nav-item" v-if="$page.props.auth.user.role == 'administrator' || $page.props.auth.user.role == 'pendanaan' " :class="{ 'active': $page.url.startsWith('/admin/jurnals') }">
-                    <Link href="/admin/jurnals" class="nav-link d-flex justify-content-between">
-                    <span>
-                        <span class="sidebar-icon">
-                           <i class="fa fa-money fa-lg" aria-hidden="true"></i>
-                        </span>
-                        <span class="sidebar-text ms-3">Pencatatan Keuangan</span>
-                    </span>
-                    </Link>
-                </li>
-
-                <li class="nav-item" :class="{ 'active': $page.url.startsWith('/admin/jurnals') }">
-                    <Link href="/admin/jurnals/show" class="nav-link d-flex justify-content-between">
-                    <span>
-                        <span class="sidebar-icon">
-                           <i class="fa fa-money fa-lg" aria-hidden="true"></i>
-                        </span>
-                        <span class="sidebar-text ms-3">Catatan Keuangan</span>
-                    </span>
-                    </Link>
-                </li>
-
-
-         </ul>
-      </div>
-   </nav>
 
 </template>
 

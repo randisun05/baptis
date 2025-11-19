@@ -1,341 +1,139 @@
 <template>
-    <Head>
-        <title>Administrator</title>
-    </Head>
-    <div class="container-fluid padding px-5">
-        <div class="row mt-1">
-            <div class="col-md-12">
-                <Link href="/admin/registration" class="btn btn-md btn-primary border-0 shadow mb-3" type="button"><i class="fa fa-arrow-left" aria-hidden="true"> </i>
-                  Kembali</Link>
-                <div class="card border-0 shadow">
-                    <div class="card-body">
-                        <h3 class="darkcolor bottom35 text-center">Registrasi Anggota</h3>
-               <form @submit.prevent="submit" class="getin_form border-form" id="login">
-                  <div class="row">
-                    <div class="col-md-6 col-sm-6">
-                        <span class="ms-4">
-                                 NIP
-                        </span>
-                        <div class="form-group bottom35 mt-1">
-                                <input type="text" class="form-control" v-model="form.nip" placeholder="Masukan NIP" maxlength="18" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
-                            <div v-if="errors.nip" class="alert alert-danger mt-2">
-                                {{ errors.nip }}
-                            </div>
-                        </div>
+  <Head title="Registrasi Peserta Baru" />
 
-                     </div>
+  <div class="container-fluid px-4 py-4">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
 
-                    <div class="col-md-6 col-sm-6">
-                        <span class="ms-4">
-                                 Nama
-                        </span>
-                        <div class="form-group bottom35 mt-1">
-                                <input type="text" class="form-control" v-model="form.name" placeholder="Masukan Nama Lengkap">
-                            <div v-if="errors.name" class="alert alert-danger mt-2">
-                                {{ errors.name }}
-                            </div>
-                        </div>
-                     </div>
-
-                     <div class="col-md-6 col-sm-6">
-                        <span class="ms-4">
-                                 Email
-                        </span>
-                        <div class="form-group bottom35 mt-1">
-                                <input type="email" class="form-control" v-model="form.email" placeholder="Masukan Alamat Email Aktif">
-                            <div v-if="errors.email" class="alert alert-danger mt-2">
-                                {{ errors.email }}
-                            </div>
-                        </div>
-                     </div>
-
-                     <div class="col-md-6 col-sm-6">
-                        <span class="ms-4">
-                                 Nomor Kontak
-                        </span>
-                        <div class="form-group bottom35 mt-1">
-                                <input type="text" class="form-control" v-model="form.contact" placeholder="Masukan Nomor Kontak Aktif" maxlength="13" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
-                            <div v-if="errors.contact" class="alert alert-danger mt-2">
-                                {{ errors.contact }}
-                            </div>
-                        </div>
-                     </div>
-
-                     <div class="col-md-6 col-sm-6">
-                        <label for="agency" class="ms-4">Instansi</label>
-                        <div class="form-group bottom35 mt-1">
-                            <div class="position-relative" ref="dropdownWrapper">
-                                <div class="form-group mt-1">
-                                <input type="text" class="form-control" placeholder="Pilih Instansi" v-model="form.agency" @click="toggleSearch" readonly>
-                                </div>
-                                <div v-if="showDropdown" class="dropdown-menu position-absolute w-100">
-                                <input type="text" class="form-control mb-2" placeholder="Cari Instansi" v-model="searchInstansi">
-                                <div class="dropdown-item-list" v-if="filteredInstansis.length > 0">
-                                    <button v-for="(instansi, index) in filteredInstansis" :key="index" class="dropdown-item" @click="selectInstansi(instansi)">
-                                    {{ instansi.title }}
-                                    </button>
-                                </div>
-                                <template v-else>
-                                    <div class="dropdown-item disabled">Instansi tidak ditemukan</div>
-                                </template>
-
-                                </div>
-                            </div>
-                                <div v-if="errors.agency" class="alert alert-danger mt-2">
-                                {{ errors.agency }}
-                                </div>
-                        </div>
-                    </div>
-
-                     <div class="col-md-3 col-sm-3">
-                        <span class="ms-4">
-                                 Jabatan
-                        </span>
-                        <div class="form-group bottom35 mt-1">
-                                <select type="form-select" class="form-control" v-model="form.position">
-                                    <option value="" disabled>Pilih Jabatan</option>
-                                    <option value="Analis SDM Aparatur">Analis SDM Aparatur</option>
-                                    <option value="Pranata SDM Aparatur">Pranata SDM Aparatur</option>
-                                </select>
-                            <div v-if="errors.position" class="alert alert-danger mt-2">
-                                {{ errors.position }}
-                            </div>
-                        </div>
-                     </div>
-
-
-                     <div class="col-md-3 col-sm-3">
-                        <span class="ms-4">
-                                 Jenjang
-                        </span>
-                        <div class="form-group bottom35 mt-1">
-                                <select type="form-select" class="form-control" v-model="form.level">
-                                    <template v-if="form.position === ''">
-                                        <option value="" disabled selected>Jabatan Harus Dipilih</option>
-                                    </template>
-                                    <template v-if="form.position === 'Analis SDM Aparatur'">
-                                        <option value="" disabled>Pilih Jenjang</option>
-                                        <option value="Ahli Pertama">Pertama</option>
-                                        <option value="Ahli Muda">Muda</option>
-                                        <option value="Ahli Madya">Madya</option>
-                                        <option value="Ahli Utama">Utama</option>
-                                    </template>
-                                    <template v-if="form.position === 'Pranata SDM Aparatur'">
-                                        <option value="" disabled>Pilih Jenjang</option>
-                                        <option value="Terampil">Terampil</option>
-                                        <option value="Mahir">Mahir</option>
-                                        <option value="Penyelia">Penyelia</option>
-                                    </template>
-                                </select>
-                            <div v-if="errors.level" class="alert alert-danger mt-2">
-                                {{ errors.level }}
-                            </div>
-                        </div>
-                     </div>
-
-                     <div class="col-md-6 col-sm-6">
-                        <span class="ms-4">
-                                 SK Jabatan   ( Bentuk File .Pdf )
-                        </span>
-                        <div class="form-group bottom35 mt-1">
-                            <div class="input-group">
-                                <input type="file" class="form-control" @change="updateDocument" accept=".pdf">
-
-                            </div>
-                            <div v-if="errors.document_jab" class="alert alert-danger mt-2">
-                                    {{ errors.document_jab }}
-                                </div>
-                                <div v-if="errors[0]" class="alert alert-danger mt-2">
-                                    {{ errors[0] }}
-                                </div>
-                            </div>
-                     </div>
-
-                     <div class="col-md-6 col-sm-6">
-                        <span class="ms-4">
-                                 Bukti Tranfer   ( Bentuk File Image )
-                        </span>
-                        <div class="form-group bottom35 mt-1">
-                                <input type="file" class="form-control" @change="updateImage" accept=".jpg, .JPG, .png, .jpeg, .JPEG, .pdf">
-                            <div v-if="errors.paid" class="alert alert-danger mt-2">
-                                    {{ errors.paid }}
-                                </div>
-                                <div v-if="errors[0]" class="alert alert-danger mt-2">
-                                    {{ errors[0] }}
-                                </div>
-                            </div>
-                     </div>
-
-                     <div class="row d-flex justify-content-center">
-                        <button type="submit" class="button btnprimary" style="width: 300px;">Submit</button>
-                    </div>
-
-                  </div>
-               </form>
-                    </div>
-                </div>
-            </div>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h2 class="fs-3 fw-bold">Registrasi Peserta</h2>
+          <Link href="/participants" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left me-1"></i> Kembali
+          </Link>
         </div>
+
+        <div class="card shadow-sm border-0">
+          <div class="card-header bg-white py-3">
+            <h5 class="mb-0 text-muted">Formulir Data Diri</h5>
+          </div>
+          <div class="card-body p-4">
+
+            <!--
+              Form @submit.prevent="submit"
+              Inertia (useForm) akan otomatis menangani file upload
+              menjadi multipart/form-data.
+            -->
+            <form @submit.prevent="submit">
+
+              <div class="row">
+                <!-- NIK -->
+                <div class="col-md-6 mb-3">
+                  <label for="nik" class="form-label fw-semibold">NIK (No. KTP)</label>
+                  <input type="text" class="form-control" :class="{ 'is-invalid': form.errors.nik }" id="nik" v-model="form.nik" placeholder="Contoh: 3201...">
+                  <div v-if="form.errors.nik" class="invalid-feedback">{{ form.errors.nik }}</div>
+                </div>
+
+                <!-- Nama Lengkap -->
+                <div class="col-md-6 mb-3">
+                  <label for="name" class="form-label fw-semibold">Nama Lengkap</label>
+                  <input type="text" class="form-control" :class="{ 'is-invalid': form.errors.name }" id="name" v-model="form.name" placeholder="Contoh: Budi Santoso">
+                  <div v-if="form.errors.name" class="invalid-feedback">{{ form.errors.name }}</div>
+                </div>
+              </div>
+
+              <div class="row">
+                <!-- Email -->
+                <div class="col-md-6 mb-3">
+                  <label for="email" class="form-label fw-semibold">Alamat Email</label>
+                  <input type="email" class="form-control" :class="{ 'is-invalid': form.errors.email }" id="email" v-model="form.email" placeholder="nama@email.com">
+                  <div v-if="form.errors.email" class="invalid-feedback">{{ form.errors.email }}</div>
+                </div>
+
+                <!-- Contact (Pengganti Phone) -->
+                <div class="col-md-6 mb-3">
+                  <label for="contact" class="form-label fw-semibold">Nomor WhatsApp/HP</label>
+                  <input type="text" class="form-control" :class="{ 'is-invalid': form.errors.contact }" id="contact" v-model="form.contact" placeholder="08123xxxx">
+                  <div v-if="form.errors.contact" class="invalid-feedback">{{ form.errors.contact }}</div>
+                </div>
+              </div>
+
+              <div class="row">
+                <!-- Document (File Upload) -->
+                <div class="col-12 mb-3">
+                  <label for="document" class="form-label fw-semibold">Upload Dokumen</label>
+
+                  <!--
+                    Gunakan @input untuk file, bukan v-model.
+                    $event.target.files[0] mengambil file yang dipilih.
+                  -->
+                  <input type="file" class="form-control" :class="{ 'is-invalid': form.errors.document }" id="document" @input="form.document = $event.target.files[0]">
+
+                  <div v-if="form.errors.document" class="invalid-feedback">{{ form.errors.document }}</div>
+                  <div class="form-text">Tipe file: PDF, JPG, PNG. Max: 2MB.</div>
+
+                  <!-- Progress Bar untuk File Upload -->
+                  <div v-if="form.progress" class="progress mt-2" style="height: 8px;">
+                    <div class="progress-bar progress-bar-striped bg-primary"
+                         role="progressbar"
+                         :style="{ width: form.progress.percentage + '%' }"
+                         :aria-valuenow="form.progress.percentage"
+                         aria-valuemin="0"
+                         aria-valuemax="100">
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+              <hr class="my-4">
+
+              <div class="d-flex justify-content-end gap-2">
+                <Link href="/participants" class="btn btn-light">Batal</Link>
+                <button type="submit" class="btn btn-primary px-4" :disabled="form.processing">
+                  <i class="bi bi-save me-1"></i>
+                  {{ form.processing ? 'Menyimpan...' : 'Daftarkan Peserta' }}
+                </button>
+              </div>
+
+            </form>
+          </div>
+        </div>
+
+      </div>
     </div>
+  </div>
 </template>
 
-<script>
-    //import layout
-    import LayoutAdmin from '../../../Layouts/Admin.vue';
+<script setup>
+import { Head, Link, useForm} from '@inertiajs/inertia-vue3'
 
-    //import Head from Inertia
-    import {
-        Head, Link
-    } from '@inertiajs/inertia-vue3';
+// Menyesuaikan useForm dengan validasi baru
+const form = useForm({
+    nik: '',
+    name: '',
+    email: '',
+    contact: '',       // Mengganti 'phone' dan 'agency'
+    document: null     // Default 'null' untuk file input
+})
 
-    //import reactive
-    import {
-        reactive
-    } from 'vue';
-
-    //import sweet alert2
-    import Swal from 'sweetalert2';
-
-    //import inertia adapter
-    import {
-        Inertia
-    } from '@inertiajs/inertia';
-
-    export default {
-
-        data() {
-                    return {
-                    searchInstansi: '',
-                    showDropdown: false
-                    };
-                },
-
-                // computed property to filter instansis based on search input
-                computed: {
-                    filteredInstansis() {
-                    return this.instansis.filter(instansi =>
-                        instansi.title.toLowerCase().includes(this.searchInstansi.toLowerCase())
-                    );
-                    }
-                },
-
-                methods: {
-                    // method to toggle dropdown visibility
-                    toggleSearch() {
-                    this.showDropdown = !this.showDropdown;
-                    if (this.showDropdown) {
-                        // Menambahkan event listener ke elemen body
-                        document.body.addEventListener('click', this.closeDropdownOutside);
-                    } else {
-                        // Menghapus event listener dari elemen body
-                        document.body.removeEventListener('click', this.closeDropdownOutside);
-                    }
-                    },
-
-                    // method to close dropdown when clicked outside
-                    closeDropdownOutside(event) {
-                    if (!this.$refs.dropdownWrapper.contains(event.target)) {
-                        this.showDropdown = false;
-                        document.body.removeEventListener('click', this.closeDropdownOutside);
-                    }
-                    },
-
-                    // method to select an instansi from dropdown
-                    selectInstansi(instansi) {
-                    this.form.agency = instansi.title;
-                    this.searchInstansi = ''; // reset search input after selection
-                    this.showDropdown = false; // hide dropdown after selection
-                    }
-                },
-
-        //layout
-        layout: LayoutAdmin,
-
-        //register component
-        components: {
-            Head,
-            Link
-        },
-
-        //props
-        props: {
-            errors: Object,
-            session: Object,
-            instansis: Array
-        },
-
-        //define composition API
-        setup() {
-
-            //define form state
-            const form = reactive({
-                nip: '',
-                name: '',
-                email: '',
-                contact: '',
-                agency: '',
-                position: '',
-                level: '',
-                document_jab: '',
-                paid: '',
-
-            });
-
-            //submit method
-            const submit = () => {
-
-                //send data to server
-                Inertia.post('/admin/registration/store', {
-                    //data
-                    nip: form.nip,
-                    name: form.name,
-                    email: form.email,
-                    contact: form.contact,
-                    agency: form.agency,
-                    position: form.position,
-                    level: form.level,
-                    document_jab: form.document_jab,
-                    paid: form.paid,
-                } ,{
-                    onSuccess: () => {
-                        //show success alert
-                        Swal.fire({
-                            title: 'Success!',
-                            text: 'Data Registrasi Berhasil Dikirim',
-                            icon: 'success',
-                            showConfirmButton: false,
-                            timer: 2000
-                        });
-                    },
-                });
-
+// Fungsi submit
+const submit = () => {
+    // form.post akan otomatis mengirim sebagai multipart/form-data
+    // karena 'document' (file) terdeteksi.
+    form.post('/admin/registration', {
+        // Hapus file dari form jika error agar tidak dikirim ulang
+        // dan tidak menyebabkan error validasi "file must be a file"
+        onError: () => {
+            if (form.errors.document) {
+                form.reset('document');
             }
-            // Method to update the document file
-            const updateDocument = (event) => {
-                form.document_jab = event.target.files[0];
-            };
-
-             // Method to update the image file
-             const updateImage = (event) => {
-                form.paid = event.target.files[0];
-            };
-
-
-            //return form state and submit method
-            return {
-                form,
-                submit,
-                updateDocument,
-                updateImage,
-
-            };
-
         }
-
-    }
-
+    })
+}
 </script>
 
-<style>
+<script>
+import LayoutAdmin from '../../../Layouts/Admin.vue';
+export default { layout: LayoutAdmin };
+</script>
 
-</style>

@@ -1,278 +1,151 @@
 <template>
+  <Head title="Edit Data Peserta" />
 
-    <Head>
-        <title>Registrasi Keanggotaan Aspro</title>
-    </Head>
+  <div class="container-fluid px-4 py-4">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
 
-<section id="registration" class="padding px-5">
-   <div class="container">
-      <div class="row d-flex justify-content-center">
-         <div class="col-lg-12 col-md-12 col-sm-10">
-            <div class="bglight logincontainer">
-               <h3 class="darkcolor bottom35 text-center">Registrasi Anggota</h3>
-               <form @submit.prevent="submit" class="getin_form border-form" id="login">
-                  <div class="row">
-                    <div class="col-md-6 col-sm-6">
-                        <span class="ms-4">
-                                 NIP
-                        </span>
-                        <div class="form-group bottom35 mt-1">
-                                <input type="text" class="form-control" v-model="form.nip" placeholder="Masukan NIP" maxlength="16" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
-                            <div v-if="errors.nip" class="alert alert-danger mt-2">
-                                {{ errors.nip }}
-                            </div>
-                        </div>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h2 class="fs-3 fw-bold">Edit Data Peserta</h2>
+          <Link href="/admin/registration" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left me-1"></i> Kembali
+          </Link>
+        </div>
 
-                     </div>
+        <div class="card shadow-sm border-0">
+          <div class="card-header bg-white py-3">
+            <h5 class="mb-0 text-muted">Formulir Data Diri</h5>
+          </div>
+          <div class="card-body p-4">
 
-                    <div class="col-md-6 col-sm-6">
-                        <span class="ms-4">
-                                 Nama
-                        </span>
-                        <div class="form-group bottom35 mt-1">
-                                <input type="text" class="form-control" v-model="form.name" placeholder="Masukan Nama Lengkap">
-                            <div v-if="errors.name" class="alert alert-danger mt-2">
-                                {{ errors.name }}
-                            </div>
-                        </div>
-                     </div>
+            <!--
+              Form @submit.prevent="submit"
+              Inertia akan mengirim _method: 'PUT' via POST
+              karena ada file upload.
+            -->
+            <form @submit.prevent="submit">
 
-                     <div class="col-md-6 col-sm-6">
-                        <span class="ms-4">
-                                 Email
-                        </span>
-                        <div class="form-group bottom35 mt-1">
-                                <input type="email" class="form-control" v-model="form.email" placeholder="Masukan Alamat Email Aktif">
-                            <div v-if="errors.email" class="alert alert-danger mt-2">
-                                {{ errors.email }}
-                            </div>
-                        </div>
-                     </div>
+              <div class="row">
+                <!-- NIK -->
+                <div class="col-md-6 mb-3">
+                  <label for="nik" class="form-label fw-semibold">NIK (No. KTP)</label>
+                  <input type="text" class="form-control" :class="{ 'is-invalid': form.errors.nik }" id="nik" v-model="form.nik">
+                  <div v-if="form.errors.nik" class="invalid-feedback">{{ form.errors.nik }}</div>
+                </div>
 
-                     <div class="col-md-6 col-sm-6">
-                        <span class="ms-4">
-                                 Nomor Kontak
-                        </span>
-                        <div class="form-group bottom35 mt-1">
-                                <input type="text" class="form-control" v-model="form.contact" placeholder="Masukan Nomor Kontak Aktif" maxlength="13" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
-                            <div v-if="errors.contact" class="alert alert-danger mt-2">
-                                {{ errors.contact }}
-                            </div>
-                        </div>
-                     </div>
+                <!-- Nama Lengkap -->
+                <div class="col-md-6 mb-3">
+                  <label for="name" class="form-label fw-semibold">Nama Lengkap</label>
+                  <input type="text" class="form-control" :class="{ 'is-invalid': form.errors.name }" id="name" v-model="form.name">
+                  <div v-if="form.errors.name" class="invalid-feedback">{{ form.errors.name }}</div>
+                </div>
+              </div>
 
-                     <div class="col-md-6 col-sm-6">
-                        <span class="ms-4">
-                                 Instansi
-                        </span>
-                        <div class="form-group bottom35 mt-1">
-                                <input type="text" class="form-control" v-model="form.agency" placeholder="Masukan Instansi">
-                            <div v-if="errors.agency" class="alert alert-danger mt-2">
-                                {{ errors.agency }}
-                            </div>
-                        </div>
-                     </div>
+              <div class="row">
+                <!-- Email -->
+                <div class="col-md-6 mb-3">
+                  <label for="email" class="form-label fw-semibold">Alamat Email</label>
+                  <input type="email" class="form-control" :class="{ 'is-invalid': form.errors.email }" id="email" v-model="form.email">
+                  <div v-if="form.errors.email" class="invalid-feedback">{{ form.errors.email }}</div>
+                </div>
 
-                     <div class="col-md-3 col-sm-3">
-                        <span class="ms-4">
-                                 Jabatan
-                        </span>
-                        <div class="form-group bottom35 mt-1">
-                                <select type="form-select" class="form-control" v-model="form.position">
-                                    <option value="" disabled>Pilih Jabatan</option>
-                                    <option value="Analis SDM Aparatur">Analis SDM Aparatur</option>
-                                    <option value="Pranata SDM Aparatur">Pranata SDM Aparatur</option>
-                                </select>
-                            <div v-if="errors.position" class="alert alert-danger mt-2">
-                                {{ errors.position }}
-                            </div>
-                        </div>
-                     </div>
+                <!-- Contact (Pengganti Phone) -->
+                <div class="col-md-6 mb-3">
+                  <label for="contact" class="form-label fw-semibold">Nomor WhatsApp/HP</label>
+                  <input type="text" class="form-control" :class="{ 'is-invalid': form.errors.contact }" id="contact" v-model="form.contact">
+                  <div v-if="form.errors.contact" class="invalid-feedback">{{ form.errors.contact }}</div>
+                </div>
+              </div>
 
+              <div class="row">
+                <!-- Document (File Upload) -->
+                <div class="col-12 mb-3">
+                  <label for="document" class="form-label fw-semibold">Upload Dokumen Baru (Opsional)</label>
 
-                     <div class="col-md-3 col-sm-3">
-                        <span class="ms-4">
-                                 Jenjang
-                        </span>
-                        <div class="form-group bottom35 mt-1">
-                                <select type="form-select" class="form-control" v-model="form.level">
-                                    <template v-if="form.position === ''">
-                                        <option value="" disabled selected>Jabatan Harus Dipilih</option>
-                                    </template>
-                                    <template v-if="form.position === 'Analis SDM Aparatur'">
-                                        <option value="" disabled>Pilih Jenjang</option>
-                                        <option value="Ahli Pertama">Pertama</option>
-                                        <option value="Ahli Muda">Muda</option>
-                                        <option value="Ahli Madya">Madya</option>
-                                        <option value="Ahli Utama">Utama</option>
-                                    </template>
-                                    <template v-if="form.position === 'Pranata SDM Aparatur'">
-                                        <option value="" disabled>Pilih Jenjang</option>
-                                        <option value="Terampil">Terampil</option>
-                                        <option value="Mahir">Mahir</option>
-                                        <option value="Penyelia">Penyelia</option>
-                                    </template>
-                                </select>
-                            <div v-if="errors.level" class="alert alert-danger mt-2">
-                                {{ errors.level }}
-                            </div>
-                        </div>
-                     </div>
+                  <input type="file" class="form-control" :class="{ 'is-invalid': form.errors.document }" id="document" @input="form.document = $event.target.files[0]">
 
-                     <div class="col-md-6 col-sm-6">
-                        <span class="ms-4">
-                                 SK Jabatan   ( Bentuk File .Pdf )
-                        </span>
-                        <div class="form-group bottom35 mt-1">
-                            <div class="input-group">
-                                <input type="file" class="form-control" @change="updateDocument" accept=".pdf">
+                  <div v-if="form.errors.document" class="invalid-feedback">{{ form.errors.document }}</div>
+                  <div class="form-text">Kosongkan jika tidak ingin mengganti dokumen.</div>
 
-                            </div>
-                            <div v-if="errors.document_jab" class="alert alert-danger mt-2">
-                                    {{ errors.document_jab }}
-                                </div>
-                                <div v-if="errors[0]" class="alert alert-danger mt-2">
-                                    {{ errors[0] }}
-                                </div>
-                            </div>
-                     </div>
-
-                     <div class="col-md-6 col-sm-6">
-                        <div class="form-group bottom35 mt-1">
-                                <!-- <input type="file" class="form-control" @input="form.document_jab = $event.target.document_jab[0]">
-                            <div v-if="errors.document_jab" class="alert alert-danger mt-2">
-                                    {{ errors.document_jab }}
-                                </div>
-                                <div v-if="errors[0]" class="alert alert-danger mt-2">
-                                    {{ errors[0] }}
-                                </div> -->
-                            </div>
-                     </div>
-
-                     <div class="row d-flex justify-content-center">
-                        <button type="submit" class="button btnprimary" style="width: 300px;">Submit</button>
-                    </div>
-
+                  <!-- Menampilkan Dokumen Saat Ini -->
+                  <div v-if="register.document_url" class="mt-3">
+                    <span class="form-text">Dokumen saat ini:</span><br>
+                    <a :href="register.document_url" target="_blank" class="btn btn-sm btn-outline-dark">
+                      <i class="bi bi-file-earmark-text me-1"></i>
+                      Lihat Dokumen
+                    </a>
                   </div>
-               </form>
-            </div>
-         </div>
+
+                  <!-- Progress Bar untuk File Upload (diubah jadi warning) -->
+                  <div v-if="form.progress" class="progress mt-2" style="height: 8px;">
+                    <div class="progress-bar progress-bar-striped bg-warning"
+                         role="progressbar"
+                         :style="{ width: form.progress.percentage + '%' }"
+                         :aria-valuenow="form.progress.percentage"
+                         aria-valuemin="0"
+                         aria-valuemax="100">
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+              <hr class="my-4">
+
+              <div class="d-flex justify-content-end gap-2">
+                <Link href="/admin/registration" class="btn btn-light">Batal</Link>
+                <!-- Tombol Update -->
+                <button type="submit" class="btn btn-warning px-4" :disabled="form.processing">
+                  <i class="bi bi-pencil-square me-1"></i>
+                  {{ form.processing ? 'Menyimpan Perubahan...' : 'Update Data' }}
+                </button>
+              </div>
+
+            </form>
+          </div>
+        </div>
+
       </div>
-   </div>
-</section>
-
-
+    </div>
+  </div>
 </template>
 
-<script>
-    //import layout
-    import LayoutAuth from '../../../Layouts/Auth.vue';
+<script setup>
+import { Head, Link, useForm } from '@inertiajs/inertia-vue3'
 
-    //import Head from Inertia
-    import {
-        Head
-    } from '@inertiajs/inertia-vue3';
+// Menerima props 'register' dari controller
+const props = defineProps({
+    register: Object
+})
 
-    //import reactive
-    import {
-        reactive
-    } from 'vue';
+// Mengisi form dengan data yang ada
+const form = useForm({
+    _method: 'PUT', // Penting untuk routing update
+    nik: props.register.nik,
+    name: props.register.name,
+    email: props.register.email,
+    contact: props.register.contact,
+    document: null     // Diisi null, hanya diisi jika ada file baru
+})
 
-    //import sweet alert2
-    import Swal from 'sweetalert2';
-
-    //import inertia adapter
-    import {
-        Inertia
-    } from '@inertiajs/inertia';
-
-    export default {
-
-        //layout
-        layout: LayoutAuth,
-
-        //register component
-        components: {
-            Head,
-
-        },
-
-        //props
-        props: {
-            errors: Object,
-            session: Object,
-            register: Object
-        },
-
-        //define composition API
-        setup(props) {
-
-            //define form state
-            const form = reactive({
-                nip: props.register.nip,
-                name: props.register.name,
-                email: props.register.email,
-                contact: props.register.contact,
-                agency: props.register.agency,
-                position: props.register.position,
-                level: props.register.level,
-                document_jab: props.register.document_jab,
-                paid: props.register.paid,
-
-            });
-
-            //submit method
-            const submit = () => {
-
-                //send data to server
-                Inertia.post('/registration/store', {
-
-                    //data
-                    nip: form.nip,
-                    name: form.name,
-                    email: form.email,
-                    contact: form.contact,
-                    agency: form.agency,
-                    position: form.position,
-                    level: form.level,
-                    document_jab: form.document_jab,
-                    paid: form.paid,
-
-                } ,{
-                    onSuccess: () => {
-                        //show success alert
-                        Swal.fire({
-                            title: 'Success!',
-                            text: 'Data Registrasi Berhasil Dikirim, Silakan Cek Email Anda.',
-                            icon: 'success',
-                            showConfirmButton: false,
-                            timer: 2000
-                        });
-                    },
-                });
-
+// Fungsi submit
+const submit = () => {
+    // Gunakan form.post untuk update jika ada file (multipart/form-data)
+    // Inertia akan membaca _method: 'PUT' dan mengirimkannya dengan benar
+    form.post(`/admin/registration/${props.register.id}`, {
+        // Hapus file dari form jika error
+        onError: () => {
+            if (form.errors.document) {
+                form.reset('document');
             }
-            // Method to update the document file
-            const updateDocument = (event) => {
-                form.document_jab = event.target.files[0];
-            };
+        },
+        // Jaga scroll position saat validasi error
+        preserveScroll: true,
+    })
+}
+</script>
 
-             // Method to update the image file
-             const updateImage = (event) => {
-                form.paid = event.target.files[0];
-            };
-
-
-            //return form state and submit method
-            return {
-                form,
-                submit,
-                updateDocument,
-                updateImage
-            };
-
-        }
-
-    }
-
+<script>
+import LayoutAdmin from '../../../Layouts/Admin.vue';
+export default { layout: LayoutAdmin };
 </script>

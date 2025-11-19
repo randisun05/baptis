@@ -36,33 +36,12 @@ class PublicController extends Controller
 
     public function index()
     {
-        $events = Event::whereNot('title','media')->latest()->take(3)->get();
-        $analisdone = Registration::where('position','Analis SDM Aparatur')->where('status','approved')->count();
-        $analisproses = Registration::where('position','Analis SDM Aparatur')->where('status','submission')->where('emailstatus',0)->count();
-        $analispaid = Registration::where('position', 'Analis SDM Aparatur')
-        ->where('emailstatus', '>', 0)
-        ->whereNotIn('status', ['approved', 'rejected'])
-        ->count();
-        $pranatadone = Registration::where('position','Pranata SDM Aparatur')->where('status','approved')->count();
-        $pranataproses = Registration::where('position','Pranata SDM Aparatur')->where('status','submission')->where('emailstatus','0')->count();
-        $pranatapaid = Registration::where('position','Pranata SDM Aparatur')->where('emailstatus', '>', 0)
-        ->whereNotIn('status', ['approved', 'rejected'])
-        ->count();
-       $showPopup = Management::where('item', 'popup')->sum('status');
-       $datas = Management::where('item', 'popup')->where('status','1')->get();
-        $agencydone = Registration::distinct()->count('agency');
+    //    $showPopup = Management::where('item', 'popup')->sum('status');
+    //    $datas = Management::where('item', 'popup')->where('status','1')->get();
 
-        return view('Index', [
-            "events" => $events,
-            'analisdone' => $analisdone,
-            'analisproses' => $analisproses,
-            'pranatadone' => $pranatadone,
-            'pranataproses' => $pranataproses,
-            'agencydone' => $agencydone,
-            'pranatapaid' => $pranatapaid,
-            'analispaid' => $analispaid,
-           'showPopup' => $showPopup,
-           'datas' => $datas
+        return inertia('Public/Website/Index', [
+        //    'showPopup' => $showPopup,
+        //    'datas' => $datas
         ]);
     }
 
@@ -150,16 +129,6 @@ class PublicController extends Controller
         ]);
     }
 
-    public function ketuaUmum()
-    {
-
-       $data = Management::where('item', 'ketuaumum')->first();
-        return inertia('Public/Website/About/KetuaUmum', [
-            'title' => "Ketua Umum",
-            'data' => $data
-        ]);
-    }
-
     public function visiMisi()
     {
         $data = Management::where('item', 'visimisi')->first();
@@ -176,11 +145,6 @@ class PublicController extends Controller
             'title' => "Struktur Organisasi",
             'data' => $data
         ]);
-
-        //  return inertia('Public/Website/Maintenance/Index', [
-        //     'title' => "Struktur Organisasi",
-        //     'data' => $data
-        // ]);
     }
 
     public function sejarah()
@@ -210,98 +174,21 @@ class PublicController extends Controller
         ]);
     }
 
-    public function hubunganMasyarakat()
-    {
-         $data = Management::where('item', 'proker')->where('sub','humas')->first();
-        return inertia('Public/Website/Program/HubunganMasyarakat', [
-            'title' => "Bidang Hubungan Masyarakat dan Kerja Sama",
-            'data' => $data
-        ]);
-    }
-
-    public function hukumAdvokasi()
-    {
-        $data = Management::where('item', 'proker')->where('sub','hukum')->first();
-        return inertia('Public/Website/Program/HukumAdvokasi', [
-            'title' => "Bidang Hukum dan Advokasi",
-            'data' => $data
-        ]);
-    }
-
-    public function keanggotaan()
-    {
-        $data = Management::where('item', 'proker')->where('sub','anggota')->first();
-        return inertia('Public/Website/Program/Keanggotaan', [
-            'title' => "Bidang Keanggotaan dan Organisasi",
-            'data' => $data
-
-        ]);
-    }
-
-    public function pengembangan()
-    {
-        $data = Management::where('item', 'proker')->where('sub','pengembangan')->first();
-        return inertia('Public/Website/Program/Pengembangan', [
-            'title' => "Bidang Pengembangan Kapasitas Insani",
-            'data' => $data
-        ]);
-    }
-
-    public function sumberPendanaan()
-    {
-        $data = Management::where('item', 'proker')->where('sub','pendanaan')->first();
-        return inertia('Public/Website/Program/SumberPendanaan', [
-            'title' => "Bidang Sumber Pendanaan Organisasi",
-            'data' => $data
-        ]);
-    }
 
     public function beritaView(Post $post)
     {
 
          // Get the related category of the post
          $user = auth()->guard('member')->user();
-
-         if ($user) {
-
-            $exist = ReactDetail::where('post_id', $post->id)->where('member_id', $user->id)->where('react_id', '3')->first();
-
-            if (!$exist) {
-                $react = ReactDetail::create([
-                    'post_id' => $post->id,
-                    'member_id' => $user->id,
-                    'react_id' => '3',
-                    'status' => '1',
-                    'type' => 'post'
-                ]);
-            }
-
-         }
-
-        $category = $post->category;
         $member = $post->member;
 
         return inertia('Public/Website/Posts/Show', [
             'title' => $post->title,
             'post' => $post,
-            'category' => $category,
             'member' => $member
         ]);
     }
 
-    public function berita()
-    {
-        return inertia('Public/Website/Maintenance/Index', [
-            'title' => "Maintenance",
-        ]);
-    }
-
-    public function artikel()
-    {
-        return inertia('Public/Website/Maintenance/Index', [
-            'title' => "ASDMA Menulis",
-        ]);
-    }
 
     public function kontak()
     {
@@ -312,149 +199,6 @@ class PublicController extends Controller
         ]);
     }
 
-    public function dataAnggota()
-    {
-
-         $dataCountsByPosition = ProfileDataPosition::whereIn('position', ['Analis SDM Aparatur', 'Pranata SDM Aparatur'])
-        ->groupBy('position')
-        ->select('position', DB::raw('count(*) as total'))
-        ->get()
-        ->pluck('total', 'position');
-
-    $dataCountsByLevel = ProfileDataPosition::whereIn('level', [
-            'Terampil', 'Mahir', 'Penyelia', 'Ahli Pertama', 'Ahli Muda', 'Ahli Madya', 'Ahli Utama'
-        ])
-        ->groupBy('level')
-        ->select('level', DB::raw('count(*) as total'))
-        ->get()
-        ->pluck('total', 'level')
-        ->sortBy(function ($value, $key) {
-            $order = ['Terampil','Mahir','Penyelia','Ahli Pertama','Ahli Muda','Ahli Madya','Ahli Utama'];
-            return array_search($key, $order);
-        });
-
-        $countsPerMonth = [];
-        $accumulatedCounts = [];
-        $totalCount = 0;
-
-        $startYear = 2024;
-        $currentYear = date('Y');  // Tahun saat ini (misalnya: 2025)
-        $currentMonth = date('n'); // Bulan saat ini (misalnya: 2 untuk Februari)
-
-        for ($year = $startYear; $year <= $currentYear; $year++) {
-            // Tentukan batas bulan (Desember untuk tahun sebelumnya, bulan saat ini untuk tahun berjalan)
-            $endMonth = ($year == $currentYear) ? $currentMonth : 12;
-
-            for ($month = 1; $month <= $endMonth; $month++) {
-                $monthlyCount = ProfileDataPosition::with('main')
-                    ->whereYear('created_at', $year)
-                    ->whereMonth('created_at', $month)
-                    ->count();
-
-                $totalCount += $monthlyCount;
-                if ($totalCount > 0) { // Hanya simpan jika ada data
-                    $key = "{$year}-" . str_pad($month, 2, '0', STR_PAD_LEFT);
-                    $countsPerMonth[$key] = $monthlyCount;
-                    $accumulatedCounts[$key] = $totalCount;
-                }
-            }
-        }
-
-
-       $datas = Management::when(request()->q, function($query) {
-           $query->where('body', 'like', '%' . request()->q . '%');
-       })
-       ->where('item', 'dataanggota')
-       ->latest()
-       ->paginate(6);
-
-        $datas->appends(['q' => request()->q]);
-
-        return inertia('Public/Website/Posts/DataAnggota', [
-            'title' => "Data Keanggotaan",
-            'datas' => $datas,
-            'dataCountsByPosition' => $dataCountsByPosition,
-            'dataCountsByLevel' => $dataCountsByLevel,
-            'countsPerMonth' => $countsPerMonth,
-            'accumulatedCounts' => $accumulatedCounts,
-        ]);
-    }
-
-    public function dataAnggotaChart()
-{
-    $dataCountsByPosition = ProfileDataPosition::whereIn('position', ['Analis SDM Aparatur', 'Pranata SDM Aparatur'])
-        ->groupBy('position')
-        ->select('position', DB::raw('count(*) as total'))
-        ->get()
-        ->pluck('total', 'position');
-
-    $dataCountsByLevel = ProfileDataPosition::whereIn('level', [
-            'Terampil', 'Mahir', 'Penyelia', 'Ahli Pertama', 'Ahli Muda', 'Ahli Madya', 'Ahli Utama'
-        ])
-        ->groupBy('level')
-        ->select('level', DB::raw('count(*) as total'))
-        ->get()
-        ->pluck('total', 'level')
-        ->sortBy(function ($value, $key) {
-            $order = ['Terampil','Mahir','Penyelia','Ahli Pertama','Ahli Muda','Ahli Madya','Ahli Utama'];
-            return array_search($key, $order);
-        });
-
-    $countsPerMonth = [];
-    $accumulatedCounts = [];
-    $accumulatedCountsByPosition = [];
-
-    $totalCount = 0;
-    $positionTotals = [];
-
-    $startYear = 2024;
-    $currentYear = date('Y');
-    $currentMonth = date('n');
-
-    for ($year = $startYear; $year <= $currentYear; $year++) {
-        $endMonth = ($year == $currentYear) ? $currentMonth : 12;
-
-        $startMonth = ($year == 2024) ? 4 : 1;
-                for ($month = $startMonth; $month <= $endMonth; $month++) {
-                    $key = "{$year}-" . str_pad($month, 2, '0', STR_PAD_LEFT);
-            // Total per bulan
-            $monthlyCount = ProfileDataPosition::whereYear('created_at', $year)
-                ->whereMonth('created_at', $month)
-                ->count();
-
-            $totalCount += $monthlyCount;
-            $countsPerMonth[$key] = $monthlyCount;
-            $accumulatedCounts[$key] = $totalCount;
-
-            // Per posisi
-            $monthlyCountsByPosition = ProfileDataPosition::whereYear('created_at', $year)
-                ->whereMonth('created_at', $month)
-                ->whereIn('position', ['Analis SDM Aparatur', 'Pranata SDM Aparatur'])
-                ->groupBy('position')
-                ->select('position', DB::raw('count(*) as total'))
-                ->get()
-                ->pluck('total', 'position');
-
-            foreach ($monthlyCountsByPosition as $position => $count) {
-                if (!isset($accumulatedCountsByPosition[$position])) {
-                    $accumulatedCountsByPosition[$position] = [];
-                }
-
-                $accumulatedCountsByPosition[$position][$key] = $count;
-            }
-        }
-    }
-
-
-
-    return inertia('Public/Website/Posts/ChartAnggota', [
-        'dataCountsByPosition' => $dataCountsByPosition,
-        'dataCountsByLevel' => $dataCountsByLevel,
-        'countsPerMonth' => $countsPerMonth,
-        'accumulatedCounts' => $accumulatedCounts,
-        'accumulatedCountsByPosition' => $accumulatedCountsByPosition,
-    ]);
-}
 
 
     public function faq()
@@ -547,151 +291,5 @@ class PublicController extends Controller
 
         return redirect()->route('user.login')->with('success', 'Password berhasil direset.');
     }
-
-    public function profileView($qr_link)
-    {
-        $data = Member::where('qr_link', $qr_link)->first();
-        $events = DetailEvent::with('event')->where('member_id', $data->id)->get();
-        $certificates = Certificate::whereIn('event_id', $events->pluck('event.id'))
-        ->where('nip', $data->nip)
-        ->get()
-        ->keyBy('event_id'); // Mengubah collection menjadi associative array dengan 'event_id' sebagai key
-
-
-        $achievments = Achievement::where('member_id', $data->id)->get();
-        // Tambahkan certificates ke setiap event secara manual
-        $events = $events->map(function ($event) use ($certificates) {
-            $event->certificate = $certificates->get($event->event->id); // Ambil satu sertifikat berdasarkan event_id
-            return $event;
-        });
-
-        // $events = DetailEvent::with('event')->where('member_id', '10')->get();
-        // $achievments = Achievement::where('member_id', '10')->get();
-
-        return inertia('Public/Profile/Index', [
-            'title' => 'Profile Anggota',
-            'data' => $data,
-            'achievments' => $achievments,
-            'events' => $events,
-            'certificates' => $certificates
-        ]);
-    }
-
-    public function downloadSertifikat($qr_link)
-    {
-        return $qr_link;
-            $data = Member::where('qr_link', $qr_link)->first();
-
-              $data = Certificate::with('event')->where('link', $id)->first();
-
-            $data = Certificate::with('event')->findOrFail($id);
-            // Generate QR Code
-            $qrLink = $data->qr_code;
-            QrCode::format('png')->size(300)->generate($qrLink);
-            $qr = QrCode::generate($qrLink);
-            return view('Reports.Certificates.Certificate', compact('data','qr'));
-
-    }
-
-    public function documentVerif($id)
-    {
-
-       $docu = DocumentDigital::where('document','documents/'.$id.'_ttd.pdf')->first();
-       if (!$docu) {
-        return redirect()->back()->with('error', 'Dokumen tidak ditemukan.');
-        };
-        $ttd = Member::where('nip', $docu->nipttd)->first('name');
-        $paraf = Member::where('nip', $docu->nipparaf)->first('name');
-
-       return inertia('Public/Website/DocuDigi/Index', [
-           'title' => 'Verifikasi Produk Aspro SDMA',
-           'docu' => $docu,
-              'ttd' => $ttd,
-                'paraf' => $paraf
-       ]);
-    }
-
-
-    public function certificateView($id)
-    {
-
-       $data = Certificate::with('event')->where('link', $id)->first();
-
-       return inertia('Public/Website/Events/Certificate', [
-           'title' => 'Verifikasi Sertifikat Kegiatan Aspro SDMA',
-           'data' => $data,
-
-       ]);
-    }
-
-    public function certificatesShow($id)
-    {
-
-        $data = Certificate::with('event')->findOrFail($id);
-        $template = TemplateCertificate::where('id',$data->template)->first();
-        $nomor = substr($data->no_certificate, 0, 4);
-        $storagePath = storage_path('app/public/sertifikat');
-
-         // Generate QR Code
-        $qrLink = $data->qr_code;
-        QrCode::format('png')->size(300)->generate($qrLink);
-        // Generate QR Code (variable $qr removed as it was unused)
-        QrCode::generate($qrLink);
-
-         // Build the command
-         $command = "python3 " . escapeshellarg(base_path('resources/py/certificate.py')) .
-        // " " . escapeshellarg('template=' . 'storage/documents/' . $data->template) .
-        " " . escapeshellarg(public_path('storage/' . $template->image)) .
-         " " . escapeshellarg('nomor=' . $data->no_certificate) .
-         " " . escapeshellarg('nama=' . $data->name) .
-         " " . escapeshellarg('qr=' . $qrLink) .
-         " " . escapeshellarg('file=' . 'sertifikat-' . $nomor . '-' . $data->name . '.pdf').
-         " " . escapeshellarg('path=' . $storagePath);
-
-         $output = shell_exec($command);
-
-         if ($output === null) {
-            return back()->with('error', 'Gagal menghasilkan sertifikat.');
-            //  return response()->json(['error' => 'Command execution failed.'], 500);
-         }
-
-        $data->update([
-            'doc' => 'sertifikat/' . 'sertifikat-' . $nomor . '-' . $data->name . '.pdf'
-        ]);
-
-        return response()->download(public_path('storage/' . $data->doc), 'sertifikat-' . $nomor . '-' . $data->name . '.pdf')->deleteFileAfterSend(true);
-
-        //  return response()->json(['success' => 'Certificate generated successfully.']);
-
-         // Return success response
-        //  return redirect()->route('admin.events.certificates.index', $event)->with('success', 'Sertifikat berhasil dihasilkan');
-
-    }
-
-
-    public function certificateSearch()
-    {
-        $data = [];
-
-       return inertia('Public/Website/Posts/CertificateSearch', [
-           'title' => 'Cari Sertifikat Kegiatan Aspro SDMA',
-           'data' => $data,
-       ]);
-    }
-
-    public function certificateFilter()
-    {
-        $datas = Certificate::
-        when(request()->q, function($query) {
-            $query->where('nip', request()->q);
-        })
-        ->get();
-
-       return inertia('Public/Website/Posts/CertificateSearch', [
-           'title' => 'Cari Sertifikat Kegiatan Aspro SDMA',
-           'datas' => $datas,
-       ]);
-    }
-
 
 }

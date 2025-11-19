@@ -1,18 +1,19 @@
 <template>
 <div class="wrapper">
-    
-    <!-- sidebar -->
-    <Sidebar />
 
-    <main class="content">
 
-        <!-- navbar -->
+
+      <div class="d-flex" id="wrapper">
+
+        <Sidebar />
+        <div id="page-content-wrapper" class="w-100 bg-light">
         <Navbar />
-
-        <!-- content -->
         <slot />
 
-    </main>
+
+        </div>
+    </div>
+
 
 </div>
 
@@ -23,7 +24,7 @@
     //import navbar
     import Navbar from "../Components/Navbar.vue";
 
-    //import sidebar
+    // //import sidebar
     import Sidebar from '../Components/Sidebar.vue';
 
     export default {
@@ -38,5 +39,20 @@
 </script>
 
 <style>
+        /* ... Paste CSS Anda yang sangat panjang di sini ... */
+        /* Untuk mempermudah, kode ini mengasumsikan CSS Bootstrap 5 sudah dimuat */
 
-</style>
+        /* Sedikit style tambahan agar sidebar full height */
+        body {
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        #wrapper {
+            min-height: 100vh;
+        }
+        #sidebar-wrapper {
+            min-width: 250px;
+            max-width: 250px;
+            min-height: 100vh;
+        }
+    </style>

@@ -1,5 +1,4 @@
 <template>
-
     <!-- navbar -->
     <Navbar />
 
@@ -17,7 +16,6 @@
 <script>
    //import navbar
    import Navbar from "../Components/Website/Navbar.vue";
-
    //import navbar
    import Footer from "../Components/Footer.vue";
 
@@ -26,8 +24,8 @@
        //register components
        components: {
            Navbar,
-           Footer
-  
+           Footer,
+
        },
    }
 

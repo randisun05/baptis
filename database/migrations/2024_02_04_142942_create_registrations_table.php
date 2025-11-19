@@ -15,20 +15,15 @@ return new class extends Migration
     {
         Schema::create('registrations', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('nip')->unique();
+            $table->string('nik')->unique();
             $table->string('name');
             $table->string('email')->unique();
             $table->string('contact')->unique();
-            $table->string('agency');
-            $table->string('position');
-            $table->string('level');
-            $table->string('document_jab')->nullable();
-            $table->enum('status',['submission','paid','confirm','approved','rejected','corrected'])->default('submission');
+            $table->string('document')->nullable();
+            $table->enum('status',['submission','validation','confirm','process','finis','reject'])->default('submission');
             $table->string('info')->nullable();
-            $table->string('paid')->nullable();
             $table->integer('emailstatus')->default(0);
-            $table->enum('from',['individu','collective'])->nullable();
-            $table->string('admin')->nullable();
+            $table->string('by')->nullable();
             $table->timestamps();
         });
     }

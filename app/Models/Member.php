@@ -11,12 +11,10 @@ class Member extends Authenticatable
     use HasFactory;
 
     protected $fillable = [
-        'nip',
+        'nik',
         'name',
         'email',
         'password',
-        'nomember',
-        'agency',
         'code-password',
         'qr_link'
     ];

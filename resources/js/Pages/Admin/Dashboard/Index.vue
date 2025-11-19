@@ -1,34 +1,152 @@
 <template>
 
-<!-- Our Blogs -->
-<section id="dashboard" class="container-fluid px-5">
-    <div class="container-fluid padding">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="row">
-          <div class="col-md-12 col-12 mb-2">
-            <h3 class="text-center">DATA MONITORING</h3>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="row mt-1">
-      <div class="col-md-12">
-        <div class="card border-0 shadow">
-          <div class="card-body" ref="reportContent">
-            <BarChart :chartData="chartRegistration" :chartOptions="chartOptions" />
-            <BarChart :chartData="chartPublication" :chartOptions="chartOptions" />
-            <h3 class="text-center mt-5">DATA ANGGOTA</h3>
-            <BarChart :chartData="chartDataByMonth" :chartOptions="chartOptions" />
-            <BarChart :chartData="chartDataByPosition" :chartOptions="chartOptions" />
-            <BarChart :chartData="chartDataByLevel" :chartOptions="chartOptions" />
-            <BarChart :chartData="chartDataAccumulated" :chartOptions="chartOptions" />
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+<div class="container-fluid px-4 py-4">
+
+                <h2 class="fs-2 mb-4">Dashboard Overview</h2>
+
+                <div class="row g-4 mb-4">
+                    <div class="col-md-3">
+                        <div class="card shadow-sm border-0 border-start border-primary border-4 h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="text-uppercase text-muted fw-semibold mb-2">Total Sales</h6>
+                                        <h4 class="mb-0 fw-bold">$24,000</h4>
+                                    </div>
+                                    <div class="feature bg-primary bg-gradient text-white rounded-3">
+                                        <i class="bi bi-currency-dollar"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="card shadow-sm border-0 border-start border-success border-4 h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="text-uppercase text-muted fw-semibold mb-2">New Orders</h6>
+                                        <h4 class="mb-0 fw-bold">125</h4>
+                                    </div>
+                                    <div class="feature bg-success bg-gradient text-white rounded-3">
+                                        <i class="bi bi-cart-check"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="card shadow-sm border-0 border-start border-warning border-4 h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="text-uppercase text-muted fw-semibold mb-2">Pending</h6>
+                                        <h4 class="mb-0 fw-bold">34</h4>
+                                    </div>
+                                    <div class="feature bg-warning bg-gradient text-dark rounded-3">
+                                        <i class="bi bi-clock"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="card shadow-sm border-0 border-start border-danger border-4 h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="text-uppercase text-muted fw-semibold mb-2">Issues</h6>
+                                        <h4 class="mb-0 fw-bold">3</h4>
+                                    </div>
+                                    <div class="feature bg-danger bg-gradient text-white rounded-3">
+                                        <i class="bi bi-exclamation-triangle"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-lg-8">
+                        <div class="card shadow-sm border-0">
+                            <div class="card-header bg-white py-3">
+                                <h5 class="mb-0 fw-bold">Recent Transactions</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover align-middle">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Customer</th>
+                                                <th>Date</th>
+                                                <th>Status</th>
+                                                <th>Total</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>#1245</td>
+                                                <td>John Doe</td>
+                                                <td>Oct 24, 2023</td>
+                                                <td><span class="badge bg-success">Completed</span></td>
+                                                <td>$120.00</td>
+                                                <td><button class="btn btn-sm btn-outline-primary">View</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td>#1246</td>
+                                                <td>Jane Smith</td>
+                                                <td>Oct 25, 2023</td>
+                                                <td><span class="badge bg-warning text-dark">Pending</span></td>
+                                                <td>$85.50</td>
+                                                <td><button class="btn btn-sm btn-outline-primary">View</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td>#1247</td>
+                                                <td>Michael Brown</td>
+                                                <td>Oct 26, 2023</td>
+                                                <td><span class="badge bg-danger">Cancelled</span></td>
+                                                <td>$45.00</td>
+                                                <td><button class="btn btn-sm btn-outline-primary">View</button></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4">
+                        <div class="card shadow-sm border-0 mb-4">
+                            <div class="card-header bg-white py-3">
+                                <h5 class="mb-0 fw-bold">Server Status</h5>
+                            </div>
+                            <div class="card-body">
+                                <p class="mb-1">CPU Usage</p>
+                                <div class="progress mb-3" style="height: 10px;">
+                                    <div class="progress-bar bg-primary" role="progressbar" style="width: 75%" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+
+                                <p class="mb-1">Memory Usage</p>
+                                <div class="progress mb-3" style="height: 10px;">
+                                    <div class="progress-bar bg-success" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+
+                                <p class="mb-1">Disk Space</p>
+                                <div class="progress" style="height: 10px;">
+                                    <div class="progress-bar bg-warning" role="progressbar" style="width: 90%" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
 <!--Our Blogs Ends-->
 
 </template>
@@ -41,9 +159,6 @@
     import { ref, reactive, onMounted } from 'vue';
     import { Inertia } from '@inertiajs/inertia';
     import Swal from 'sweetalert2';
-    import BarChart from '../../../Components/BarChart.vue';
-    import html2canvas from 'html2canvas';
-    import jsPDF from 'jspdf';
 
 
     export default {
@@ -55,184 +170,18 @@
         components: {
             Head,
             Link,
-            BarChart
+
         },
 
         //props
         props: {
-            registrationData: {
-            type: Object,
-            required: true,
-            default: () => ({})
-            },
-            publicationData: {
-            type: Object,
-            required: true,
-            default: () => ({})
-            },
-        countsPerMonth: {
-            type: Object,
-            required: true,
-            default: () => ({})
-            },
-            errors: Object,
-            dataCountsByPosition: {
-            type: Object,
-            required: true,
-            default: () => ({})
-            },
-            dataCountsByLevel: {
-            type: Object,
-            required: true,
-            default: () => ({})
-            },
-            accumulatedCounts: {
-            type: Object,
-            required: true,
-            default: () => ({})
-            }
+
         },
         setup(props) {
-            const reportContent = ref(null);
-            const chartOptions = reactive({
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                datalabels: {
-                    color: '#000', // You can customize the label color
-                    anchor: 'end',
-                    align: 'end',
-                    font: {
-                    weight: 'bold',
-                    size: 12
-                    },
-                    formatter(value) {
-                    return value; // Show the value directly
-                    }
-                }
-                }
-            });
-            const chartRegistration = reactive({
-                labels: Object.keys(props.registrationData).map(key => `${key}`),
-                datasets: [
-                {
-                    label: 'Data Registrasi',
-                    backgroundColor: '#DC143C',
-                    data: Object.values(props.registrationData)
-                }
-                ]
-            });
-
-            const chartPublication = reactive({
-                labels: Object.keys(props.publicationData).map(key => `${key}`),
-                datasets: [
-                {
-                    label: 'Data Publikasi',
-                    backgroundColor: '#00008B',
-                    data: Object.values(props.publicationData)
-                }
-                ]
-            });
-
-                const chartDataByMonth = reactive({
-                labels: Object.keys(props.countsPerMonth).map(key => `${key}`),
-                datasets: [
-                {
-                    label: 'Counts By Month',
-                    backgroundColor: '#FFA500',
-                    data: Object.values(props.countsPerMonth)
-                }
-                ]
-            });
-
-            const chartDataByPosition = reactive({
-                labels: Object.keys(props.dataCountsByPosition).map(key => `${key}`),
-                datasets: [
-                {
-                    label: 'Counts By Jabatan',
-                    backgroundColor: '#f87979',
-                    data: Object.values(props.dataCountsByPosition)
-                }
-                ]
-            });
-
-            const chartDataByLevel = reactive({
-                labels: Object.keys(props.dataCountsByLevel).map(key => `${key}`),
-                datasets: [
-                {
-                    label: 'Counts By Jenjang',
-                    backgroundColor: '#7acbf9',
-                    data: Object.values(props.dataCountsByLevel)
-                }
-                ]
-            });
-
-            const chartDataAccumulated = reactive({
-                labels: Object.keys(props.accumulatedCounts).map(key => `${key}`),
-                datasets: [
-                {
-                    label: 'Accumulation by Month',
-                    backgroundColor: '#79f879',
-                    data: Object.values(props.accumulatedCounts)
-                }
-                ]
-            });
-
-            const exportToPDF = () => {
-            if (reportContent.value) {
-                html2canvas(reportContent.value, { scale: 2 }).then(canvas => {
-                const imgData = canvas.toDataURL('image/png');
-                const pdf = new jsPDF('p', 'mm', 'a4');
-
-                const pdfWidth = pdf.internal.pageSize.getWidth();
-                const pdfHeight = pdf.internal.pageSize.getHeight();
-
-                const imgWidth = canvas.width;
-                const imgHeight = canvas.height;
-
-                // Rasio tinggi dan lebar dari gambar yang dihasilkan
-                const ratio = imgWidth / imgHeight;
-
-                // Menghitung tinggi gambar dalam PDF berdasarkan lebar halaman PDF
-                const pdfImgHeight = pdfWidth / ratio;
-
-                let position = 0;
-                let heightLeft = pdfImgHeight;
-
-                if (pdfImgHeight > pdfHeight) {
-                    // Gambar lebih tinggi dari satu halaman, bagi ke dalam beberapa halaman
-                    while (heightLeft > 0) {
-                    pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfImgHeight);
-                    heightLeft -= pdfHeight;
-                    position -= pdfHeight;
-
-                    // Jika ada sisa konten, tambahkan halaman baru
-                    if (heightLeft > 0) {
-                        pdf.addPage();
-                    }
-                    }
-                } else {
-                    // Jika gambar pas di satu halaman
-                    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfImgHeight);
-                }
-
-                pdf.save('report.pdf');
-                });
-            } else {
-                console.error('reportContent is not available');
-            }
-            };
 
 
             return {
-                reportContent,
-                chartDataByPosition,
-                chartDataByLevel,
-                chartDataAccumulated,
-                chartOptions,
-                chartDataByMonth,
-                chartRegistration,
-                chartPublication,
+
             };
             }
         };

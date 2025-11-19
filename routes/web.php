@@ -24,7 +24,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [\App\Http\Controllers\Public\PublicController::class, 'index'])->name('/');
 
-
 Route::get('/email', function () {
     return view('Emails.Registration', [
         'data' => [
@@ -40,7 +39,6 @@ Route::prefix('admin')->group(function() {
     //middleware "auth"
     Route::group(['middleware' => ['auth']], function () {
         //route dashboard
-
         Route::get('/dashboard', App\Http\Controllers\Admin\DashboardController::class)->name('admin.dashboard');
         Route::resource('/management', App\Http\Controllers\Admin\ManagementController::class, ['as' => 'admin']);
         Route::resource('/docudigi', App\Http\Controllers\Admin\DocuDigiController::class, ['as' => 'admin']);
@@ -72,13 +70,8 @@ Route::prefix('admin')->group(function() {
         Route::get('/admin/posts/', [\App\Http\Controllers\Admin\PostController::class, 'list'])->name('admin.posts.list');
         Route::post('/posts/{id}', [\App\Http\Controllers\Admin\PostController::class, 'update'])->name('admin.posts.update');
         Route::resource('/posts', \App\Http\Controllers\Admin\PostController::class, ['as' => 'admin']);
-        Route::get('/posts/{id}/limited', [\App\Http\Controllers\Admin\PostController::class, 'limited'])->name('admin.posts.limited');
         Route::get('/posts/{id}/approve', [\App\Http\Controllers\Admin\PostController::class, 'approve'])->name('admin.posts.approve');
-        Route::get('/posts/{id}/return', [\App\Http\Controllers\Admin\PostController::class, 'return'])->name('admin.posts.return');
         Route::get('/posts/{id}/reject', [\App\Http\Controllers\Admin\PostController::class, 'reject'])->name('admin.posts.reject');
-        Route::get('/posts/{id}/cancel', [\App\Http\Controllers\Admin\PostController::class, 'cancel'])->name('admin.posts.cancel');
-        Route::get('/posts/{id}/cancelLimited', [\App\Http\Controllers\Admin\PostController::class, 'cancelLimited'])->name('admin.posts.cancellimited');
-        Route::get('/posts/{id}/submission', [\App\Http\Controllers\Admin\PostController::class, 'cancel'])->name('admin.posts.submission');
         Route::get('/events/{id}/certificates/import', [\App\Http\Controllers\Admin\EventController::class, 'certificatesImportCreate'])->name('admin.events.certificates.import.create');
         Route::post('/events/{id}/certificates/import', [\App\Http\Controllers\Admin\EventController::class, 'certificatesImportStore'])->name('admin.events.certificates.import.store');
         Route::get('/events/{id}/certificates', [\App\Http\Controllers\Admin\EventController::class, 'certificatesIndex'])->name('admin.events.certificates.index');
@@ -98,53 +91,12 @@ Route::prefix('admin')->group(function() {
         Route::resource('/events', \App\Http\Controllers\Admin\EventController::class, ['as' => 'admin']);
         Route::post('/medias/{id}', [\App\Http\Controllers\Admin\MediaController::class, 'update'])->name('admin.medias.update');
         Route::resource('/medias', \App\Http\Controllers\Admin\MediaController::class, ['as' => 'admin']);
-        Route::post('/merchans/{id}', [\App\Http\Controllers\Admin\MerchanController::class, 'update'])->name('admin.merchans.update');
-        Route::get('/merchans/{id}/change', [\App\Http\Controllers\Admin\MerchanController::class, 'change'])->name('admin.merchans.status');
-        Route::resource('/merchans', \App\Http\Controllers\Admin\MerchanController::class, ['as' => 'admin']);
-        Route::get('/category/create', [\App\Http\Controllers\Admin\PostController::class, 'categoryCreate'])->name('admin.category.create');
-        Route::post('/category/store', [\App\Http\Controllers\Admin\PostController::class, 'categoryStore'])->name('admin.category.store');
         Route::resource('/setting', \App\Http\Controllers\Admin\AuthAdminController::class, ['as' => 'admin']);
         Route::get('/members/report/export', [\App\Http\Controllers\Admin\DataMembersController::class, 'exportReport'])->name('admin.member.export');
         Route::get('/members/report', [\App\Http\Controllers\Admin\DataMembersController::class, 'indexReport'])->name('admin.member.report');
         Route::resource('/members', \App\Http\Controllers\Admin\DataMembersController::class, ['as' => 'admin']);
-        Route::resource('/achievements', \App\Http\Controllers\Admin\AchievementController::class, ['as' => 'admin']);
-        Route::post('/achievements/{id}', [\App\Http\Controllers\Admin\AchievementController::class, 'update'])->name('admin.acievements.update');
-        Route::get('/generate-qr', [\App\Http\Controllers\Admin\QRCodeController::class, 'generateQRCode']);
-        Route::get('/members/qrcode/{id}', [\App\Http\Controllers\Admin\QRCodeController::class, 'generateQRCode1']);
         Route::get('/member-card/download/{id}', [\App\Http\Controllers\Admin\DataMembersController::class, 'downloadMemberCard'])->name('admin.card.download');
 
-        //arsip
-
-
-        Route::get('/archives/inbox', [\App\Http\Controllers\Admin\ArchiveController::class, 'inbox'])->name('admin.archives.inbox');
-        Route::get('/archives/inbox/{id}/show', [\App\Http\Controllers\Admin\ArchiveController::class, 'showInbox'])->name('admin.archives.inbox.show');
-        Route::get('/archives/inbox/{id}/update', [\App\Http\Controllers\Admin\ArchiveController::class, 'updateInbox'])->name('admin.archives.inbox.update');
-        Route::post('/archives/disposition/inbox/{id}', [\App\Http\Controllers\Admin\ArchiveController::class, 'dispoInbox'])->name('admin.archives.inbox.disposition');
-        Route::post('/archives/disposition/{id}', [\App\Http\Controllers\Admin\ArchiveController::class, 'dispo'])->name('admin.archives.disposition');
-        Route::get('/archives/{id}/editarsip', [\App\Http\Controllers\Admin\ArchiveController::class, 'editArchive'])->name('admin.archives.editArchive');
-
-        // For the index page (list all archives)
-        Route::get('/archives', [\App\Http\Controllers\Admin\ArchiveController::class, 'index'])->name('admin.archives.index');
-        // For showing the form to create a new archive
-        Route::get('/archives/create', [\App\Http\Controllers\Admin\ArchiveController::class, 'create'])->name('admin.archives.create');
-        // For storing a newly created archive
-        Route::post('/archives', [\App\Http\Controllers\Admin\ArchiveController::class, 'store'])->name('admin.archives.store');
-        // For displaying a specific archive
-        Route::get('/archives/{archive}', [\App\Http\Controllers\Admin\ArchiveController::class, 'show'])->name('admin.archives.show');
-        // For showing the form to edit an existing archive
-        Route::get('/archives/{archive}/edit', [\App\Http\Controllers\Admin\ArchiveController::class, 'edit'])->name('admin.archives.edit');
-        // For updating an existing archive
-        Route::put('/archives/{archive}', [\App\Http\Controllers\Admin\ArchiveController::class, 'update'])->name('admin.archives.update');
-        // Or, if you prefer PATCH for partial updates:
-        // Route::patch('/archives/{archive}', [\App\Http\Controllers\Admin\ArchiveController::class, 'update'])->name('admin.archives.update');
-        // For deleting an archive
-        Route::delete('/archives/{archive}', [\App\Http\Controllers\Admin\ArchiveController::class, 'destroy'])->name('admin.archives.destroy');
-        // Route::resource('/archives', \App\Http\Controllers\Admin\ArchiveController::class, ['as' => 'admin']);
-
-        //jurnal
-        Route::get('/jurnals/export', [\App\Http\Controllers\Admin\JurnalController::class, 'exportReport'])->name('admin.jurnals.export');
-        Route::get('/jurnals/show', [\App\Http\Controllers\Admin\JurnalController::class, 'show'])->name('admin.jurnals.show');
-        Route::resource('/jurnals', \App\Http\Controllers\Admin\JurnalController::class, ['as' => 'admin']);
 
 
     });

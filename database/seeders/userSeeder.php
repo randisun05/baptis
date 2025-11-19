@@ -16,15 +16,15 @@ class userSeeder extends Seeder
     public function run()
     {
         User::create([
-            'nip'      => '0000000000000000',
+            'nik'      => '0000000000000000',
             'name'      => 'Administrator',
             'email'     => 'admin@gmail.com',
             'role'     => 'administrator',
-            'password'  => bcrypt('Hausbozz123'),
+            'password'  => bcrypt('password'),
         ]);
 
         User::create([
-            'nip'      => '0000000000000001',
+            'nik'      => '0000000000000001',
             'name'      => 'Dimas',
             'email'     => 'dimas@gmail.com',
             'role'     => 'administrator',
@@ -32,7 +32,7 @@ class userSeeder extends Seeder
         ]);
 
         User::create([
-            'nip'      => '0000000000000002',
+            'nik'      => '0000000000000002',
             'name'      => 'Afreza',
             'email'     => 'afreza@gmail.com',
             'role'     => 'administrator',
@@ -40,7 +40,7 @@ class userSeeder extends Seeder
         ]);
 
         User::create([
-            'nip'      => '0000000000000003',
+            'nik'      => '0000000000000003',
             'name'      => 'Dhanu',
             'email'     => 'dhanu@gmail.com',
             'role'     => 'administrator',

@@ -21,7 +21,6 @@ return new class extends Migration
             $table->string('title')->nullable();
             $table->string('desc')->nullable();
             $table->string('doc')->nullable();
-            $table->string('sert')->nullable();
             $table->timestamps();
         });
     }

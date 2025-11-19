@@ -101,22 +101,6 @@ class DatabaseSeeder extends Seeder
         //     'level'      => 'Pertama',
         // ]);
 
-        Category::create([
-            'title'      => 'Berita',
-        ]);
-
-        Category::create([
-            'title'      => 'Cerita',
-        ]);
-
-        Category::create([
-            'title'      => 'Artikel',
-        ]);
-
-        Category::create([
-            'title'      => 'Lainnya',
-        ]);
-
         // Event::create([
         //     'title'  => 'Media',
         //     'slug'  => 'Media',

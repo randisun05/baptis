@@ -1,0 +1,148 @@
+[33mcommit f712fb84264ccd200a9ebcfecd773dbfba0d06d6[m[33m ([m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: randisunardi1995@gmail.com <randisunardi1995@gmail.com>
+Date:   Thu Oct 16 18:28:50 2025 +0700
+
+    update recapcha v3
+
+ app/Http/Controllers/User/LoginController.php      |   32 [32m+[m[31m-[m
+ .../{About.cbe7d0bf.js => About.a2220613.js}       |    2 [32m+[m[31m-[m
+ .../{Admin.5d8187ee.js => Admin.8d0eef5e.js}       |    2 [32m+[m[31m-[m
+ .../{Artikel.e34247dd.js => Artikel.fdbb2790.js}   |    2 [32m+[m[31m-[m
+ .../assets/{Auth.a9fc3c0e.js => Auth.ef4adffb.js}  |    2 [32m+[m[31m-[m
+ .../{BarChart.eff9d8a7.js => BarChart.2f645e8f.js} |    2 [32m+[m[31m-[m
+ .../{Berhasil.fd970d9c.js => Berhasil.3e1f5f02.js} |    2 [32m+[m[31m-[m
+ .../{Berita.0188ddd0.js => Berita.1762c79a.js}     |    2 [32m+[m[31m-[m
+ .../{Cerita.65fafd93.js => Cerita.b3520112.js}     |    2 [32m+[m[31m-[m
+ ...ificate.d19d175f.js => Certificate.fc6459f1.js} |    2 [32m+[m[31m-[m
+ ...h.5e64d9f5.js => CertificateSearch.3816b5a8.js} |    2 [32m+[m[31m-[m
+ ...icates.9ba85d9d.js => Certificates.7c02fd23.js} |    2 [32m+[m[31m-[m
+ ....147ff25f.js => CertificatesImport.abb923f6.js} |    2 [32m+[m[31m-[m
+ ...x.ba2a9764.js => CertificatesIndex.4683d42d.js} |    2 [32m+[m[31m-[m
+ ...nggota.351f5885.js => ChartAnggota.352a8aa7.js} |    2 [32m+[m[31m-[m
+ .../{Create.cd24fd91.js => Create.17e4fe18.js}     |    2 [32m+[m[31m-[m
+ .../{Create.9f358b48.js => Create.366e781a.js}     |    2 [32m+[m[31m-[m
+ .../{Create.ee54ba65.js => Create.3c80764f.js}     |    2 [32m+[m[31m-[m
+ .../{Create.5b54cab8.js => Create.644176e0.js}     |    2 [32m+[m[31m-[m
+ .../{Create.b7f638e1.js => Create.a33818d0.js}     |    2 [32m+[m[31m-[m
+ .../{Create.4451b371.js => Create.dbc55ea1.js}     |    2 [32m+[m[31m-[m
+ .../{Create.8e626312.js => Create.dc7c3962.js}     |    2 [32m+[m[31m-[m
+ .../{Create.5fe22522.js => Create.ea968392.js}     |    2 [32m+[m[31m-[m
+ .../{Create.cdd15168.js => Create.ed837726.js}     |    2 [32m+[m[31m-[m
+ .../{Create.7d2a0688.js => Create.fe7ace6f.js}     |    2 [32m+[m[31m-[m
+ ...gory.2f4f3a6d.js => CreateCategory.ed28185a.js} |    2 [32m+[m[31m-[m
+ ...Anggota.37c1354e.js => DataAnggota.f63f2b59.js} |    2 [32m+[m[31m-[m
+ .../assets/{Edit.30fcbb14.js => Edit.08ca9b6e.js}  |    2 [32m+[m[31m-[m
+ .../assets/{Edit.d9df3970.js => Edit.12b1a6d3.js}  |    2 [32m+[m[31m-[m
+ .../assets/{Edit.d000bf65.js => Edit.146afa9d.js}  |    2 [32m+[m[31m-[m
+ .../assets/{Edit.05cb3838.js => Edit.623c23e3.js}  |    2 [32m+[m[31m-[m
+ .../assets/{Edit.5fbecf05.js => Edit.74e1c393.js}  |    2 [32m+[m[31m-[m
+ .../assets/{Edit.3810c852.js => Edit.80142f10.js}  |    2 [32m+[m[31m-[m
+ .../assets/{Edit.9da06ea1.js => Edit.9cf70885.js}  |    2 [32m+[m[31m-[m
+ .../assets/{Edit.26977a22.js => Edit.a69d2d09.js}  |    2 [32m+[m[31m-[m
+ .../assets/{Edit.f19310ca.js => Edit.ad73ecd4.js}  |    2 [32m+[m[31m-[m
+ .../assets/{Edit.4311a6ba.js => Edit.b61d3eae.js}  |    2 [32m+[m[31m-[m
+ .../assets/{Edit.41e08124.js => Edit.c62e520e.js}  |    2 [32m+[m[31m-[m
+ .../assets/{Edit.bd4ee497.js => Edit.d107a3bd.js}  |    2 [32m+[m[31m-[m
+ .../assets/{Edit.777cbbec.js => Edit.db5dc77f.js}  |    2 [32m+[m[31m-[m
+ .../assets/{Edit.77e21fb4.js => Edit.fb98d8d3.js}  |    2 [32m+[m[31m-[m
+ .../{Edit2.a1b7ae74.js => Edit2.e095a571.js}       |    2 [32m+[m[31m-[m
+ ...Archive.65a6a8db.js => EditArchive.6ee1a802.js} |    2 [32m+[m[31m-[m
+ ...sition.f401212e.js => EditPosition.9819e043.js} |    2 [32m+[m[31m-[m
+ .../{Editor.cef5b960.js => Editor.595b0043.js}     |    2 [32m+[m[31m-[m
+ .../{Footer.89025ac8.js => Footer.490da72c.js}     |    2 [32m+[m[31m-[m
+ .../{Forget.6460984c.js => Forget.85776608.js}     |    2 [32m+[m[31m-[m
+ public/build/assets/GenerateQRCode.68e7d988.js     |    2 [31m-[m
+ public/build/assets/GenerateQRCode.b90b9529.js     |    2 [32m+[m
+ .../{Group.cf3ccbd5.js => Group.5c21dcec.js}       |    2 [32m+[m[31m-[m
+ .../{Group.eb15d5be.js => Group.a92dcb83.js}       |    2 [32m+[m[31m-[m
+ ...uccess.56ceb553.js => GroupSuccess.97dc11f3.js} |    2 [32m+[m[31m-[m
+ ....0de7091f.js => HubunganMasyarakat.3af7d73a.js} |    2 [32m+[m[31m-[m
+ ...okasi.eb347a2f.js => HukumAdvokasi.bfcc8a0a.js} |    2 [32m+[m[31m-[m
+ .../{Import.3452eb3a.js => Import.51d91120.js}     |    2 [32m+[m[31m-[m
+ .../{Inbox.e6354b2a.js => Inbox.bba09992.js}       |    2 [32m+[m[31m-[m
+ .../{Index.5c861470.js => Index.09b6f12f.js}       |    2 [32m+[m[31m-[m
+ .../{Index.48ab4fe2.js => Index.0f25f6dc.js}       |    2 [32m+[m[31m-[m
+ .../{Index.6c0da410.js => Index.110c0b94.js}       |    2 [32m+[m[31m-[m
+ .../{Index.1eb72b71.js => Index.2b5cc7dc.js}       |    2 [32m+[m[31m-[m
+ .../{Index.ea168061.js => Index.33d408aa.js}       |    2 [32m+[m[31m-[m
+ .../{Index.bcaa110b.js => Index.3b8f7d19.js}       |    2 [32m+[m[31m-[m
+ .../{Index.d1b8478d.js => Index.3bb593be.js}       |    2 [32m+[m[31m-[m
+ .../{Index.14614582.js => Index.402e9a81.js}       |    2 [32m+[m[31m-[m
+ .../{Index.491c8407.js => Index.4aae744f.js}       |    2 [32m+[m[31m-[m
+ .../{Index.db9190ad.js => Index.55945d30.js}       |    2 [32m+[m[31m-[m
+ .../{Index.31e7dadc.js => Index.5d82c818.js}       |    2 [32m+[m[31m-[m
+ .../{Index.92fc502f.js => Index.5e9dbd27.js}       |    2 [32m+[m[31m-[m
+ .../{Index.4ff57bf3.js => Index.5fab819c.js}       |    2 [32m+[m[31m-[m
+ .../{Index.8ff1f401.js => Index.5facc6c4.js}       |    2 [32m+[m[31m-[m
+ .../{Index.d3b94000.js => Index.7fd5dfde.js}       |    2 [32m+[m[31m-[m
+ .../{Index.d9cb2ce8.js => Index.82074c57.js}       |    2 [32m+[m[31m-[m
+ .../{Index.5dacf74a.js => Index.8dafba40.js}       |    2 [32m+[m[31m-[m
+ .../{Index.80d73830.js => Index.9eceebc7.js}       |    2 [32m+[m[31m-[m
+ .../{Index.c805c81d.js => Index.a182b310.js}       |    2 [32m+[m[31m-[m
+ .../{Index.b69476ba.js => Index.ab4f6c72.js}       |    2 [32m+[m[31m-[m
+ .../{Index.be07e062.js => Index.ade07bc9.js}       |    2 [32m+[m[31m-[m
+ .../{Index.0db4946b.js => Index.af79307e.js}       |    2 [32m+[m[31m-[m
+ .../{Index.78b7a177.js => Index.b3f9ed9b.js}       |    2 [32m+[m[31m-[m
+ .../{Index.66226705.js => Index.c11a52b5.js}       |    2 [32m+[m[31m-[m
+ .../{Index.a8c3d7f0.js => Index.cd64ef93.js}       |    2 [32m+[m[31m-[m
+ .../{Index.b577ec22.js => Index.d61a9b0d.js}       |    2 [32m+[m[31m-[m
+ .../{Index.26607602.js => Index.f0a3b587.js}       |    2 [32m+[m[31m-[m
+ .../{Index.8d50d3ba.js => Index.f4b5e7ab.js}       |    2 [32m+[m[31m-[m
+ .../{Index.1caadac4.js => Index.f664657b.js}       |    2 [32m+[m[31m-[m
+ .../{Index.d0489f67.js => Index.faabc423.js}       |    2 [32m+[m[31m-[m
+ public/build/assets/Index2.b1483471.js             |    1 [32m+[m
+ public/build/assets/Index2.e143ae9b.js             |    1 [31m-[m
+ ...dexOther.79fb2a74.js => IndexOther.59bb6f69.js} |    2 [32m+[m[31m-[m
+ ...ition.f0014524.js => IndexPosition.1a2521b2.js} |    2 [32m+[m[31m-[m
+ .../assets/{Info.75c0c033.js => Info.dd0f2785.js}  |    2 [32m+[m[31m-[m
+ ...ggotaan.4bd8777c.js => Keanggotaan.6fb4317e.js} |    2 [32m+[m[31m-[m
+ ...KetuaUmum.b2df0cf5.js => KetuaUmum.7c6fdc5a.js} |    2 [32m+[m[31m-[m
+ ...ak-kami.2ffd91d2.js => Kontak-kami.5698c6e4.js} |    2 [32m+[m[31m-[m
+ .../assets/{List.228a5d36.js => List.116ec8cb.js}  |    2 [32m+[m[31m-[m
+ .../assets/{List.e60208ec.js => List.3c95ebf3.js}  |    2 [32m+[m[31m-[m
+ .../{ListShow.32b3bfe6.js => ListShow.f09ff748.js} |    2 [32m+[m[31m-[m
+ public/build/assets/Login.03fe8e8b.js              |    1 [31m-[m
+ public/build/assets/Login.0bc5d3ad.js              |    1 [31m-[m
+ public/build/assets/Login.ae9dac09.js              |    1 [32m+[m
+ public/build/assets/Login.f07f76ae.js              |    1 [32m+[m
+ ...mberCard.e9dffed1.js => MemberCard.abf958dc.js} |    2 [32m+[m[31m-[m
+ ...gination.3e674621.js => Pagination.058a1fb3.js} |    2 [32m+[m[31m-[m
+ ...bangan.3717d5bd.js => Pengembangan.e123507f.js} |    2 [32m+[m[31m-[m
+ ...b3b97f00.js => PeraturanOrganisasi.922e4223.js} |    2 [32m+[m[31m-[m
+ .../{Qr_code.81d3bdbe.js => Qr_code.d0a9746c.js}   |    2 [32m+[m[31m-[m
+ ...ration.44a9e811.js => Registration.eec2977d.js} |    2 [32m+[m[31m-[m
+ .../{Report.7b3eccb2.js => Report.da448f0f.js}     |    2 [32m+[m[31m-[m
+ .../{Sejarah.efb49967.js => Sejarah.bd0d16df.js}   |    2 [32m+[m[31m-[m
+ .../assets/{Show.82a7e046.js => Show.162300b8.js}  |    2 [32m+[m[31m-[m
+ .../assets/{Show.9d8c674e.js => Show.1c65c427.js}  |    2 [32m+[m[31m-[m
+ .../assets/{Show.0f7944c6.js => Show.21ae124b.js}  |    2 [32m+[m[31m-[m
+ .../assets/{Show.ff3254d0.js => Show.28a2f523.js}  |    2 [32m+[m[31m-[m
+ .../assets/{Show.7c41053d.js => Show.2988d73f.js}  |    2 [32m+[m[31m-[m
+ .../assets/{Show.4f6c917b.js => Show.3e437ca7.js}  |    2 [32m+[m[31m-[m
+ .../assets/{Show.5c99a4b8.js => Show.6ce4b00f.js}  |    2 [32m+[m[31m-[m
+ .../assets/{Show.6bff818d.js => Show.89dd575b.js}  |    2 [32m+[m[31m-[m
+ .../assets/{Show.5fd551c5.js => Show.999c6a47.js}  |    2 [32m+[m[31m-[m
+ .../assets/{Show.6d8bc2d9.js => Show.aaa7a996.js}  |    2 [32m+[m[31m-[m
+ .../assets/{Show.55d78e2b.js => Show.b96994f2.js}  |    2 [32m+[m[31m-[m
+ .../assets/{Show.df4d374a.js => Show.c8df15e6.js}  |    2 [32m+[m[31m-[m
+ .../assets/{Show.6749169d.js => Show.da7e04d4.js}  |    2 [32m+[m[31m-[m
+ .../assets/{Show.f51e057c.js => Show.f64baf77.js}  |    2 [32m+[m[31m-[m
+ .../assets/{Show.f06b8237.js => Show.fcdc0c1b.js}  |    2 [32m+[m[31m-[m
+ ...ShowInbox.3246c9d8.js => ShowInbox.5df83be3.js} |    2 [32m+[m[31m-[m
+ ....1b02019a.js => StrukturOrganisasi.edbb58ee.js} |    2 [32m+[m[31m-[m
+ .../{Success.aa464dc1.js => Success.6f14b635.js}   |    2 [32m+[m[31m-[m
+ ...aan.65d7bbc8.js => SumberPendanaan.2ddc4886.js} |    2 [32m+[m[31m-[m
+ ...Templates.7b6b4e19.js => Templates.389f0aaa.js} |    2 [32m+[m[31m-[m
+ .../assets/{User.bc39fe30.js => User.3f7aa064.js}  |    2 [32m+[m[31m-[m
+ .../{VisiMisi.c9bee312.js => VisiMisi.e164dca4.js} |    2 [32m+[m[31m-[m
+ .../{Website.da7e3c0b.js => Website.bdf73528.js}   |    2 [32m+[m[31m-[m
+ .../assets/{app.1cf3474e.js => app.7c8452b3.js}    |    2 [32m+[m[31m-[m
+ .../assets/{faq.4fd8e81d.js => faq.c1592547.js}    |    2 [32m+[m[31m-[m
+ .../{index.es.083fdfed.js => index.es.1fd174b0.js} |    2 [32m+[m[31m-[m
+ ...es.min.efe6e936.js => jspdf.es.min.043f649f.js} |    4 [32m+[m[31m-[m
+ ...all.cdfce74f.js => sweetalert2.all.9b90a332.js} |    2 [32m+[m[31m-[m
+ public/build/manifest.json                         | 1086 [32m++++++++++[m[31m----------[m
+ resources/js/Pages/Auth/Login.vue                  |   46 [32m+[m[31m-[m
+ resources/js/Pages/User/Auth/Login.vue             |   38 [32m+[m[31m-[m
+ resources/views/app.blade.php                      |    3 [32m+[m[31m-[m
+ 141 files changed, 778 insertions(+), 695 deletions(-)

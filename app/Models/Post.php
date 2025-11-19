@@ -21,25 +21,19 @@ class Post extends Model
         'document',
         'docstatus',
         'imagestatus',
-        'member_id',
+        'user_id',
         'status',
         'publish_at',
     ];
 
 
-    public function category()
+
+
+    public function user()
     {
-        return $this ->belongsTo(Category::class);
+        return $this ->belongsTo(User::class);
     }
 
-    public function member()
-    {
-        return $this ->belongsTo(Member::class);
-    }
 
-    public function react()
-    {
-        return $this ->hasMany(ReactDetail::class);
-    }
 
 }

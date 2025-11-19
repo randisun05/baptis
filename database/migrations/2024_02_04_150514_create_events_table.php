@@ -17,14 +17,8 @@ return new class extends Migration
             $table->id();
             $table->string('title')->unique();
             $table->string('slug')->nullable();
-            $table->text('body');
             $table->date('date');
-            $table->date('enddate');
-            $table->integer('participant');
-            $table->string('place');
-            $table->string('link');
-            $table->string('image')->nullable();
-            $table->enum('status',['active','closed','media']);
+            $table->enum('status',['active','closed']);
             $table->enum('file',['Y','N'])->default('N');
             $table->enum('absen',['Y','N'])->default('N')->nullable();
             $table->timestamps();
