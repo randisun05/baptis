@@ -56,12 +56,10 @@ class PostController extends Controller
     {
 
         $this->cekAuth();
-
        // Validate request including file validation
       $request->validate([
         'title' => 'required|string',
         'body' => 'required|',
-        'document' => 'file|mimes:pdf|max:2048|nullable',
         'image' => '|image|mimes:jpeg,png,jpg,gif,svg|max:2048|nullable',
         ]);
 
@@ -90,16 +88,10 @@ class PostController extends Controller
     }
     $today = Carbon::now()->format('Y-m-d H:i:s');
 
-    // Store the file using Laravel's file storage system
-    $document = $request->file('document');
-    if ($document) {
-        $document = $request->file('document')->storePublicly('/documents');
-        // Proceed with storing or processing the uploaded file
-    };
 
-    $image = $request->file('picture');
+    $image = $request->file('image');
     if ($image) {
-        $image = $request->file('picture')->storePublicly('/images');
+        $image = $request->file('image')->storePublicly('/images');
         // Proceed with storing or processing the uploaded file
     };
 
@@ -109,10 +101,9 @@ class PostController extends Controller
             'slug' => $slug,
             'excerpt' => $excerpt,
             'image' => $image,
-            'document' => $document,
             'publish_at' => $today,
-            'user_id' => 1,
-            'status' => 'submission',
+            'user_id' => auth()->id(),
+            'status' => 'deactive',
         ]);
 
 
@@ -187,18 +178,10 @@ class PostController extends Controller
     }
     $today = Carbon::now()->format('Y-m-d H:i:s');
 
-    // Store the file using Laravel's file storage system
-    $document = $request->file('document');
-    if ($document) {
-        $document = $request->file('document')->storePublicly('/documents');
-        // Proceed with storing or processing the uploaded file
-    } else {
-        $document = Post::where ('id', $id)->value('document');
-    };
 
-    $image = $request->file('picture');
+    $image = $request->file('image');
     if ($image) {
-        $image = $request->file('picture')->storePublicly('/images');
+        $image = $request->file('image')->storePublicly('/images');
         // Proceed with storing or processing the uploaded file
     } else {
         $image = Post::where ('id', $id)->value('image');
@@ -210,10 +193,9 @@ class PostController extends Controller
             'slug' => $slug,
             'excerpt' => $excerpt,
             'image' => $image,
-            'document' => $document,
             'publish_at' => $today,
-            'user_id' => 1,
-            'status' => 'submission',
+            'user_id' => auth()->id(),
+            'status' => 'deactive',
 
         ]);
 
