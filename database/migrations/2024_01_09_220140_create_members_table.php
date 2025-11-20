@@ -20,7 +20,8 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('password');
             $table->string('code-password')->nullable();
-            $table->string('qr_link')->nullable();
+            $table->enum('status', ['confirm', 'pending', 'cancel', 'confirmed', 'end', 'process'])->default('confirm');
+            $table->string('category')->nullable();
             $table->timestamps();
         });
     }

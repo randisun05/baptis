@@ -14,6 +14,7 @@ use App\Models\Management;
 use App\Models\Registration;
 use App\Models\ProfileDataMain;
 use App\Models\ProfileDataPosition;
+use App\Models\RefEvent;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -25,105 +26,71 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // \App\Models\User::factory(10)->create();
+        Member::create([
+            'nik'      => '1234567890123456',
+            'name'      => 'John Doe',
+            'email'     => 'johndoe@example.com',
+            'password'  => bcrypt('password'),
+            'status'    => 'confirm',
+        ]);
+
+        Member::create([
+            'nik'      => '6543210987654321',
+            'name'      => 'Jane Smith',
+            'email'     => 'janesmith@example.com',
+            'password'  => bcrypt('password'),
+            'status'    => 'confirm',
+        ]);
+
+          Member::create([
+            'nik'      => '1122334455667788',
+            'name'      => 'Alice Johnson',
+            'email'     => 'alicejohnson@example.com',
+            'password'  => bcrypt('password'),
+
+        ]);
+
+          User::create([
+            'nik'      => '0000000000000000',
+            'name'      => 'Administrator',
+            'email'     => 'admin@gmail.com',
+            'role'     => 'administrator',
+            'password'  => bcrypt('password'),
+        ]);
+
+        RefEvent::create([
+            'title' => 'kegiatan 1',
+        ]);
+
+         RefEvent::create([
+            'title' => 'kegiatan 2',
+        ]);
+
+         RefEvent::create([
+            'title' => 'kegiatan 3',
+        ]);
 
 
+        Event::create([
+            'title' => 'Baptis Massal Januari',
+            'ref_event_id' => 1,
+            'date' => '2024-01-20',
+            'place' => 'Gereja St. Maria',
+        ]);
 
+          Event::create([
+            'title' => 'Baptis Massal Februari',
+            'ref_event_id' => 2,
+            'date' => '2024-02-15',
+            'place' => 'Gereja St. Yosef',
+        ]);
 
-
-        // Member::create([
-        //     'nip'      => '199501052022031111',
-        //     'nomember'      => '199501052022031001',
-        //     'name'      => 'Administrator',
-        //     'email'      => 'admin@gmail.com',
-        //     'password'      => 'password',
-        //     'agency'      => 'BKN',
-        // ]);
-        // Member::create([
-        //     'nip'      => '199501052022031002',
-        //     'nomember'      => '199501052022031002',
-        //     'name'      => 'Randi',
-        //     'email'      => 'randi@gmail.com',
-        //     'password'      => 'password',
-        //     'agency'      => 'BKN'
-        // ]);
-
-        // Member::create([
-        //     'nip'      => '199501052022031003',
-        //     'nomember'      => '199501052022031003',
-        //     'name'      => 'Adi',
-        //     'email'      => 'adi@gmail.com',
-        //     'password'      => 'password',
-        //     'agency'      => 'BKN'
-        // ]);
-
-        // ProfileDataMain::create([
-        //     'nip'      => '199501052022031001',
-        //     'nomember'      => '199501052022031001',
-        //     'name'      => 'Administrator',
-        //     'email'      => 'admin@gmail.com',
-
-        // ]);
-        // ProfileDataMain::create([
-        //     'nip'      => '199501052022031002',
-        //     'nomember'      => '199501052022031002',
-        //     'name'      => 'Randi',
-        //     'email'      => 'randi@gmail.com',
-
-        // ]);
-
-        // ProfileDataMain::create([
-        //     'nip'      => '199501052022031003',
-        //     'nomember'      => '199501052022031003',
-        //     'name'      => 'Adi',
-        //     'email'      => 'adi@gmail.com',
-
-        // ]);
-
-        // ProfileDataPosition::create([
-        //     'main_id'      => '1',
-        //     'agency'      => 'BKN',
-        //     'position'      => 'Analis SDM Aparatur',
-        //     'level'      => 'Pertama',
-
-        // ]);
-        // ProfileDataPosition::create([
-        //     'main_id'      => '2',
-        //     'agency'      => 'BKN',
-        //     'position'      => 'Analis SDM Aparatur',
-        //     'level'      => 'Pertama',
-        // ]);
-
-        // ProfileDataPosition::create([
-        //     'main_id'      => '3',
-        //     'agency'      => 'BKN',
-        //     'position'      => 'Analis SDM Aparatur',
-        //     'level'      => 'Pertama',
-        // ]);
-
-        // Event::create([
-        //     'title'  => 'Media',
-        //     'slug'  => 'Media',
-        //     'body' => 'Media',
-        //     'date' => '2024-03-16',
-        //     'enddate' => '2024-03-16',
-        //     'place' => 'Media',
-        //     'link' => 'Media',
-        //     'participant' => '0',
-        //     'image' => '',
-        //     'status' => 'media',
-        // ]);
-
-
-        // \App\Models\Post::factory(20)->create();
-        // \App\Models\Event::factory(20)->create();
-        // \App\Models\Merchan::factory(20)->create();
-
-
-
-
-
-
+            Event::create([
+                'title' => 'Baptis Massal Maret',
+                'ref_event_id' => 3,
+                'date' => '2024-03-10',
+                'place' => 'Gereja St. Paulus',
+            ]);
     }
 
 

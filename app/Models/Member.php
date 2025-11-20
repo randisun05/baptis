@@ -16,7 +16,8 @@ class Member extends Authenticatable
         'email',
         'password',
         'code-password',
-        'qr_link'
+        'status',
+        'category'
     ];
 
     protected $hidden = [
