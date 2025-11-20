@@ -1,297 +1,192 @@
 <template>
-    <!-- Our Blogs -->
-    <section id="member-card" class="padding_m mt-4">
-        <div class="ms-5">
-            <div class="row">
-                <div class="col-12 d-flex flex-wrap">
-                    <div class="card shadow top60 flex-fill me-4 mb-4" style="min-width:340px; max-width: 48%;">
-                        <div class="text-center">
-                            <h4>Informasi Anggota</h4>
-                            <h4>Aspro SDM Aparatur</h4>
-                            <hr class="mt-0">
-                        </div>
-                        <div class="row mb-4">
-                            <div class="col-sm-12">
-                                <div class="row py-1 ms-2">
-                                    <div class="col-sm-4">
-                                        <h5>No.</h5>
-                                    </div>
-                                    <div class="col-sm-8">
-                                        <h5>: {{ profile.main.nomember }}</h5>
-                                    </div>
-                                </div>
-                                <div class="row py-1 ms-2">
-                                    <div class="col-sm-4">
-                                        <h5>NIP</h5>
-                                    </div>
-                                    <div class="col-sm-8">
-                                        <h5>: {{ profile.main.nip }}</h5>
-                                    </div>
-                                </div>
-                                <div class="row py-1 ms-2">
-                                    <div class="col-sm-4">
-                                        <h5>Nama</h5>
-                                    </div>
-                                    <div class="col-sm-8">
-                                        <h5>: {{ profile.main.name }}</h5>
-                                    </div>
-                                </div>
-                                <div class="row py-1 ms-2">
-                                    <div class="col-sm-4">
-                                        <h5>Instansi</h5>
-                                    </div>
-                                    <div class="col-sm-8">
-                                        <h5>: {{ profile.agency }}</h5>
-                                    </div>
-                                </div>
-                                <div class="row py-1 ms-2">
-                                    <div class="col-sm-4">
-                                        <h5>Tanggal</h5>
-                                    </div>
-                                    <div class="col-sm-8">
-                                        <h5>: {{ formattedDate }}</h5>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+    <Head title="Dashboard Peserta" />
+
+    <div class="container py-5">
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="welcome-card p-4 rounded shadow-sm bg-white d-flex align-items-center justify-content-between">
+                    <div>
+                        <h4 class="fw-bold text-primary mb-1">Halo, {{ user.name }}!</h4>
+                        <p class="text-muted mb-0">Selamat datang di panel kegiatan.</p>
                     </div>
-                    <div class="card shadow top60 flex-fill mb-4" style="min-width:340px; max-width: 48%;">
-                        <div class="text-center">
-                            <h4>Informasi Keuangan</h4>
-                            <h4>Aspro SDM Aparatur</h4>
-                            <hr class="mt-0">
-                        </div>
-                        <iframe src="/user/jurnals/show" style="width:100%;height:150px;border:none;"></iframe>
+                    <div class="status-badge">
+                        <span v-if="user.status === 'confirm'" class="badge bg-warning text-dark">
+                            <i class="fa fa-exclamation-circle me-1"></i> Menunggu Konfirmasi
+                        </span>
+                        <span v-else class="badge bg-success">
+                            <i class="fa fa-check-circle me-1"></i> Akun Terverifikasi
+                        </span>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
 
-
-    <section id="dashboard" class="card mx-5 mt-3 shadow">
-        <div class="ms-4 mt-4">
-            <h3> Kegiatan </h3>
-            <hr>
-        </div>
-        <!-- :autoplay="5000"  -->
-        <carousel :items-to-show="1" :center-mode="false" wrap-around="true">
-            <slide v-for="(event, index) in events.data" :key="index">
-                <div class="news_item shadow row">
-                    <div class="col-lg-6" style="display: flex; justify-content: center; align-items: center;">
-                        <img class="image" v-if="event.image" :src="getImageUrl(event.image)" alt="Gambar"
-                            style="width: 100%;" />
+        <div v-if="user.status === 'confirm'" class="row justify-content-center fade-in">
+            <div class="col-md-8">
+                <div class="card border-0 shadow card-verification">
+                    <div class="card-header bg-danger text-white fw-bold">
+                        <i class="fa fa-user-check me-2"></i> Konfirmasi Data Diri
                     </div>
-                    <div class="col-lg-6">
-                        <div class="news_desc">
-                            <h4 class="text-capitalize font-light darkcolor" style="font-weight: bold;"><a href="#.">{{
-                                            event.title }}</a></h4>
-                            <div class="mt-2 text-center">
-                                <span v-if="event.status === 'active'" class="badge bg-success">Open</span>
-                                <span v-else-if="event.status === 'closed'" class="badge bg-danger">Closed</span>
-                            </div>
-                            <ul class="top20 bottom20">
-                                <li>
-                                    <a href="#."><i class="fa fa-calendar me-2" title="Tanggal pelaksanaa"></i>{{
-                                            event.date }}
-                                        <a href="#." class="ms-4"> <i class="fa fa-user-o me-2"
-                                                title="Jumlah peserta"></i>
-                                            {{ event.participant }}</a></a>
-                                </li>
-                                <p>Pendaftaran ditutup pada {{ event.enddate }}</p>
+                    <div class="card-body p-4">
+                        <div class="alert alert-info mb-4">
+                            <i class="fa fa-info-circle me-2"></i>
+                            Mohon periksa data di bawah ini. Jika sudah benar, silakan klik tombol konfirmasi untuk melihat jadwal kegiatan.
+                        </div>
 
-                            </ul>
-                            <div class="text-center">
-                                <Link v-if="event.status == 'active'" :href="`/user/events/${event.slug}`" title="join"
-                                    class="button btnprimary" type="button">
-                                Join
+                        <table class="table table-borderless table-hover">
+                            <tbody>
+                                <tr>
+                                    <td class="text-muted fw-bold" width="35%">Nama Lengkap</td>
+                                    <td>: {{ user.name }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted fw-bold">Email</td>
+                                    <td>: {{ user.email }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted fw-bold">Instansi</td>
+                                    <td>: {{ user.agency || '-' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted fw-bold">Jabatan</td>
+                                    <td>: {{ data?.jabatan || '-' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted fw-bold">No. Telepon</td>
+                                    <td>: {{ user.phone || '-' }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="d-grid gap-2 mt-4">
+                            <button @click="verifyData" class="btn btn-primary btn-lg shadow fw-bold" :disabled="processing">
+                                <span v-if="processing">
+                                    <i class="fa fa-spinner fa-spin me-2"></i> Memproses...
+                                </span>
+                                <span v-else>
+                                    <i class="fa fa-check-double me-2"></i> Data Sudah Benar, Lanjutkan
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div v-else class="row fade-in">
+            <div class="col-md-12">
+                <h5 class="fw-bold mb-4 ps-2 border-start border-4 border-primary">Jadwal Kegiatan Anda</h5>
+
+                <div v-if="events.length > 0" class="timeline-container">
+                    <div v-for="(detail, index) in events" :key="detail.id" class="timeline-item">
+                        <div class="timeline-marker"></div>
+                        <div class="timeline-content card border-0 shadow-sm">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <span class="badge bg-primary rounded-pill">{{ formatDate(detail.event.date) }}</span>
+                                    <small class="text-muted">Status: {{ detail.status }}</small>
+                                </div>
+                                <h5 class="fw-bold text-dark">{{ detail.event.title }}</h5>
+                                <p class="text-muted small mb-2"><i class="fa fa-map-marker-alt me-1"></i> {{ detail.event.place }}</p>
+
+                                <Link :href="`/user/events/${detail.event.id}`" class="btn btn-sm btn-outline-primary mt-2">
+                                    Detail Kegiatan <i class="fa fa-arrow-right ms-1"></i>
                                 </Link>
-                                <Link v-else :href="`/user/events/${event.slug}`" title="join"
-                                    class="button btnprimary" type="button">
-                                View
-                                </Link>
                             </div>
                         </div>
                     </div>
                 </div>
-            </slide>
 
-            <template #addons>
-                <navigation />
-                <pagination />
-            </template>
-        </carousel>
-        <div class="text-center py-3">
-            <a href="/user/events" class="btn btnprimary">Lihat Semua Kegiatan</a>
-        </div>
-    </section>
-
-    <section id="dashboard" class="card mx-5 mt-3 shadow">
-        <div class="ms-4 mt-4">
-            <h3> Merchandises </h3>
-            <hr>
-        </div>
-
-        <carousel :items-to-show="1" :center-mode="false" wrap-around="true">
-            <slide v-for="(merchan, index) in merchans.data" :key="index" class="px-5">
-                <div class="news_item shadow row">
-                    <div class="col-lg-6" style="display: flex; justify-content: center; align-items: center;">
-                        <img class="image" v-if="merchan.image" :src="getImageUrl(merchan.image)" alt="Gambar"
-                            style="max-width: 100%; max-height: 100%; width: auto; height: auto;" />
-                    </div>
-
-                    <div class="col-lg-6">
-                        <div class="col product-details" style="text-align: left;">
-                            <h5 class="product-brand">{{ merchan.title }}</h5>
-                            <h6 class="product-name">{{ merchan.subtitle }}</h6>
-                            <div style="font-size: 10px;" class="product-color">Warna : {{ merchan.color }}</div>
-                            <div class="product-rating">
-                                <span class="rating-star">★</span>
-                                <span class="rating-star">★</span>
-                                <span class="rating-star">★</span>
-                                <span class="rating-star">★</span>
-                                <span class="rating-star">★</span>
-                            </div>
-                            <h6 class="product-price mb-2">Rp.{{ merchan.price }}</h6>
-                            <h6 class="mb-1">Bagaimana Cara Kamu Beli:</h6>
-                            <div v-html="merchan.how" style="font-size: 10px;"></div>
-                            <div class="mt-3">
-                                <Link :href="`/user/merchans/${merchan.id}`" title="join" class="button btnprimary"
-                                    type="button">View</Link>
-                            </div>
-                        </div>
-                    </div>
+                <div v-else class="text-center py-5 text-muted">
+                    <img src="https://cdn-icons-png.flaticon.com/512/7486/7486744.png" alt="Empty" width="100" class="mb-3 opacity-50">
+                    <p>Anda belum terdaftar di kegiatan manapun.</p>
                 </div>
-            </slide>
-            <template #addons>
-                <navigation />
-                <pagination />
-            </template>
-        </carousel>
-        <div class="text-center py-3">
-            <a href="/user/merchans" class="btn btnprimary">Lihat Semua Merchandise</a>
-        </div>
-    </section>
-
-    <section id="dashboard" class="card mx-5 mt-3 shadow">
-        <div class="ms-4 mt-4">
-            <h3> Berita </h3>
-            <hr>
+            </div>
         </div>
 
-        <carousel :items-to-show="1" :center-mode="false" wrap-around="true">
-            <slide v-for="(post, index) in posts.data" :key="index">
-                <div class="news_item shadow row">
-                    <div class="col-lg-6" style="display: flex; justify-content: center; align-items: center;">
-                        <img class="image" v-if="post.image" :src="getImageUrl(post.image)" alt="Gambar"
-                            style="width: 100%;" />
-                    </div>
-                    <div class="col-lg-6">
-                        <div class="news_desc">
-                            <h3 class="text-capitalize font-light darkcolor"><a href="#">{{ post.title }}</a>
-                            </h3>
-                            <ul class="meta-tags top20 bottom20">
-                                <li><a href="#."><i class="fa fa-user"></i>{{ post.member.name }}</a></li>
-                                <li><a href="#."><i class="fa fa-calendar"></i>{{ post.publish_at }}</a></li>
-                            </ul>
-                            <p class="bottom35">{{ post.excerpt }}</p>
-                            <Link :href="`/user/posts/list/${post.slug}`" title="join" class="button btnprimary"
-                                type="button">View
-                            </Link>
-                        </div>
-                    </div>
-                </div>
-            </slide>
-            <template #addons>
-                <navigation />
-                <pagination />
-            </template>
-        </carousel>
-        <div class="text-center py-3">
-            <a href="/user/posts/list" class="btn btnprimary">Lihat Semua Post</a>
-        </div>
-    </section>
-
+    </div>
 </template>
 
-<script>
-//import layout Admin
-import LayoutUser from '../../../Layouts/User.vue';
-
-//import Heade from Inertia
-import {
-    Head, Link
-} from '@inertiajs/inertia-vue3';
-
-import 'vue3-carousel/dist/carousel.css'
-import { Carousel, Slide, Pagination, Navigation } from 'vue3-carousel'
-
-//import ref from vue
-import {
-    ref, reactive
-} from 'vue';
-
-//import inertia adapter
+<script setup>
+import { ref } from 'vue';
+import { Head, Link } from '@inertiajs/inertia-vue3';
 import { Inertia } from '@inertiajs/inertia';
-
-//import sweet alert2
+import LayoutWebsite from '../../../Layouts/Website.vue';
 import Swal from 'sweetalert2';
 
-export default {
+// Props dari controller
+const props = defineProps({
+    data: Object, // Data Registrasi (misalnya untuk detail jabatan)
+    events: Array,
+    user: Object // Data User/Member utama (sudah berisi status)
+});
 
-    //layout
-    layout: LayoutUser,
+const processing = ref(false);
 
-    //register components
-    components: {
-        Head, Carousel, Slide, Pagination, Navigation, Link
-    },
+// Format Tanggal
+const formatDate = (dateString) => {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString('id-ID', options);
+};
 
-    //props
-    props: {
-        profile: Object,
-        events: Object,
-        merchans: Object,
-        posts: Object,
-        formattedDate: Object
-    },
+// Truncate Text
+const truncate = (text, length) => {
+    if(!text) return '';
+    return text.length > length ? text.substring(0, length) + '...' : text;
+};
 
-    //inisialisasi composition API
-    setup() {
-
-        //define state search
-        const search = ref('' || (new URL(document.location)).searchParams.get('q'));
-
-        //define method search
-        const handleSearch = () => {
-            Inertia.get('/events', {
-
-                //send params "q" with value from state "search"
-                q: search.value,
+// Fungsi Verifikasi Data
+const verifyData = () => {
+    Swal.fire({
+        title: 'Konfirmasi Data?',
+        text: "Pastikan data Anda sudah benar sebelum melanjutkan.",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Ya, Benar!',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Perlu diperhatikan: Backend harus mengupdate status di tabel members
+            Inertia.post('/user/dashboard/verify', {}, {
+                onStart: () => processing.value = true,
+                onFinish: () => processing.value = false,
+                onSuccess: () => {
+                    Swal.fire('Berhasil', 'Data terverifikasi. Menampilkan jadwal...', 'success');
+                }
             });
         }
-
-        // Method to get the URL of the document
-        const getImageUrl = (imageName) => {
-            return `/storage/${imageName}`;
-        }
-
-        //return
-        return {
-            getImageUrl,
-
-
-        }
-    }
-
-
-}
-
+    });
+};
 </script>
 
-<style>
-.img-fluid {
-    max-width: 100%;
-    height: auto;
+<script>
+export default { layout: LayoutWebsite }
+</script>
+
+<style scoped>
+/* Custom CSS dari respons sebelumnya */
+.fade-in { animation: fadeIn 0.8s ease-in-out; }
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.card-verification { border-radius: 15px; overflow: hidden; }
+
+.timeline-container { position: relative; padding-left: 30px; margin-top: 20px; }
+.timeline-container::before { content: ''; position: absolute; left: 7px; top: 0; bottom: 0; width: 2px; background: #e9ecef; }
+.timeline-item { position: relative; margin-bottom: 30px; }
+.timeline-marker {
+    position: absolute; left: -28px; top: 15px; width: 16px; height: 16px; border-radius: 50%;
+    background: #fff; border: 4px solid #0d6efd; z-index: 1; box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.2);
+}
+.timeline-content { border-radius: 10px; transition: transform 0.3s ease, box-shadow 0.3s ease; }
+.timeline-content:hover { transform: translateY(-3px); box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important; }
+@media (max-width: 768px) {
+    .timeline-container { padding-left: 20px; }
+    .timeline-container::before { left: 2px; }
+    .timeline-marker { left: -23px; }
 }
 </style>

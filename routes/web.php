@@ -110,7 +110,8 @@ Route::prefix('user')->group(function() {
     //middleware "auth"
     Route::group(['middleware' => ['member']], function () {
         //route dashboard
-        Route::get('/dashboard', App\Http\Controllers\User\DashboardController::class)->name('user.dashboard');
+        Route::get('/dashboard', [App\Http\Controllers\User\DashboardController::class, 'index'])->name('user.dashboard');
+        Route::post('/dashboard/verify', [App\Http\Controllers\User\DashboardController::class, 'verifyData'])->name('user.dashboard.verifyData');
 
         //route profile
         Route::get('/profile', [\App\Http\Controllers\User\DataProfileController::class, 'index'])->name('user.profile');

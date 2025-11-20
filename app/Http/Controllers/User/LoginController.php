@@ -25,46 +25,19 @@ class LoginController extends Controller
     {
        // Validate the form data
             $this->validate($request, [
-                'nip'      => 'required',
+                'email'      => 'required',
                 'password'  => 'required',
-                 'recaptcha_token' => 'required|string',
             ],[
-                'nip.required' => 'NIP harus diisi',
+                'email.required' => 'Email harus diisi',
                 'password.required' => 'Password harus diisi',
-                'recaptcha_token.required' => 'reCAPTCHA token is missing. Please try again.',
             ]);
-
-             // ✅ 2. Verifikasi token ke Google
-            $response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
-                'secret'   => env('RECAPTCHA_SECRET_KEY'),
-                'response' => $request->recaptcha_token,
-                'remoteip' => $request->ip(),
-            ]);
-
-             Log::info('Recaptcha Response:', $response->json());
-              $result = $response->json();
-
-              // ✅ 3. Pastikan berhasil diverifikasi
-        if (!($result['success'] ?? false)) {
-            return back()->withErrors([
-                'recaptcha' => 'Verifikasi reCAPTCHA gagal. Silakan coba lagi.',
-            ])->withInput();
-        }
-
-        // ✅ 4. (Opsional) Cek skor minimum (nilai 0–1)
-        if (($result['score'] ?? 0) < 0.5) {
-            return back()->withErrors([
-                'recaptcha' => 'Aktivitas mencurigakan terdeteksi. Silakan coba lagi.',
-            ])->withInput();
-        }
-
             // Cek nip dan password
-            $member = Member::where('nip', $request->nip)->first();
+            $member = Member::where('email', $request->email)->first();
 
             if (!$member) {
-                return redirect()->back()->with('error', 'NIP belum terdaftar. Silakan lakukan pendaftaran keanggotaan.');
+                return redirect()->back()->with('error', 'Email belum terdaftar. Silakan lakukan pendaftaran keanggotaan.');
             } elseif (!password_verify($request->password, $member->password)) {
-                return redirect()->back()->with('error', 'NIP atau Password salah');
+                return redirect()->back()->with('error', 'Email atau Password salah');
             }
 
             // Login the user
@@ -129,8 +102,6 @@ class LoginController extends Controller
 
     public function forgetPassword(Request $request)
     {
-
-        return $request;
 
         $request->validate([
             'nip' => 'required',

@@ -1,50 +1,36 @@
-<template>
-     <!-- navbar -->
-         <Navbar />
-        <div class="wrapper">
+<script setup>
+    // Import components
+    import Navbar from "../Components/User/Navbar.vue";
+</script>
 
-        <!-- sidebar -->
+<template>
+    <div class="d-flex" style="min-height: 100vh; overflow-x: hidden; background-color: #f8f9fa;">
+
         <Sidebar />
 
-        <main class="content">
+        <div class="d-flex flex-column flex-grow-1" style="min-width: 0;">
 
+            <Navbar />
 
+            <main class="flex-grow-1">
+                <slot />
+            </main>
 
-            <!-- content -->
-            <slot />
+            <footer class="bg-white text-center py-3 border-top text-muted small mt-auto">
+                &copy; 2025 Paroki Santa Melania - Admin System
+            </footer>
 
-        </main>
-
-        <!-- footer -->
-        <Footer />
+        </div>
 
     </div>
+</template>
 
-
-    </template>
-
-    <script>
-        //import navbar
-        import Navbar from "../Components/User/Navbar.vue";
-
-        //import sidebar
-        import Sidebar from '../Components/User/Sidebar.vue';
-
-        //import footer
-        import Footer from '../Components/Footer.vue';
-
-        export default {
-
-            //register components
-            components: {
-                Navbar,
-                Sidebar,
-                Footer
-            },
-        }
-
-    </script>
-
-    <style>
-
-    </style>
+<style>
+    /* Tidak perlu CSS tambahan yang rumit.
+       Sidebar.vue sudah mengatur lebarnya sendiri (280px).
+       Bootstrap classes (d-flex, flex-grow-1) menangani sisanya.
+    */
+    body {
+        background-color: #f8f9fa;
+    }
+</style>

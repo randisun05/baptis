@@ -14,81 +14,50 @@ use Illuminate\Support\Carbon;
 use App\Models\ProfileDataMain;
 use App\Models\ProfileDataPosition;
 use App\Http\Controllers\Controller;
+use App\Models\DetailEvent;
+use App\Models\Registration;
 use Barryvdh\Snappy\Facades\SnappyImage;
 
 class DashboardController extends Controller
 {
-    public function __invoke()
+   public function index()
     {
-
-        if (!auth()->guard('member')->check())
-        {
+        if (!auth()->guard('member')->check()) {
             return redirect()->route('login');
         }
 
+        $user = auth()->guard('member')->user();
 
-        $main = ProfileDataMain::where('nip',auth()->guard('member')->user()->nip)
-        ->first();
+        // Mengambil data registrasi
+        // Asumsi: Kolom penghubung adalah 'member_id' atau 'member_nip' sesuai database Anda
+        $data = Registration::where('email', $user->email)->first();
 
-        $profile = ProfileDataPosition::with('main')->where('main_id',$main->id)->first();
-
-        $user = Member::where('nip',$main->nip)
-        ->first();
-
-        $date = Member::where('nip', $main->nip)->first('created_at');
-
-        $formattedDate = Carbon::parse($date->created_at)->format('d F Y');
-
-
-
-        $events = Event::whereNot('title','media')->when(request()->q, function($query) {
-            $query->where('title', 'like', '%' . request()->q . '%');
-        })
-        ->latest()
-        ->paginate(5);
-
-        $merchans = Merchan::when(request()->q, function($query) {
-            $query->where('title', 'like', '%' . request()->q . '%');
-        })
-        ->latest()
-        ->paginate(5);
-
-        $posts = Post::with('member')->when(request()->q, function($query) {
-            $query->where('title', 'like', '%' . request()->q . '%');
-        })
-        ->where(function($query) {
-            $query->where('status', 'approved')
-                ->orWhere('status', 'limited');
-        })
-        ->latest()
-        ->paginate(5);
-
-        $events->appends(['q' => request()->q]);
-        $merchans->appends(['q' => request()->q]);
-        $posts->appends(['q' => request()->q]);
-
+        // Mengambil event yang diikuti user
+        // with('event') digunakan untuk mengambil detail nama kegiatan & tanggal dari tabel events
+        $events = DetailEvent::with('event')
+                    ->where('member_id', $user->id)
+                    ->latest()
+                    ->get();
 
         return inertia('User/Dashboard/Index', [
-            'profile' => $profile,
+            'data'   => $data,
             'events' => $events,
-            'merchans' => $merchans,
-            'posts' => $posts,
-            'user' => $user,
-            'formattedDate' => $formattedDate
+            'user'   => $user // Kirim data user untuk header
         ]);
     }
 
-    public function print(Request $request)
+    // Fungsi untuk tombol "Data Sudah Benar"
+    public function verifyData()
     {
-        $profile = $request->input('profile');
+        $user = auth()->guard('member')->user();
+        $verify = Member::where('email', $user->email)->firstOrFail();
 
-        // Render view ke HTML
-        $html = view('member_card', compact('profile'))->render();
+        // Ubah status dari 'confirm' menjadi 'verified' (atau status aktif lainnya)
+        $verify->update([
+            'status' => 'confirmed'
+        ]);
 
-        // Konversi HTML menjadi gambar PNG
-        $image = SnappyImage::loadHTML($html)->setOption('format', 'png')->inline();
-
-        // Kembalikan respons dengan gambar PNG yang langsung diunduh
-        return response($image, 200)->header('Content-Type', 'image/png');
+        return redirect()->back()->with('success', 'Data berhasil diverifikasi. Selamat datang di Dashboard Kegiatan.');
     }
+
 }
