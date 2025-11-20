@@ -1,343 +1,237 @@
-            <template>
+<template>
 
-                <Head>
-                    <title>Administrator</title>
-                </Head>
-                <div class="container padding px-5">
-                    <div class="row mt-1">
-                        <div class="col-md-12">
-                            <div class="card border-0 shadow">
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="row py-4">
-                                                <div class="col-md-2 col-12 mb-2">
-                                                    <Link href="/admin/events" class="btn btn-md btn-primary border-0 shadow w-100"
-                                                        type="button"><i class="fa fa-arrow-left"></i>
-                                                    Kembali</Link>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <h3 class="text-center">Detail Event</h3>
-                                    <div class="row py-4 ms-5">
-                                        <div class="col-md-2">
-                                            <span class="text-black">
-                                                Judul
-                                            </span>
-                                        </div>
-                                        <div class="col-md-9 mb-2">
-                                            <span>
-                                                : {{ event.title }}
-                                            </span>
-                                        </div>
+    <Head>
+        <title>Detail Event - Administrator</title>
+    </Head>
 
-                                        <div class="col-md-2">
-                                            <span class="text-black">
-                                                Deskripsi
-                                            </span>
-                                        </div>
-                                        <div v-html="event.body" style="text-align:justify;text-justify: " class="col-md-9 mb-2">
+    <div class="container-fluid px-4 py-4">
+        <div class="row justify-content-center">
+            <div class="col-md-12">
 
-                                        </div>
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="fs-3 fw-bold mb-0 text-dark">Detail Event</h2>
+                    <Link href="/admin/events" class="btn btn-outline-secondary border-0 shadow-sm">
+                        <i class="fa fa-arrow-left me-1"></i> Kembali
+                    </Link>
+                </div>
 
-                                        <div class="col-md-2">
-                                            <span class="text-black">
-                                                Tanggal Pelaksanaan
-                                            </span>
-                                        </div>
-                                        <div class="col-md-9 mb-2">
-                                            <span>
-                                                : {{ event.date }}
-                                            </span>
-                                        </div>
-
-                                        <div class="col-md-2">
-                                            <span class="text-black">
-                                                Tutup Pendaftaran
-                                            </span>
-                                        </div>
-                                        <div class="col-md-9 mb-2">
-                                            <span>
-                                                : {{ event.enddate }}
-                                            </span>
-                                        </div>
-
-                                        <div class="col-md-2">
-                                            <span class="text-black">
-                                                Kapasitas Peserta
-                                            </span>
-                                        </div>
-                                        <div class="col-md-9 mb-2">
-                                            <span>
-                                                : {{ event.participant }}
-                                            </span>
-                                        </div>
-
-                                        <div class="col-md-2">
-                                            <span class="text-black">
-                                                Tempat Pelaksanaan
-                                            </span>
-                                        </div>
-                                        <div class="col-md-9 mb-2">
-                                            <span>
-                                                : {{ event.place }}
-                                            </span>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <span class="text-black">
-                                                Link
-                                            </span>
-                                        </div>
-                                        <div class="col-md-9 mb-2">
-                                            <span>
-                                                : {{ event.link }}
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
+                <div class="card border-0 shadow mb-4">
+                    <div class="card-header bg-white border-bottom-0 pt-4 pb-0">
+                        <h4 class="fw-bold text-primary">{{ event.title }}</h4>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <table class="table table-borderless table-sm">
+                                    <tbody>
+                                        <tr>
+                                            <td class="fw-bold text-muted" style="width: 150px;">Tanggal Mulai</td>
+                                            <td>: {{ event.date }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-bold text-muted">Selesai/Tutup</td>
+                                            <td>: {{ event.enddate }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-bold text-muted">Tempat</td>
+                                            <td>: {{ event.place }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-md-6">
+                                <table class="table table-borderless table-sm">
+                                    <tbody>
+                                        <tr>
+                                            <td class="fw-bold text-muted" style="width: 150px;">Kapasitas</td>
+                                            <td>: <span class="badge bg-info">{{ event.participant }} Peserta</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-bold text-muted">Link External</td>
+                                            <td>:
+                                                <a v-if="event.link" :href="event.link" target="_blank" class="text-decoration-none">
+                                                    {{ event.link }} <i class="fa fa-external-link-alt small"></i>
+                                                </a>
+                                                <span v-else class="text-muted">-</span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
-                    </div>
 
+                        <hr class="my-4">
 
-                    <div class="row mt-4">
-                        <div class="col-md-12">
-                            <div class="card border-0 shadow">
-                                <div class="card-body">
-                                    <h3 class="text-center">Detail Peserta</h3>
-                                    <div class="col-md-6 col-12 mb-2 mt-4">
-                                        <form @submit.prevent="handleSearch">
-                                            <div class="input-group">
-                                                <input type="text" class="form-control border-0 shadow" v-model="search"
-                                                    placeholder="masukkan kata kunci dan enter...">
-                                                <span class="input-group-text border-0 shadow">
-                                                    <i class="fa fa-search"></i>
-                                                </span>
-                                            </div>
-                                        </form>
-                                    </div>
-                                    <ul class="nav nav-tabs">
-                                        <li class="nav-item">
-                                            <a class="nav-link" :class="{ active: activeTab === 'participant' }"
-                                                @click="setActiveTab('participant')">Participant</a>
-                                        </li>
-                                        <li class="nav-item ms-4">
-                                             <button class="btn btn-success w-100" @click="absenAll">Absen All</button>   
-                                        </li>
-                                    </ul>
-
-                                    <div v-show="activeTab === 'participant'" class="table-responsive" id="sub">
-                                        <table class="table table-bordered table-centered table-nowrap mb-0 rounded">
-                                            <thead class="thead-dark">
-                                                <tr class="border-0 text-center">
-                                                    <th class="border-0 rounded-start" style="width:5%">No.</th>
-                                                    <th class="border-0">Nama</th>
-                                                    <th class="border-0">Instansi</th>
-                                                    <th class="border-0">Sebagai</th>
-                                                    <th class="border-0 rounded-end" style="width:12%">Status
-                                                       
-                                                    </th>
-                                                </tr>
-                                            </thead>
-                                            <div class="mt-2"></div>
-                                            <tbody>
-                                                <tr v-for="(detail, index) in details.data" :key="index">
-                                                    <td class="fw-bold text-center">{{ ++index + (details.current_page - 1) *
-                                                        details.per_page }}</td>
-                                                    <td>{{ detail.member.name }}</td>
-                                                    <td>{{ detail.member.agency }}</td>
-                                                    <td @click="openRoleModal(detail)" style="cursor: pointer;" title="Klik untuk ubah peran">
-                                                    {{ detail.title }}
-                                                    </td>
-                                                    <td class="text-center">
-                                                        {{ detail.status }}
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-
-                                    <Pagination v-if="activeTab === 'participant'" :links="details.links" align="end" />
-
-                                </div>
+                        <div class="mt-3">
+                            <h5 class="fw-bold mb-3">Deskripsi Kegiatan</h5>
+                            <div class="p-3 bg-light rounded border" style="min-height: 100px;">
+                                <div v-html="event.body" class="text-break detail-content"></div>
                             </div>
                         </div>
                     </div>
                 </div>
 
+                <div class="card border-0 shadow">
+                    <div class="card-body p-4">
+                        <h4 class="fw-bold mb-4">Data Peserta</h4>
 
-                <!-- Modal untuk edit peran -->
-                <div v-if="showRoleModal" class="modal-backdrop">
-                <div class="modal-content-custom">
-                    <h5>Edit Peran Peserta</h5>
-                    <select v-model="selectedRole" class="form-control mb-3">
-                    <option value="Peserta">Peserta</option>
-                    <option value="Moderator">Moderator</option>
-                    <option value="Panitia">Panitia</option>
-                    <option value="Narasumber">Narasumber</option>
-                    </select>
-                    <button class="btn btn-sm btn-success" @click="updateRole(selectedParticipantId, selectedRole)">Simpan</button>         
-                    <button class="btn btn-sm btn-secondary ms-2" @click="closeRoleModal">Batal</button>
+                        <div class="row mb-3 align-items-end">
+                            <div class="col-md-6 mb-2">
+                                <form @submit.prevent="handleSearch">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control border-0 shadow-sm" v-model="search" placeholder="Cari nama peserta...">
+                                        <button class="input-group-text border-0 shadow-sm bg-white">
+                                            <i class="fa fa-search"></i>
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                           <div class="col-md-6 mb-2 text-md-end">
+                            <Link :href="`/admin/events/${event.id}/enroll`" class="btn btn-success shadow-sm">
+                                <i class="fa fa-check-circle me-1"></i> Enroll Peserta
+                            </Link>
+                        </div>
+                        </div>
+
+                        <ul class="nav nav-tabs mb-3">
+                            <li class="nav-item">
+                                <a class="nav-link active fw-bold" href="#">List Peserta</a>
+                            </li>
+                        </ul>
+
+                        <div class="table-responsive">
+                            <table class="table table-hover table-centered table-nowrap mb-0 rounded">
+                                <thead class="thead-dark table-light">
+                                    <tr>
+                                        <th class="border-0 rounded-start text-center" style="width:5%">No.</th>
+                                        <th class="border-0">Nama</th>
+                                        <th class="border-0 rounded-end text-center">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="(detail, index) in details.data" :key="index">
+                                        <td class="fw-bold text-center">
+                                            {{ ++index + (details.current_page - 1) * details.per_page }}
+                                        </td>
+                                        <td>{{ detail.member.name }}</td>
+                                        <td class="text-center">
+                                            <span class="badge bg-secondary">{{ detail.status }}</span>
+                                        </td>
+                                    </tr>
+                                    <tr v-if="details.data.length === 0">
+                                        <td colspan="5" class="text-center py-4 text-muted">Belum ada peserta yang terdaftar.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <Pagination :links="details.links" align="end" class="mt-3" />
+
+                    </div>
                 </div>
-                </div>
+            </div>
+        </div>
+    </div>
 
-            </template>
+</template>
 
-            <script>
-            //import layout
-            import LayoutAdmin from '../../../Layouts/Admin.vue';
+<script>
+//import layout
+import LayoutAdmin from '../../../Layouts/Admin.vue';
 
-            //import component pagination
-            import Pagination from '../../../Components/Pagination.vue';
+//import component pagination
+import Pagination from '../../../Components/Pagination.vue';
 
-            //import Heade and Link from Inertia
-            import {
-                Head,
-                Link
-            } from '@inertiajs/inertia-vue3';
+//import Heade and Link from Inertia
+import { Head, Link } from '@inertiajs/inertia-vue3';
 
-            //import tinyMCE
-            import Editor from '@tinymce/tinymce-vue';
+//import inertia adapter
+import { Inertia } from '@inertiajs/inertia';
 
-            //import ref from vue
-            import {
-                ref, reactive,
-            } from 'vue';
+//import ref from vue
+import { ref } from 'vue';
 
-            //import inertia adapter
-            import { Inertia } from '@inertiajs/inertia';
+//import sweet alert2
+import Swal from 'sweetalert2';
 
-            //import sweet alert2
-            import Swal from 'sweetalert2';
+export default {
+    layout: LayoutAdmin,
 
-            export default {
-                //layout
-                layout: LayoutAdmin,
+    components: {
+        Head,
+        Link,
+        Pagination
+    },
 
-                //register component
-                components: {
-                    Head,
-                    Link,
-                    Editor,
-                    Pagination
-                },
+    props: {
+        errors: Object,
+        event: Object,
+        details: Object
+    },
 
-                //props
-                props: {
-                    errors: Object,
-                    event: Object,
-                    details: Object
-                },
+    setup(props) {
+        //define state search
+        const search = ref('' || (new URL(document.location)).searchParams.get('q'));
 
-                data() {
-                    return {
-                        activeTab: 'participant', // Set the default active tab
-                        showRoleModal: false,
-                        selectedRole: '',
-                        selectedParticipantId: null
+        //define method search
+        const handleSearch = () => {
+            Inertia.get(`/admin/events/${props.event.id}`, {
+                //send params "q" with value from state "search"
+                q: search.value,
+            }, {
+                preserveState: true, // Supaya tidak refresh full page
+                preserveScroll: true
+            });
+        }
 
-                    };
-                },
+        return {
+            search,
+            handleSearch
+        }
+    }
+}
+</script>
 
-                methods: {
-                    setActiveTab(tabName) {
-                        this.activeTab = tabName;
-                    },
-                    openRoleModal(participant) {
-                    this.selectedRole = participant.title;
-                    this.selectedParticipantId = participant.id;
-                    this.showRoleModal = true;
-                    },
+<style scoped>
+/* Styling untuk Modal Custom */
+.modal-backdrop-custom {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1050;
+    animation: fadeIn 0.2s;
+}
 
-                    closeRoleModal() {
-                    this.showRoleModal = false;
-                    this.selectedRole = '';
-                    this.selectedParticipantId = null;
-                    },
+.modal-content-custom {
+    background: #fff;
+    padding: 25px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 450px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    animation: slideIn 0.3s;
+}
 
-                    updateRole(participantId, role) {
-                        Inertia.post(`/admin/events/${participantId}/updaterole`, {
-                            title: role
-                        }, {
-                            onSuccess: () => {
-                                this.closeRoleModal();
-                                Swal.fire('Sukses', 'Peran peserta diperbarui!', 'success');
-                            }
-                        });
-                    },           
-                    
-                    absenAll() {
-                    Swal.fire({
-                        title: 'Yakin ingin absen semua peserta?',
-                        icon: 'question',
-                        showCancelButton: true,
-                        confirmButtonText: 'Ya, absen semua',
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                        Inertia.get(`/admin/events/${this.event.id}/absenall`, {}, {
-                            onSuccess: () => {
-                            Swal.fire('Sukses', 'Semua peserta telah diabsen!', 'success');
-                            }
-                        });
-                        }
-                    });
-                    }
+/* Utility render HTML agar gambar tidak overflow */
+.detail-content :deep(img) {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+}
 
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
 
-                },
-
-
-                //inisialisasi composition API
-                setup(props) {
-
-                    //define state search
-                    const search = ref('' || (new URL(document.location)).searchParams.get('q'));
-
-                    //define method search
-                    const handleSearch = () => {
-                        Inertia.get(`/admin/events/${props.event.id}`, {
-
-                            //send params "q" with value from state "search"
-                            q: search.value,
-                        });
-                    }
-
-                    // Method to get the URL of the document
-                    const getDocumentUrl = (documentName) => {
-                        return `/storage/${documentName}`;
-                    }
-                    //return
-                    return {
-                        getDocumentUrl,
-                        search,
-                        handleSearch
-
-                    }
-                }
-            }
-
-            </script>
-
-            <style>
-        .modal-backdrop {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.4);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1050;
-            }
-            .modal-content-custom {
-            background: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            width: 90%;
-            max-width: 400px;
-            box-shadow: 0 5px 15px rgba(0,0,0,.5);
-            }
-            </style>
+@keyframes slideIn {
+    from { transform: translateY(-20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+</style>

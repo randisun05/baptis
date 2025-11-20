@@ -8,8 +8,8 @@
             <Link href="/admin/events/create" class="btn btn-primary border-0 shadow">
                 <i class="fa fa-plus-circle me-2"></i> Tambah Kegiatan
             </Link>
-            <Link href="/admin/events/group" class="btn btn-primary border-0 shadow">
-                <i class="fa fa-plus-circle me-2"></i> Group Kegiatan
+            <Link href="/admin/events/ref" class="btn btn-primary border-0 shadow">
+                <i class="fa fa-plus-circle me-2"></i> Ref Kegiatan
             </Link>
         </div>
 
@@ -57,6 +57,9 @@
                                 </td>
                                 <td class="text-center">
                                     <div class="btn-group">
+                                        <Link :href="`/admin/events/${event.id}`" class="btn btn-sm btn-success text-white" title="Show">
+                                            <i class="fa fa-eye"></i>
+                                        </Link>
                                         <Link :href="`/admin/events/${event.id}/edit`" class="btn btn-sm btn-warning text-white" title="Edit">
                                             <i class="fa fa-pencil"></i>
                                         </Link>

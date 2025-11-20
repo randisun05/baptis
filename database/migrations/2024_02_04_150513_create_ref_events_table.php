@@ -13,11 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('media', function (Blueprint $table) {
+        Schema::create('ref_events', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('event_id')->references('id')->on('events')->restrictOnDelete()->restrictOnUpdate();
-            $table->string('title')->nullable();
-            $table->string('media');
+            $table->string('title');
+            $table->string('status')->default('active');
             $table->timestamps();
         });
     }
@@ -29,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('media');
+        Schema::dropIfExists('ref_events');
     }
 };

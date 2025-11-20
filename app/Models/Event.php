@@ -15,8 +15,8 @@ class Event extends Model
         'slug',
         'date',
         'status',
-        'file',
-        'absen'
+        'place',
+        'ref_event_id',
     ];
 
     public function getRouteKeyName()
@@ -29,5 +29,8 @@ class Event extends Model
         return $this->where('slug', $value)->firstOrFail(); // Mencari model berdasarkan 'slug'
     }
 
-
+      public function ref()
+    {
+        return $this ->belongsTo(RefEvent::class);
+    }
 }

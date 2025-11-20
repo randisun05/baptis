@@ -66,7 +66,13 @@ Route::prefix('admin')->group(function() {
         Route::get('/posts/{id}/reject', [\App\Http\Controllers\Admin\PostController::class, 'reject'])->name('admin.posts.reject');
 
         //route events
+         Route::get('/events-ref', [\App\Http\Controllers\Admin\EventController::class, 'Indexref'])->name('admin.events.Indexref');
+        Route::post('/events-ref/', [\App\Http\Controllers\Admin\EventController::class, 'Storeref'])->name('admin.events.Storeref');
+        Route::put('/events-ref/{id}', [\App\Http\Controllers\Admin\EventController::class, 'Updateref'])->name('admin.events.Updateref');
+        Route::delete('/events-ref/{id}/delete', [\App\Http\Controllers\Admin\EventController::class, 'Deleteref'])->name('admin.events.Deleteref');
         Route::post('/events/{id}', [\App\Http\Controllers\Admin\EventController::class, 'update'])->name('admin.events.update');
+        Route::get('/events/{id}/enroll', [\App\Http\Controllers\Admin\EventController::class, 'enroll'])->name('admin.events.enroll');
+        Route::post('/events/{id}/enroll', [\App\Http\Controllers\Admin\EventController::class, 'Storeenroll'])->name('admin.events.Storeenroll');
         Route::resource('/events', \App\Http\Controllers\Admin\EventController::class, ['as' => 'admin']);
 
         //route setting

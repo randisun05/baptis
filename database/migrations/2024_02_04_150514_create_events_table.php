@@ -19,8 +19,8 @@ return new class extends Migration
             $table->string('slug')->nullable();
             $table->date('date');
             $table->enum('status',['active','closed']);
-            $table->enum('file',['Y','N'])->default('N');
-            $table->enum('absen',['Y','N'])->default('N')->nullable();
+            $table->string('place')->nullable();
+            $table->foreignId('ref_event_id')->nullable()->constrained('ref_events')->onDelete('set null');
             $table->timestamps();
         });
     }

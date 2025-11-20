@@ -4,15 +4,16 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\Event;
 use App\Models\Member;
+use App\Models\RefEvent;
 use App\Models\Certificate;
 use App\Models\DetailEvent;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\TemplateCertificate;
 use App\Http\Controllers\Controller;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\EventParticipantsExport;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
-use Illuminate\Support\Str;
 
 class EventController extends Controller
 {
@@ -45,9 +46,9 @@ class EventController extends Controller
      */
     public function create()
     {
-
+        $refevents = RefEvent::all();
         return inertia('Admin/Events/Create', [
-
+            'refevents' => $refevents
          ]);
     }
 
@@ -64,6 +65,8 @@ class EventController extends Controller
     $request->validate([
         'title' => 'required|string',
         'date' => 'required',
+        'place' => 'nullable|string',
+        'ref_event_id' => 'nullable|exists:ref_events,id',
     ]);
 
     $slug = strtolower(str_replace(' ', '-', $request->title));
@@ -72,6 +75,10 @@ class EventController extends Controller
             'title' => $request->title,
             'date' => $request->date,
             'slug' => $slug,
+            'place' => $request->place,
+            'desc' => $request->desc,
+            'ref_event_id' => $request->ref_event_id,
+
         ]);
 
      //redirect
@@ -108,20 +115,6 @@ class EventController extends Controller
         return redirect()->route('admin.events.index');
     }
 
-    public function absenAll($id)
-    {
-        $details = DetailEvent::where('event_id', $id)->get();
-
-        foreach ($details as $detail) {
-            $detail->update([
-                'status' => 'hadir',
-            ]);
-        }
-
-        return redirect()->route('admin.events.show', $id)->with('success', 'Data has been saved');
-    }
-
-
     /**
      * Show the form for editing the specified resource.
      *
@@ -153,6 +146,8 @@ class EventController extends Controller
       $request->validate([
         'title' => 'required|string',
         'date' => 'required',
+        'place' => 'nullable|string',
+        'ref_event_id' => 'nullable|exists:ref_events,id',
 
     ]);
 
@@ -162,6 +157,9 @@ class EventController extends Controller
             'title' => $request->title,
             'date' => $request->date,
             'slug' => $slug,
+            'place' => $request->place,
+            'desc' => $request->desc,
+            'ref_event_id' => $request->ref_event_id,
         ]);
 
 
@@ -178,32 +176,93 @@ class EventController extends Controller
     public function destroy($id)
     {
         $event = Event::findOrFail($id);
-
         $event->delete();
-
         //redirect
         return redirect()->route('admin.events.index');
     }
 
-
-    public function absen($id)
+    public function Indexref()
     {
+        $refevents = RefEvent::
+             when(request()->q, function($query) {
+                 $query->where('title', 'like', '%' . request()->q . '%');
+             })
+             ->latest()
+             ->paginate(10);
 
-        $status = Event::where('id', $id)->value('absen');
+        $refevents->appends(['q' => request()->q]);
 
-        if ($status == 'N') {
-            Event::where('id',$id)->update([
-                'absen' => "Y",
+        return inertia('Admin/Events/Ref', [
+            'refevents' => $refevents,
+         ]);
+    }
+
+     public function Storeref(Request $request)
+        {
+
+            // Validate request including file validation
+        $request->validate([
+            'title' => 'required|string',
+        ]);
+            RefEvent::create([
+                'title' => $request->title,
             ]);
-        } else {
-            Event::where('id',$id)->update([
-                'absen' => "N",
-            ]);
+            //redirect
+            return redirect()->route('admin.events.Indexref');
         }
 
-     //redirect
-     return redirect()->route('admin.events.index');
-    }
+     public function Updateref(Request $request , $id)
+        {
+            // Validate request including file validation
+        $request->validate([
+            'title' => 'required|string',
+        ]);
+            RefEvent::where('id',$id)->update([
+                'title' => $request->title,
+            ]);
+            //redirect
+            return redirect()->route('admin.events.Indexref');
+        }
+
+     public function Deleteref($id)
+        {
+            $refevent = RefEvent::findOrFail($id);
+            $refevent->delete();
+            //redirect
+            return redirect()->route('admin.events.Indexref');
+        }
+
+         public function enroll($id)
+        {
+          $member_enroled = DetailEvent::where('event_id', $id)->pluck('member_id')->toArray();
+          $members = Member::whereNotIn('id', $member_enroled)->get();
+
+          $event = Event::findOrFail($id);
+          return inertia('Admin/Events/Enroll', [
+            'members' => $members,
+            'event' => $event,
+          ]);
+        }
+
+        public function storeenroll(Request $request, $id)
+        {
+          $request->validate([
+            'member_ids' => 'required|array',
+            'member_ids.*' => 'exists:members,id',
+          ]);
+
+          foreach ($request->member_ids as $member_id) {
+            DetailEvent::create([
+              'event_id' => $id,
+              'member_id' => $member_id,
+            ]);
+          }
+
+          return redirect()->route('admin.events.show', $id);
+        }
+
+
+
 
 
 }
