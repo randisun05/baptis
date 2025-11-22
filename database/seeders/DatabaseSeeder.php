@@ -27,25 +27,31 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         Member::create([
-            'nik'      => '1234567890123456',
+            'number'      => '1234567890123456',
             'name'      => 'John Doe',
             'email'     => 'johndoe@example.com',
             'password'  => bcrypt('password'),
+            'contact'  => '081278162172312',
+            'group'     => 1    ,
             'status'    => 'confirm',
         ]);
 
         Member::create([
-            'nik'      => '6543210987654321',
+            'number'      => '6543210987654321',
             'name'      => 'Jane Smith',
             'email'     => 'janesmith@example.com',
             'password'  => bcrypt('password'),
+            'contact'  => '08127816217361',
+            'group'     => 1    ,
             'status'    => 'confirm',
         ]);
 
           Member::create([
-            'nik'      => '1122334455667788',
+            'number'      => '1122334455667788',
             'name'      => 'Alice Johnson',
             'email'     => 'alicejohnson@example.com',
+            'contact'  => '0812781621732131',
+            'group'     => 1    ,
             'password'  => bcrypt('password'),
 
         ]);

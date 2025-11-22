@@ -8,9 +8,7 @@
             <Link href="/admin/events/create" class="btn btn-primary border-0 shadow">
                 <i class="fa fa-plus-circle me-2"></i> Tambah Kegiatan
             </Link>
-            <Link href="/admin/events/ref" class="btn btn-primary border-0 shadow">
-                <i class="fa fa-plus-circle me-2"></i> Ref Kegiatan
-            </Link>
+            
         </div>
 
 

@@ -25,7 +25,6 @@
                                 <thead class="thead-dark">
                                     <tr class="border-0 text-center">
                                         <th class="border-0 rounded-start" style="width:5%">No.</th>
-                                        <th class="border-0">NIP</th>
                                         <th class="border-0">Nama</th>
                                         <th class="border-0">Email</th>
                                         <th class="border-0">Role</th>
@@ -36,7 +35,6 @@
                                 <tbody>
                                     <tr v-for="(user, index) in users.data" :key="index">
                                         <td class="fw-bold text-center">{{ ++index + (users.current_page - 1) * users.per_page }}</td>
-                                        <td>{{ user.nip }}</td>
                                         <td>{{ user.name}}</td>
                                         <td>{{ user.email }}</td>
                                         <td>{{ user.role }}</td>

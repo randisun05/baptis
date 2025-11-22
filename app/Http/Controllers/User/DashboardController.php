@@ -18,46 +18,61 @@ use App\Models\DetailEvent;
 use App\Models\Registration;
 use Barryvdh\Snappy\Facades\SnappyImage;
 
+// Import semua model relasi yang diperlukan untuk Eager Loading
+use App\Models\DataBaptis;
+use App\Models\DataKatekumen;
+use App\Models\DataKeluarga;
+use App\Models\DataMenikah;
+use App\Models\DataRiwayat;
+
+
 class DashboardController extends Controller
 {
-   public function index()
+    public function index()
     {
-        if (!auth()->guard('member')->check()) {
-            return redirect()->route('login');
-        }
+        // 1. Ambil data user dari guard
+        $loggedInUser = auth()->guard('member')->user();
 
-        $user = auth()->guard('member')->user();
+        // 2. Ambil objek Member LENGKAP dengan Eager Loading SEMUA relasi
+        $memberData = Member::where('number', $loggedInUser->number)
+                           ->with([
+                               'dataKatekumen',
+                               'dataRiwayat',
+                               'dataMenikah',
+                               'dataBaptis',
+                               // Relasi 'dataKeluarga' harus diambil
+                               'dataKeluarga',
+                           ])
+                           ->firstOrFail();
 
-        // Mengambil data registrasi
-        // Asumsi: Kolom penghubung adalah 'member_id' atau 'member_nip' sesuai database Anda
-        $data = Registration::where('email', $user->email)->first();
+        // 3. Mengambil data registrasi (untuk detail tambahan seperti jabatan)
+        $registrationData = Registration::where('email', $loggedInUser->email)->first();
 
-        // Mengambil event yang diikuti user
-        // with('event') digunakan untuk mengambil detail nama kegiatan & tanggal dari tabel events
+        // 4. Mengambil event yang diikuti user
         $events = DetailEvent::with('event')
-                    ->where('member_id', $user->id)
-                    ->latest()
-                    ->get();
+                           ->where('member_id', $loggedInUser->id)
+                           ->latest()
+                           ->get();
 
+        // 5. Kirim data yang dibutuhkan ke frontend
         return inertia('User/Dashboard/Index', [
-            'data'   => $data,
-            'events' => $events,
-            'user'   => $user // Kirim data user untuk header
+            'registrationData' => $registrationData, // Kirim data registrasi (data)
+            'events'           => $events,
+            'user'             => $memberData // Kirim data Member lengkap dengan relasi
         ]);
     }
 
-    // Fungsi untuk tombol "Data Sudah Benar"
+    // Fungsi untuk tombol "Data Sudah Benar" (Tidak ada perubahan)
     public function verifyData()
     {
         $user = auth()->guard('member')->user();
-        $verify = Member::where('email', $user->email)->firstOrFail();
 
-        // Ubah status dari 'confirm' menjadi 'verified' (atau status aktif lainnya)
+        $verify = Member::where('email', $user->email)->firstOrFail();
+        
         $verify->update([
             'status' => 'confirmed'
         ]);
 
         return redirect()->back()->with('success', 'Data berhasil diverifikasi. Selamat datang di Dashboard Kegiatan.');
     }
-
 }

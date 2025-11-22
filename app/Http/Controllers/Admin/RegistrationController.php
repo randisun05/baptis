@@ -2,9 +2,19 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
+use Log;
+use App\Models\Member;
+use App\Models\DataBaptis;
+use App\Models\DataMenikah;
+use App\Models\DataRiwayat;
+use App\Models\DataKeluarga;
 use App\Models\Registration;
 use Illuminate\Http\Request;
+use App\Models\DataKatekumen;
+use Symfony\Component\Mime\Email;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 
 class RegistrationController extends Controller
@@ -27,6 +37,7 @@ class RegistrationController extends Controller
         $registers->getCollection()->transform(function ($reg) {
             return [
                 'id' => $reg->id,
+                'number' => $reg->number,
                 'name' => $reg->name,
                 'email' => $reg->email,
                 'contact' => $reg->contact,
@@ -51,42 +62,200 @@ class RegistrationController extends Controller
         return inertia('Admin/Registration/Create');
     }
 
-    /**
-     * Menyimpan data peserta baru.
-     */
-    public function store(Request $request)
+
+  public function store(Request $request)
     {
-        // 1. Validasi Input dari Vue
-        $request->validate([
+
+        // 1. Validasi Input Dasar
+        $rules = [
+            'number' => 'required|string|unique:registrations',
             'name' => 'required|string|max:255',
             'gender' => 'required|in:Laki-laki,Perempuan',
-            'email' => 'required|email|unique:registrations,email',
+            'email' => 'required|email|unique:registrations,email|unique:members,email',
             'contact' => 'required|unique:registrations,contact',
             'kelompok' => 'required|in:Katekumen,Sakramen Baptis Bayi',
-        ], [
-            'name.required' => 'Nama lengkap wajib diisi.',
-            'email.unique' => 'Email sudah terdaftar.',
-            'contact.unique' => 'Nomor telepon sudah terdaftar.',
-            'kelompok.required' => 'Silakan pilih kelompok katekese.'
-        ]);
+            // Validasi Data Keluarga (Array)
+            // 'family_members' => 'required|array|min:1',
+            // 'family_members.*.name' => 'required|string|max:255',
+            // 'family_members.*.relation' => 'required|string|max:50',
+            // 'family_members.*.religion' => 'required|string|max:50',
+            // 'family_members.*.address' => 'required|string',
+            // 'family_members.*.contact' => 'required|string|max:15',
+        ];
 
-        // 2. Mapping Data (String Vue -> Boolean DB)
-        // Sesuai migration: $table->boolean('gender'); $table->boolean('group');
-        $isMale = $request->gender === 'Laki-laki' ? true : false;
-        $isCatechumen = $request->kelompok === 'Katekumen' ? true : false;
+        // 1b. Validasi Kondisional berdasarkan Kelompok
+        if ($request->kelompok === 'Katekumen') {
+            // DataKatekumen
+            // $rules['address'] = 'required|string';
+            // $rules['education'] = 'required|string|max:100';
+            // $rules['namePenjamin'] = 'required|string|max:255';
+            
+            // DataRiwayat
+            // $rules['religion'] = 'required|string|max:50'; 
+            // $rules['location'] = 'required|string|max:255'; 
+            // $rules['schedule'] = 'nullable|string|max:255';
+            // $rules['dateStart'] = 'required|date'; 
+            // $rules['dateEnd'] = 'nullable|date';
+            // $rules['participateBefore'] = 'boolean';
+            // $rules['nameGuru'] = 'nullable|string|max:255';
+            // $rules['nameGereja'] = 'nullable|string|max:255';
+            // $rules['addressGereja'] = 'nullable|string';
+            // $rules['namePriest'] = 'nullable|string|max:255';
+            // $rules['dateBaptis'] = 'nullable|date';
+            // $rules['numberBaptis'] = 'nullable|string|max:50';
+            
+            // DataMenikah
+            // $rules['statusMarried'] = 'required|string|max:50';
+            
+            // Aturan kompleks lainnya (misalnya, jika statusMarried = Menikah Katolik, maka namePasangan wajib)
+            if ($request->statusMarried && $request->statusMarried !== 'Belum Menikah') {
+                // $rules['namePasangan'] = 'required|string|max:255';
+                // $rules['religionPasangan'] = 'required|string|max:50';
+                // ... dan validasi lainnya sesuai kompleksitas form Menikah
+            }
+            
+        } elseif ($request->kelompok === 'Sakramen Baptis Bayi') {
+            // DataBaptis
+            // $rules['namePastoor'] = 'required|string|max:255';
+            // $rules['name'] = 'required|string|max:255';
+            // $rules['status'] = 'required|string|max:50'; // Status DataBaptis
+        }
 
-        // 3. Simpan ke Database
-        Registration::create([
-            'name' => $request->name,
-            'gender' => $isMale,
-            'email' => $request->email,
-            'contact' => $request->contact,
-            'group' => $isCatechumen, // Masuk ke kolom 'group' di DB
-            'status' => 'wait',       // Default status sesuai enum migration
-        ]);
+        $messages = [
+            // 'name.required' => 'Nama lengkap wajib diisi.',
+            // 'email.unique' => 'Email sudah terdaftar.',
+            // 'contact.unique' => 'Nomor telepon sudah terdaftar.',
+            // 'kelompok.required' => 'Silakan pilih kelompok katekese.',
+            // 'family_members.required' => 'Data anggota keluarga wajib diisi.',
+            // ... Tambahkan pesan error kondisional lainnya
+        ];
+        
+        $request->validate($rules, $messages);
 
-        // 4. Redirect dengan pesan sukses
-        return Redirect::route('admin.registration.index')->with('success', 'Data peserta berhasil ditambahkan.');
+        // 2. Mapping Data Dasar
+        $isMale = $request->gender === 'Laki-laki';
+        $isCatechumen = $request->kelompok === 'Katekumen';
+        $password = Hash::make('password'); // Default password
+
+        // Mulai Transaksi Database
+        DB::beginTransaction();
+
+        try {
+            // 3. Simpan ke Model Registration (Detail Pendaftaran)
+            $registration = Registration::create([
+                'number' => $request->number,
+                'name' => $request->name,
+                'gender' => $isMale,
+                'email' => $request->email,
+                'contact' => $request->contact,
+                'group' => $isCatechumen,
+                'status' => 'wait',
+            ]);
+
+            // 4. Simpan ke Model Member (Akun untuk Login)
+            Member::create([
+                'number' => $request->number,
+                'name' => $request->name,
+                'password' => $password,
+                'email' => $request->email,
+                'contact' => $request->contact,
+                'group' => $isCatechumen,
+                'status' => 'confirm',
+            ]);
+
+            // 5. Simpan Data Kondisional
+            if ($request->kelompok === 'Katekumen') {
+                // 5a. Data Katekumen
+                DataKatekumen::create([
+                    'number' => $request->number,
+                    'address' => $request->address,
+                    'education' => $request->education,
+                    'namePenjamin' => $request->namePenjamin,
+                ]);
+
+                // 5b. Data Riwayat (LENGKAP)
+                DataRiwayat::create([
+                    'number' => $request->number,
+                    'religion' => $request->religion,
+                    'location' => $request->location,
+                    'schedule' => $request->schedule ?? null,
+                    'dateStart' => $request->dateStart,
+                    'dateEnd' => $request->dateEnd ?? null,
+                    'participateBefore' => $request->participateBefore ?? false,
+                    'nameGuru' => $request->nameGuru ?? null,
+                    'nameGereja' => $request->nameGereja ?? null,
+                    'addressGereja' => $request->addressGereja ?? null,
+                    'namePriest' => $request->namePriest ?? null,
+                    'dateBaptis' => $request->dateBaptis ?? null,
+                    'numberBaptis' => $request->numberBaptis ?? null,
+                ]);
+                
+                // 5c. Data Menikah (LENGKAP)
+                DataMenikah::create([
+                    'number' => $request->number,
+                    'statusMarried' => $request->statusMarried,
+                    'namePasangan' => $request->namePasangan ?? null, 
+                    'religionPasangan' => $request->religionPasangan ?? null,
+                    'placeMarried1' => $request->placeMarried1 ?? null,
+                    'cityMarried1' => $request->cityMarried1 ?? null,
+                    'dateMarried1' => $request->dateMarried1 ?? null,
+                    'namePeneguh1' => $request->namePeneguh1 ?? null,
+                    'numberMarried1' => $request->numberMarried1 ?? null,
+                    'placeMarried2' => $request->placeMarried2 ?? null,
+                    'cityMarried2' => $request->cityMarried2 ?? null,
+                    'dateMarried2' => $request->dateMarried2 ?? null,
+                    'namePeneguh2' => $request->namePeneguh2 ?? null,
+                    'numberMarried2' => $request->numberMarried2 ?? null,
+                    'cityMarried3' => $request->cityMarried3 ?? null,
+                    'dateMarried3' => $request->dateMarried3 ?? null,
+                    'numberMarried3' => $request->numberMarried3 ?? null,
+                    'religionMarried' => $request->religionMarried ?? null,
+                    'placeMarried4' => $request->placeMarried4 ?? null,
+                    'cityMarried4' => $request->cityMarried4 ?? null,
+                    'namePeneguh4' => $request->namePeneguh4 ?? null,
+                    'dateMarried4' => $request->dateMarried4 ?? null,
+                    'numberMarried4' => $request->numberMarried4 ?? null,
+                    'nameMantan' => $request->nameMantan ?? null,
+                    'cityMantan' => $request->cityMantan ?? null,
+                    'statusMantan' => $request->statusMantan ?? null,
+                    'yearMantan' => $request->yearMantan ?? null,
+                ]);
+
+            } elseif ($request->kelompok === 'Sakramen Baptis Bayi') {
+                // 5a. Data Baptis Bayi
+                DataBaptis::create([
+                    'number' => $request->number,
+                    'name' => $request->name, // Asumsi ini adalah nama bayi
+                    'status' => $request->status, // Status di Model DataBaptis
+                    'namePastoor' => $request->namePastoor,
+                ]);
+            }
+            
+            // 6. Simpan Data Keluarga (Berulang untuk kedua kelompok)
+            foreach ($request->family_members as $memberData) {
+                DataKeluarga::create([
+                    'number' => $request->number,
+                    'name' => $memberData['name'],
+                    'religion' => $memberData['religion'],
+                    'relation' => $memberData['relation'],
+                    'address' => $memberData['address'],
+                    'contact' => $memberData['contact'],
+                ]);
+            }
+
+            DB::commit(); // Commit (Simpan Permanen)
+
+            // 7. Respon ke Vue/Inertia
+            return Redirect::route('admin.registration.index')->with('success', 'Pendaftaran baru berhasil diproses dan disimpan.');
+
+        } catch (\Exception $e) {
+            DB::rollBack(); // Rollback (Batalkan semua operasi DB jika ada error)
+
+            \Log::error("Registration failed: " . $e->getMessage());
+
+            // Berikan feedback error kepada pengguna
+            return redirect()->back()->with('error', 'Gagal memproses pendaftaran karena masalah sistem. Silakan coba lagi.')->withInput();
+        }
     }
 
     /**
@@ -94,99 +263,231 @@ class RegistrationController extends Controller
      */
     public function edit($id)
     {
-        $register = Registration::findOrFail($id);
+        // 1. Ambil data Registrasi utama
+        $registration = Registration::findOrFail($id);
+        $number = $registration->number; // Gunakan 'number' sebagai kunci relasi
 
-        // Format data agar sesuai dengan v-model di Vue Edit
-        $formattedData = [
-            'id' => $register->id,
-            'name' => $register->name,
-            'email' => $register->email,
-            'contact' => $register->contact,
-            'gender' => $register->gender ? 'Laki-laki' : 'Perempuan',
-            'kelompok' => $register->group ? 'Katekumen' : 'Sakramen Baptis Bayi',
+        // 2. Tentukan kelompok dan ambil data terkait
+        $isCatechumen = $registration->group; 
+        $data = [
+            'registration' => $registration,
+            'family_members' => DataKeluarga::where('number', $number)->get(),
         ];
 
+        if ($isCatechumen) {
+            $data['data_katekumen'] = DataKatekumen::where('number', $number)->first();
+            $data['data_riwayat'] = DataRiwayat::where('number', $number)->first();
+            $data['data_menikah'] = DataMenikah::where('number', $number)->first();
+            $data['data_baptis'] = null; // Pastikan data yang tidak relevan null
+        } else {
+            $data['data_baptis'] = DataBaptis::where('number', $number)->first();
+            $data['data_katekumen'] = null;
+            $data['data_riwayat'] = null;
+            $data['data_menikah'] = null;
+        }
+
+        // 3. Kirim semua data yang telah di-load ke view Edit.vue
         return inertia('Admin/Registration/Edit', [
-            'register' => $formattedData,
+            'registration' => $data
         ]);
     }
-
-    /**
-     * Update data peserta.
+   /**
+     * Memperbarui (Update) data registrasi yang ada di database.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param int $id ID dari Registrasi
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(Request $request, $id)
     {
-        $register = Registration::findOrFail($id);
+        // Temukan data registrasi yang akan diubah
+        $registration = Registration::findOrFail($id);
 
-        // 1. Validasi (Unique ignore current ID)
-        $request->validate([
+        $oldNumber = $registration->number;
+        $isCatechumen = $registration->group; // Kelompok tidak bisa diubah
+
+        // 1. Validasi Input Dasar
+        $rules = [
+            // number tidak divalidasi unique karena tidak berubah
             'name' => 'required|string|max:255',
             'gender' => 'required|in:Laki-laki,Perempuan',
-            'email' => 'required|email|unique:registrations,email,' . $id,
-            'contact' => 'required|unique:registrations,contact,' . $id,
+            // Pastikan email dan contact unique, kecuali untuk record yang sedang di-edit
+            'email' => 'required|email|unique:registrations,email,' . $id . '|unique:members,email,' . $oldNumber . ',number', // Gunakan 'number' sebagai unique key di tabel Member
+            'contact' => 'required|string|max:255|unique:registrations,contact,' . $id,
             'kelompok' => 'required|in:Katekumen,Sakramen Baptis Bayi',
-        ]);
+            
+            // Validasi Data Keluarga (Array)
+            // 'family_members' => 'required|array|min:1',
+            // 'family_members.*.name' => 'required|string|max:255',
+            // // ... (tambahkan validasi family_members lainnya jika diperlukan)
+        ];
 
-        // 2. Mapping Data
-        $isMale = $request->gender === 'Laki-laki' ? true : false;
-        $isCatechumen = $request->kelompok === 'Katekumen' ? true : false;
+        // 1b. Validasi Kondisional (Menggunakan aturan yang sama dengan store)
+        if ($isCatechumen) {
+            // DataKatekumen
+            // $rules['address'] = 'required|string';
+            // $rules['education'] = 'required|string|max:100';
+            // $rules['namePenjamin'] = 'required|string|max:255';
+            
+            // DataRiwayat
+            // $rules['religion'] = 'required|string|max:50'; 
+            // // ... (tambahkan validasi DataRiwayat dan DataMenikah lainnya)
+        } else {
+            // DataBaptis
+            // $rules['namePastoor'] = 'required|string|max:255';
+            // $rules['status'] = 'required|string|max:50';
+        }
 
-        // 3. Update Database
-        $register->update([
-            'name' => $request->name,
-            'gender' => $isMale,
-            'email' => $request->email,
-            'contact' => $request->contact,
-            'group' => $isCatechumen,
-        ]);
+        $request->validate($rules);
+        
+        // 2. Mapping Data Dasar
+        $newIsMale = $request->gender === 'Laki-laki';
 
-        return Redirect::route('admin.registration.index')->with('success', 'Data peserta berhasil diperbarui.');
+        // Mulai Transaksi Database
+        DB::beginTransaction();
+
+        try {
+            // 3. Update Model Registration
+            $registration->update([
+                'name' => $request->name,
+                'gender' => $newIsMale,
+                'email' => $request->email,
+                'contact' => $request->contact,
+                // 'group' tidak diupdate karena disabled di form
+            ]);
+
+            // 4. Update Model Member (Akun untuk Login)
+            Member::where('number', $oldNumber)->update([
+                'name' => $request->name,
+                'email' => $request->email,
+                'contact' => $request->contact,
+                // Password tidak diubah, kecuali ada field khusus
+            ]);
+
+            // 5. Update Data Kondisional (UPDATE atau INSERT jika tidak ada - tapi diasumsikan data terkait sudah ada dari awal)
+            if ($isCatechumen) {
+                // 5a. Data Katekumen
+                DataKatekumen::updateOrCreate(['number' => $oldNumber], [
+                    'address' => $request->address,
+                    'education' => $request->education,
+                    'namePenjamin' => $request->namePenjamin,
+                ]);
+
+                // 5b. Data Riwayat
+                DataRiwayat::updateOrCreate(['number' => $oldNumber], [
+                    'religion' => $request->religion,
+                    'location' => $request->location,
+                    'schedule' => $request->schedule,
+                    'dateStart' => $request->dateStart,
+                    'dateEnd' => $request->dateEnd,
+                    'participateBefore' => $request->participateBefore,
+                    'nameGuru' => $request->nameGuru,
+                    'nameGereja' => $request->nameGereja,
+                    'addressGereja' => $request->addressGereja,
+                    'namePriest' => $request->namePriest,
+                    'dateBaptis' => $request->dateBaptis,
+                    'numberBaptis' => $request->numberBaptis,
+                ]);
+                
+                // 5c. Data Menikah
+                DataMenikah::updateOrCreate(['number' => $oldNumber], [
+                    'statusMarried' => $request->statusMarried,
+                    'namePasangan' => $request->namePasangan, 
+                    'religionPasangan' => $request->religionPasangan,
+                    // ... (lanjutkan update semua field DataMenikah)
+                    'placeMarried1' => $request->placeMarried1,
+                    'cityMarried1' => $request->cityMarried1,
+                    'dateMarried1' => $request->dateMarried1,
+                    'namePeneguh1' => $request->namePeneguh1,
+                    'numberMarried1' => $request->numberMarried1,
+                    'placeMarried2' => $request->placeMarried2,
+                    'cityMarried2' => $request->cityMarried2,
+                    'dateMarried2' => $request->dateMarried2,
+                    'namePeneguh2' => $request->namePeneguh2,
+                    'numberMarried2' => $request->numberMarried2,
+                    'cityMarried3' => $request->cityMarried3,
+                    'dateMarried3' => $request->dateMarried3,
+                    'numberMarried3' => $request->numberMarried3,
+                    'religionMarried' => $request->religionMarried,
+                    'placeMarried4' => $request->placeMarried4,
+                    'cityMarried4' => $request->cityMarried4,
+                    'namePeneguh4' => $request->namePeneguh4,
+                    'dateMarried4' => $request->dateMarried4,
+                    'numberMarried4' => $request->numberMarried4,
+                    'nameMantan' => $request->nameMantan,
+                    'cityMantan' => $request->cityMantan,
+                    'statusMantan' => $request->statusMantan,
+                    'yearMantan' => $request->yearMantan,
+                ]);
+
+            } else {
+                // 5a. Data Baptis Bayi
+                DataBaptis::updateOrCreate(['number' => $oldNumber], [
+                    'name' => $request->name, // Nama Bayi
+                    'status' => $request->status,
+                    'namePastoor' => $request->namePastoor,
+                ]);
+            }
+            
+            // 6. Update Data Keluarga (Hapus yang lama, simpan yang baru/diperbarui)
+            // Hapus semua anggota keluarga yang terkait dengan registrasi ini
+            DataKeluarga::where('number', $oldNumber)->delete();
+
+            // Simpan semua anggota keluarga yang baru dari request
+            foreach ($request->family_members as $memberData) {
+                // Karena kita menghapus semua lalu membuat baru, kita hanya perlu create
+                DataKeluarga::create([
+                    'number' => $oldNumber,
+                    'name' => $memberData['name'],
+                    'religion' => $memberData['religion'],
+                    'relation' => $memberData['relation'],
+                    'address' => $memberData['address'],
+                    'contact' => $memberData['contact'],
+                ]);
+            }
+
+            DB::commit(); // Commit (Simpan Permanen)
+
+            // 7. Respon ke Vue/Inertia
+            return Redirect::route('admin.registration.index')->with('success', 'Data registrasi peserta berhasil diperbarui.');
+
+        } catch (\Exception $e) {
+            DB::rollBack(); // Rollback (Batalkan semua operasi DB jika ada error)
+
+            \Log::error("Registration update failed: " . $e->getMessage());
+
+            // Berikan feedback error kepada pengguna
+            return redirect()->back()->with('error', 'Gagal memperbarui pendaftaran karena masalah sistem. Silakan coba lagi.')->withInput();
+        }
     }
-
     /**
      * Hapus data peserta.
      */
-    public function destroy($id)
-    {
-        $register = Registration::findOrFail($id);
-        $register->delete();
+    // Pastikan Anda telah mengimpor Model yang diperlukan di bagian atas file:
+// use App\Models\Registration;
+// use App\Models\Member;
+// use Illuminate\Support\Facades\Redirect;
 
-        return Redirect::route('admin.registration.index')->with('success', 'Data peserta berhasil dihapus.');
+public function destroy($id)
+{
+    // 1. Cari data Registration berdasarkan ID
+    $register = Registration::findOrFail($id);
+    
+    // Simpan email sebelum data dihapus
+    $email = $register->email; 
+
+    // 2. Hapus data Member terkait
+    // Cari member yang memiliki email yang sama dengan registrasi yang akan dihapus
+    $member = Member::where('email', $email)->first();
+
+    if ($member) {
+        $member->delete();
     }
+    
+    // 3. Hapus data Registration
+    $register->delete();
 
-    /**
-     * Menyetujui Pendaftaran (Approve)
-     * Mengubah status menjadi 'accept'
-     */
-    public function approve($id)
-    {
-        $register = Registration::findOrFail($id);
-        
-        $register->update([
-            'status' => 'accept'
-        ]);
-
-        // Opsional: Kirim Email Notifikasi di sini (Anda bisa uncomment jika mailer sudah siap)
-        // Mail::to($register->email)->send(new SendEmailApprove($register));
-
-        return Redirect::back()->with('success', 'Pendaftaran peserta telah disetujui.');
-    }
-
-    /**
-     * Menolak Pendaftaran (Reject)
-     * Mengubah status menjadi 'reject'
-     */
-    public function reject($id)
-    {
-        $register = Registration::findOrFail($id);
-        
-        $register->update([
-            'status' => 'reject'
-        ]);
-
-        // Opsional: Kirim Email Notifikasi Reject
-        // Mail::to($register->email)->send(new SendEmailReject($register));
-
-        return Redirect::back()->with('success', 'Pendaftaran peserta ditolak.');
-    }
+    // 4. Redirect dengan pesan sukses
+    return Redirect::route('admin.registration.index')->with('success', 'Data peserta dan akun member terkait berhasil dihapus.');
+}
 }

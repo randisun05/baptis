@@ -8,10 +8,16 @@
                     <div>
                         <h4 class="fw-bold text-primary mb-1">Halo, {{ user.name }}!</h4>
                         <p class="text-muted mb-0">Selamat datang di panel kegiatan.</p>
+                        <p class="mb-0 small">
+                            Grup Pendaftaran: 
+                            <span class="fw-bold text-dark">
+                                {{ user.group == 1 ? 'Katekumen' : (user.group == 0 ? 'Sakramen Baptis Bayi' : 'Lainnya') }}
+                            </span>
+                        </p>
                     </div>
                     <div class="status-badge">
-                        <span v-if="user.status === 'confirm'" class="badge bg-warning text-dark">
-                            <i class="fa fa-exclamation-circle me-1"></i> Menunggu Konfirmasi
+                        <span v-if="user.status !== 'confirmed'" class="badge bg-warning text-dark">
+                            <i class="fa fa-exclamation-circle me-1"></i> Menunggu Konfirmasi Data
                         </span>
                         <span v-else class="badge bg-success">
                             <i class="fa fa-check-circle me-1"></i> Akun Terverifikasi
@@ -21,8 +27,8 @@
             </div>
         </div>
 
-        <div v-if="user.status === 'confirm'" class="row justify-content-center fade-in">
-            <div class="col-md-8">
+        <div v-if="user.status !== 'confirmed'" class="row justify-content-center fade-in">
+            <div class="col-md-10">
                 <div class="card border-0 shadow card-verification">
                     <div class="card-header bg-danger text-white fw-bold">
                         <i class="fa fa-user-check me-2"></i> Konfirmasi Data Diri
@@ -30,13 +36,14 @@
                     <div class="card-body p-4">
                         <div class="alert alert-info mb-4">
                             <i class="fa fa-info-circle me-2"></i>
-                            Mohon periksa data di bawah ini. Jika sudah benar, silakan klik tombol konfirmasi untuk melihat jadwal kegiatan.
+                            Mohon periksa data di bawah ini. Pastikan semua data lengkap sesuai dengan grup pendaftaran Anda.
                         </div>
 
-                        <table class="table table-borderless table-hover">
+                        <h6 class="fw-bold text-primary mb-3"><i class="fa fa-user me-2"></i> Data Akun Utama</h6>
+                        <table class="table table-borderless table-sm mb-4">
                             <tbody>
                                 <tr>
-                                    <td class="text-muted fw-bold" width="35%">Nama Lengkap</td>
+                                    <td class="text-muted fw-bold" width="30%">Nama Lengkap</td>
                                     <td>: {{ user.name }}</td>
                                 </tr>
                                 <tr>
@@ -44,19 +51,65 @@
                                     <td>: {{ user.email }}</td>
                                 </tr>
                                 <tr>
-                                    <td class="text-muted fw-bold">Instansi</td>
-                                    <td>: {{ user.agency || '-' }}</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-muted fw-bold">Jabatan</td>
-                                    <td>: {{ data?.jabatan || '-' }}</td>
-                                </tr>
-                                <tr>
                                     <td class="text-muted fw-bold">No. Telepon</td>
-                                    <td>: {{ user.phone || '-' }}</td>
+                                    <td>: {{ user.contact || '-' }}</td>
                                 </tr>
                             </tbody>
                         </table>
+                        
+                        <div v-if="user.group == 1">
+                            <h6 class="fw-bold text-primary mt-4 mb-3"><i class="fa fa-book me-2"></i> Data Katekumen, Riwayat & Menikah</h6>
+                            
+                            <h6 class="text-secondary small fw-bold mt-3">Detail Katekumen</h6>
+                            <table class="table table-borderless table-sm mb-3">
+                                <tbody>
+                                    <tr><td class="text-muted fw-bold" width="30%">Alamat</td><td>: {{ user.data_katekumen?.address || 'Belum diisi' }}</td></tr>
+                                    <tr><td class="text-muted fw-bold">Pendidikan</td><td>: {{ user.data_katekumen?.education || '-' }}</td></tr>
+                                    <tr><td class="text-muted fw-bold">Nama Penjamin</td><td>: {{ user.data_katekumen?.namePenjamin || '-' }}</td></tr>
+                                </tbody>
+                            </table>
+
+                            <h6 class="text-secondary small fw-bold mt-3">Detail Riwayat</h6>
+                            <table class="table table-borderless table-sm mb-3">
+                                <tbody>
+                                    <tr><td class="text-muted fw-bold" width="30%">Nama Guru</td><td>: {{ user.data_riwayat?.nameGuru || 'Belum diisi' }}</td></tr>
+                                    <tr><td class="text-muted fw-bold">Tanggal Mulai</td><td>: {{ user.data_riwayat?.dateStart ? formatDate(user.data_riwayat.dateStart) : '-' }}</td></tr>
+                                    <tr><td class="text-muted fw-bold">Tanggal Selesai</td><td>: {{ user.data_riwayat?.dateEnd ? formatDate(user.data_riwayat.dateEnd) : '-' }}</td></tr>
+                               
+                                </tbody>
+                            </table>
+
+                            <h6 class="text-secondary small fw-bold mt-3">Detail Menikah</h6>
+                            <table class="table table-borderless table-sm mb-3">
+                                <tbody>
+                                    <tr><td class="text-muted fw-bold" width="30%">Status Menikah</td><td>: {{ user.data_menikah?.statusMarried || '-' }}</td></tr>
+                                    <tr><td class="text-muted fw-bold">Nama Pasangan</td><td>: {{ user.data_menikah?.namePasangan || '-' }}</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div v-else-if="user.group == 0">
+                            <h6 class="fw-bold text-primary mt-4 mb-3"><i class="fa fa-hands-holding-child me-2"></i> Data Sakramen Baptis Bayi</h6>
+                            
+                            <h6 class="text-secondary small fw-bold mt-3">Detail Baptis</h6>
+                            <table class="table table-borderless table-sm mb-3">
+                                <tbody>
+                                    <tr><td class="text-muted fw-bold" width="30%">Nama Calon Baptis</td><td>: {{ user.data_baptis?.name || 'Belum diisi' }}</td></tr>
+                                    <tr><td class="text-muted fw-bold">Nama Pastoor</td><td>: {{ user.data_baptis?.namePastoor || '-' }}</td></tr>
+                                    <tr><td class="text-muted fw-bold">Status</td><td>: {{ user.data_baptis?.status || '-' }}</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <h6 class="fw-bold text-primary mt-4 mb-3"><i class="fa fa-users me-2"></i> Data Anggota Keluarga</h6>
+                        <div v-if="user.data_keluarga && user.data_keluarga.length > 0">
+                            <div v-for="(family, fIndex) in user.data_keluarga" :key="fIndex" class="card card-body bg-light mb-2 p-3">
+                                <span class="fw-bold text-dark">{{ family.name }} ({{ family.relation }})</span>
+                                <small class="text-muted">{{ family.address }} | Kontak: {{ family.contact }}</small>
+                            </div>
+                        </div>
+                        <div v-else class="alert alert-warning small">Data keluarga belum diisi.</div>
+
 
                         <div class="d-grid gap-2 mt-4">
                             <button @click="verifyData" class="btn btn-primary btn-lg shadow fw-bold" :disabled="processing">
@@ -65,6 +118,15 @@
                                 </span>
                                 <span v-else>
                                     <i class="fa fa-check-double me-2"></i> Data Sudah Benar, Lanjutkan
+                                </span>
+                            </button>
+
+                             <button class="btn btn-danger btn-lg shadow fw-bold" :disabled="processing" disabled>
+                                <span v-if="processing">
+                                    <i class="fa fa-spinner fa-spin me-2"></i> Memproses...
+                                </span>
+                                <span v-else>
+                                    <i class="fa fa-check-double me-2"></i> Jika Ada Perbaikan Data Hubungi Gereja
                                 </span>
                             </button>
                         </div>
@@ -76,7 +138,6 @@
         <div v-else class="row fade-in">
             <div class="col-md-12">
                 <h5 class="fw-bold mb-4 ps-2 border-start border-4 border-primary">Jadwal Kegiatan Anda</h5>
-
                 <div v-if="events.length > 0" class="timeline-container">
                     <div v-for="(detail, index) in events" :key="detail.id" class="timeline-item">
                         <div class="timeline-marker"></div>
@@ -111,31 +172,25 @@
 import { ref } from 'vue';
 import { Head, Link } from '@inertiajs/inertia-vue3';
 import { Inertia } from '@inertiajs/inertia';
-import LayoutWebsite from '../../../Layouts/Website.vue';
+import LayoutWebsite from '../../../Layouts/User.vue';
 import Swal from 'sweetalert2';
 
-// Props dari controller
+// PROPS YANG DIREVISI
 const props = defineProps({
-    data: Object, // Data Registrasi (misalnya untuk detail jabatan)
+    registrationData: Object, // Data Registrasi (nama baru dari 'data')
     events: Array,
-    user: Object // Data User/Member utama (sudah berisi status)
+    user: Object // Data User/Member utama dengan relasi (dataKatekumen, dataKeluarga, dll.)
 });
 
 const processing = ref(false);
 
-// Format Tanggal
+// Format Tanggal (Tidak ada perubahan)
 const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     return new Date(dateString).toLocaleDateString('id-ID', options);
 };
 
-// Truncate Text
-const truncate = (text, length) => {
-    if(!text) return '';
-    return text.length > length ? text.substring(0, length) + '...' : text;
-};
-
-// Fungsi Verifikasi Data
+// Fungsi Verifikasi Data (Tidak ada perubahan)
 const verifyData = () => {
     Swal.fire({
         title: 'Konfirmasi Data?',
@@ -148,7 +203,6 @@ const verifyData = () => {
         cancelButtonText: 'Batal'
     }).then((result) => {
         if (result.isConfirmed) {
-            // Perlu diperhatikan: Backend harus mengupdate status di tabel members
             Inertia.post('/user/dashboard/verify', {}, {
                 onStart: () => processing.value = true,
                 onFinish: () => processing.value = false,
@@ -166,7 +220,7 @@ export default { layout: LayoutWebsite }
 </script>
 
 <style scoped>
-/* Custom CSS dari respons sebelumnya */
+/* CSS dipertahankan */
 .fade-in { animation: fadeIn 0.8s ease-in-out; }
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(20px); }

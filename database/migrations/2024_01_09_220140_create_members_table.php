@@ -15,13 +15,14 @@ return new class extends Migration
     {
         Schema::create('members', function (Blueprint $table) {
             $table->id();
-            $table->string('nik')->unique();
+            $table->string('number')->unique();
             $table->string('name');
             $table->string('email')->unique();
             $table->string('password');
             $table->string('code-password')->nullable();
+            $table->string('contact')->unique();
+            $table->boolean('group');
             $table->enum('status', ['confirm', 'pending', 'cancel', 'confirmed', 'end', 'process'])->default('confirm');
-            $table->string('category')->nullable();
             $table->timestamps();
         });
     }

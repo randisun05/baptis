@@ -25,6 +25,11 @@
             </li>
             <li class="nav-item mb-1">
                 <Link href="/admin/registration" class="nav-link d-flex align-items-center gap-3" :class="{ 'active-nav': $page.url.startsWith('/admin/registration') }">
+                    <i class="bi bi-people-fill fs-5"></i> <span>Registrasi</span>
+                </Link>
+            </li>
+            <li class="nav-item mb-1">
+                <Link href="/admin/members" class="nav-link d-flex align-items-center gap-3" :class="{ 'active-nav': $page.url.startsWith('/admin/members') }">
                     <i class="bi bi-people-fill fs-5"></i> <span>Data Peserta</span>
                 </Link>
             </li>
@@ -34,7 +39,7 @@
                 </Link>
             </li>
             <li class="nav-item mb-1">
-                <Link href="/admin/users" class="nav-link d-flex align-items-center gap-3" :class="{ 'active-nav': $page.url.startsWith('/admin/users') }">
+                <Link href="/admin/setting" class="nav-link d-flex align-items-center gap-3" :class="{ 'active-nav': $page.url.startsWith('/admin/setting') }">
                     <i class="bi bi-person-gear fs-5"></i> <span>Akun Pengguna</span>
                 </Link>
             </li>
@@ -66,10 +71,10 @@ import { Link } from '@inertiajs/inertia-vue3';
 .text-navy { color: #003366 !important; }
 .sidebar-container {
     background-color: #003366;
-    position: sticky; /* Agar sidebar diam saat discroll */
+    position: sticky; 
     top: 0;
-    height: 100vh;
-    overflow-y: auto; /* Scroll jika menu terlalu panjang */
+    height: auto;
+    overflow-y: auto; 
 }
 .nav-link {
     color: rgba(255, 255, 255, 0.8);

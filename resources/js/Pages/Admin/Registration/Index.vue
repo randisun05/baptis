@@ -5,7 +5,7 @@
 
     <div class="d-flex justify-content-between align-items-center mb-4">
       <div>
-        <h2 class="fs-3 fw-bold text-navy mb-0">Data Peserta</h2>
+        <h2 class="fs-3 fw-bold text-navy mb-0">Data Pendaftaran</h2>
         <p class="text-muted small mb-0">Kelola pendaftaran peserta baru.</p>
       </div>
       <Link href="/admin/registration/create" class="btn btn-navy shadow-sm">
@@ -34,10 +34,9 @@
             <thead>
               <tr>
                 <th class="px-4 py-3" style="width: 5%;">No</th>
+                 <th class="px-4 py-3" style="width: 20%;">Tahun/Nomor</th>
                 <th class="px-4 py-3" style="width: 20%;">Nama Lengkap</th>
-                
                 <th class="px-4 py-3" style="width: 10%;">Jenis Kelamin</th>
-
                 <th class="px-4 py-3" style="width: 15%;">Email</th>
                 <th class="px-4 py-3" style="width: 10%;">No. Telepon</th>
                 <th class="px-4 py-3" style="width: 15%;">Kelompok Katekese</th>
@@ -49,6 +48,9 @@
               <tr v-for="(register, index) in registers.data" :key="register.id">
                 <td class="px-4 fw-bold text-secondary">
                     {{ (registers.current_page ? (registers.current_page - 1) * registers.per_page + index + 1 : index + 1) }}
+                </td>
+                 <td class="px-4">
+                    <div class="fw-bold text-navy">{{ register.number }}</div>
                 </td>
                 <td class="px-4">
                     <div class="fw-bold text-navy">{{ register.name }}</div>

@@ -25,12 +25,8 @@
                                 <table class="table table-borderless table-sm">
                                     <tbody>
                                         <tr>
-                                            <td class="fw-bold text-muted" style="width: 150px;">Tanggal Mulai</td>
+                                            <td class="fw-bold text-muted" style="width: 150px;">Tanggal</td>
                                             <td>: {{ event.date }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="fw-bold text-muted">Selesai/Tutup</td>
-                                            <td>: {{ event.enddate }}</td>
                                         </tr>
                                         <tr>
                                             <td class="fw-bold text-muted">Tempat</td>
@@ -41,21 +37,6 @@
                             </div>
                             <div class="col-md-6">
                                 <table class="table table-borderless table-sm">
-                                    <tbody>
-                                        <tr>
-                                            <td class="fw-bold text-muted" style="width: 150px;">Kapasitas</td>
-                                            <td>: <span class="badge bg-info">{{ event.participant }} Peserta</span></td>
-                                        </tr>
-                                        <tr>
-                                            <td class="fw-bold text-muted">Link External</td>
-                                            <td>:
-                                                <a v-if="event.link" :href="event.link" target="_blank" class="text-decoration-none">
-                                                    {{ event.link }} <i class="fa fa-external-link-alt small"></i>
-                                                </a>
-                                                <span v-else class="text-muted">-</span>
-                                            </td>
-                                        </tr>
-                                    </tbody>
                                 </table>
                             </div>
                         </div>

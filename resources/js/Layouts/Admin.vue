@@ -18,7 +18,7 @@
             </main>
 
             <footer class="bg-white text-center py-3 border-top text-muted small mt-auto">
-                &copy; 2025 Paroki Santa Melania - Admin System
+                &copy; 2025 Paroki Santa Melania - Sistem Admin
             </footer>
             
         </div>

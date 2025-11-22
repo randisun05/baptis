@@ -15,6 +15,7 @@ class Registration extends Model
      * Disesuaikan dengan kolom yang ada di file migration.
      */
     protected $fillable = [
+        'number',
         'name',
         'gender',
         'email',

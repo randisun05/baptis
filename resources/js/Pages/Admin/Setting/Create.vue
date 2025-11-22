@@ -126,7 +126,7 @@
                                 <div class="row d-flex justify-content-center py-5">
                                     <button type="submit" class="button btnprimary"
                                         style="width: 300px;">Simpan</button>
-                                    <Link href="/user/profile" class="button btnsecondary" style="width: 300px;">Batal
+                                    <Link href="/admin/dashboard" class="button btnsecondary" style="width: 300px;">Batal
                                     </Link>
                                 </div>
                             </div>

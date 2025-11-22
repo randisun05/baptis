@@ -1,93 +1,64 @@
 <template>
-   <!-- Responsive navbar-->
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <div class="container px-5">
-                <a class="navbar-brand" href="#!">Start Bootstrap</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="#!">Home</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#!">About</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#!">Contact</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#!">Services</a></li>
-                    </ul>
-                </div>
+    <nav class="navbar navbar-expand-lg fixed-top" :class="{ 'scrolled': isScrolled }">
+        <div class="container">
+        <a href="/" class="navbar-brand d-flex align-items-center">
+        <i class="fas fa-church me-2 fa-lg text-warning"></i>
+         <div class="d-flex flex-column lh-sm">
+        <span class="fw-bold text-white">Paroki Santa Melania</span>
+        <span class="fs-7 text-white-50" style="font-size: 0.75rem;">Sistem Informasi Katekumen dan Baptis Bayi</span>
+                    </div>
+    </a>
+            
+            <div class="d-flex gap-2">
+                <!-- Asumsi Link dan route/path-nya valid -->
+                <Link href="/user/login" class="btn btn-outline-light btn-sm px-4">Masuk</Link>
             </div>
-        </nav>
-
+        </div>
+    </nav>
 </template>
 
-<script>
-import { ref } from 'vue';
-import { Inertia } from '@inertiajs/inertia';
-//import Link
-import { Link,  } from '@inertiajs/inertia-vue3';
+<script setup>
+import { Link } from '@inertiajs/inertia-vue3';
+import { ref, onMounted, onUnmounted } from 'vue';
 
+// Logika untuk Navbar berubah warna saat discroll
+const isScrolled = ref(false);
 
+const handleScroll = () => {
+    // 50px adalah batas scroll sebelum navbar berubah warna
+    isScrolled.value = window.scrollY > 50;
+};
 
-export default {
-    //register component
-    components: {
-        Link,
-    },
+onMounted(() => {
+    window.addEventListener('scroll', handleScroll);
+});
 
-    data() {
-        return {
-            dropdowns: {
-                home: false,
-                profile: false,
-                program: false,
-                publikasi: false,
-                keanggotaan: false,
-                kontak: false,
-            },
-            dropdownItems: {
-                profile: ["Tentang Aspro", "Ketua Umum", "Struktur Organisasi", "Visi Misi", "Sejarah Terbentuknya Aspro", "Peraturan Organisasi"],
-                program: ["Pelatihan", "Sertifikasi", "Kegiatan Aspro"],
-                publikasi: ["Pengumuman", "Artikel", "Berita", "Media"],
-                keanggotaan: ["Login", "Registrasi"],
-            },
-            isScrolled: false, // New property to track scroll state
-        };
-    },
-    methods: {
-        toggleDropdown(dropdown) {
-            this.dropdowns[dropdown] = !this.dropdowns[dropdown];
-        },
-
-    },
-    mounted() {
-        const handleScroll = () => {
-            this.isScrolled = window.scrollY > 0;
-        };
-        window.addEventListener('scroll', handleScroll);
-        onUnmounted(() => {
-            window.removeEventListener('scroll', handleScroll);
-        });
-    },
-
-
-
-
-}
+onUnmounted(() => {
+    window.removeEventListener('scroll', handleScroll);
+});
 </script>
 
-
-<style>
-/* CSS for red background */
-/* CSS for red background */
-
-
-/* CSS for fixed header */
-.fixedmenu {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 1000;
-    transition: background-color 0.3s ease-in-out; /* Smooth transition for background color */
+<style scoped>
+/* --- Custom Colors & Variables (Diperlukan di sini untuk styling navbar) --- */
+:root {
+    --navy-primary: #003366;
+    --orange-accent: #ff9900;
 }
-
-
-
+.text-warning { color: #ff9900 !important; }
+/* --- Navbar Styles (Penting untuk diletakkan di sini) --- */
+.navbar {
+    transition: all 0.3s ease-in-out;
+    padding: 1rem 0;
+    background: transparent; /* Transparan di awal */
+}
+.navbar.scrolled {
+    background: var(--navy-primary); /* Navy saat discroll */
+    padding: 0.5rem 0;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+/* Memindahkan style yang relevan ke komponen ini */
+.btn-outline-light:hover {
+    background-color: white;
+    color: var(--navy-primary);
+}
 </style>

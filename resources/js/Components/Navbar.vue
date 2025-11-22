@@ -19,17 +19,23 @@
              </Link>
           </li>
 
-          <!-- Notification Icon -->
-          <li class="nav-item position-relative">
-             <a class="nav-link icon-link" href="#" title="Notifikasi">
-                <i class="bi bi-bell-fill fs-5"></i>
-                <!-- Badge Notification -->
-                <span class="position-absolute top-10 start-100 translate-middle badge rounded-pill bg-danger border border-light shadow-sm" style="font-size: 0.6rem; padding: 0.35em 0.5em;">
-                  4
-                  <span class="visually-hidden">unread messages</span>
-                </span>
-             </a>
+            <li class="nav-item dropdown">
+      <a href="#" class="nav-link icon-link p-2" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false" title="Menu Pengguna">
+          <i class="bi bi-person-circle fs-5"></i> 
+      </a>
+      
+      <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end text-small shadow border-0" aria-labelledby="dropdownUser1" style="background-color: #002244;">
+          <li class="dropdown-header">
+              <span class="fw-bold">{{ $page.props.auth?.user?.name || 'Administrator' }}</span>
+              <div class="small text-white opacity-75">{{ $page.props.auth?.user?.email || '' }}</div>
           </li>
+          <li><hr class="dropdown-divider border-white opacity-25"></li>
+          
+          <li><Link class="dropdown-item" href="/user/profile">Profile</Link></li>
+          <li><hr class="dropdown-divider border-white opacity-25"></li>
+          <li><Link class="dropdown-item text-danger" href="/logout" method="post" as="button">Sign out</Link></li>
+      </ul>
+  </li>
 
           <!-- Profile Dropdown Kecil (Opsional jika di sidebar sudah ada) -->
           <!-- <li class="nav-item"> ... </li> -->

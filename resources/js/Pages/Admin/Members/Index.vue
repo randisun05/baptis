@@ -1,277 +1,321 @@
-                <template>
+<template>
+    <Head>
+        <title>Administrator | Data Peserta</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    </Head>
 
-                    <Head>
-                        <title>Administrator</title>
-                    </Head>
-                    <div class="container-fluid padding px-5">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="row">
-                                    <div class="col-md-1 col-12 mb-2">
-                                        <Link href="/admin/members/report" class="btn btn-md btn-primary border-0 shadow w-100"
-                                            type="button">
-                                        <i class="fa fa-file-pdf" aria-hidden="true"></i>
-                                        Report</Link>
-                                    </div>
-                                    <div class="col-md-6 col-12 mb-2">
-                                        <form @submit.prevent="handleSearch">
-                                            <div class="input-group">
-                                                <input type="text" class="form-control border-0 shadow" v-model="search"
-                                                    placeholder="masukkan kata kunci dan enter...">
-                                                <span class="input-group-text border-0 shadow">
-                                                    <i class="fa fa-search"></i>
-                                                </span>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+    <div class="container-fluid px-4 py-4">
 
-                        <div class="row mt-1">
-                            <div class="col-md-12">
-                                <div class="card border-0 shadow">
-                                    <div class="card-body">
-                                        <div class="table-responsive">
-                                            <table class="table table-bordered table-centered table-nowrap mb-0 rounded">
-                                                <thead class="thead-dark">
-                                                    <tr class="border-0 text-center">
-                                                        <th class="border-0 rounded-start" style="width:5%">No.</th>
-                                                        <th class="border-0">No Anggota</th>
-                                                        <th class="border-0">Nama</th>
-                                                        <th class="border-0">Jabatan</th>
-                                                        <th class="border-0">Instansi</th>
-                                                        <th class="border-0 rounded-end" style="width:12%">Aksi</th>
-                                                    </tr>
-                                                </thead>
-                                                <div class="mt-2"></div>
-                                                <tbody>
-                                                    <tr v-for="(data, index) in datas.data" :key="index">
-                                                        <td class="fw-bold text-center">{{ ++index + (datas.current_page - 1) *
-                                                            datas.per_page }}</td>
-                                                        <td>{{ data.main.nomember }}</td>
-                                                        <td>{{ data.main.name }}</td>
-                                                        <td>{{ data.position }} {{ data.level }}</td>
-                                                        <td>{{ data.agency }}</td>
-                                                        <td class="text-center">
-                                                            <Link :href="`/admin/members/${data.id}`" title="view"
-                                                                class="btn btn-sm btn-primary border-0 shadow me-1" type="button"><i
-                                                                class="fa fa-eye fa-lg" aria-hidden="true"></i></Link>
-                                                            <a v-if="$page.props.auth.user.role == 'administrator' || $page.props.auth.user.role == 'keanggotaan'"
-                                                                :href="`/admin/members/${data.id}/edit`" title="edit"
-                                                                class="btn btn-sm btn-warning border-0 shadow me-1"><i
-                                                                    class="fa fa-pencil fa-lg" aria-hidden="true"></i> </a>
-                                                            <a :href="`/admin/members/qrcode/${data.id}`"
-                                                                class="btn btn-sm btn-info border-0 shadow me-1" type="button"><i
-                                                                    class="fa fa-qrcode fa-lg" aria-hidden="true"></i></a>
-                                                            <button @click="downloadCard(data)"
-                                                                class="btn btn-sm btn-success border-0 shadow me-1" type="button">
-                                                                <i class="fa fa-id-card" aria-hidden="true"></i></button>
-                                                            <!-- <a :href="`/admin/member-card/download/${data.main_id}`"
-                                                                class="btn btn-sm btn-info border-0 shadow me-2" type="button"><i
-                                                                    class="fa fa-qrcode fa-lg" aria-hidden="true"></i></a> -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="fs-3 fw-bold text-navy mb-0"><i class="bi bi-people-fill me-2"></i> Data Peserta</h2>
+                <p class="text-muted small mb-0">Kelola akun peserta yang terdaftar di sistem.</p>
+            </div>
+        </div>
 
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                        <Pagination :links="datas.links" align="end" />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+        <div v-if="$page.props.session?.success || $page.props.session?.error || $page.props.session?.status"
+             class="alert alert-dismissible fade show shadow-sm border-0 mb-4"
+             :class="{
+                 'alert-success bg-success-subtle text-success-emphasis': $page.props.session?.success || $page.props.session?.status,
+                 'alert-danger bg-danger-subtle text-danger-emphasis': $page.props.session?.error
+             }"
+             role="alert">
+            
+            <i class="bi me-2" :class="$page.props.session?.error ? 'bi-exclamation-triangle-fill' : 'bi-check-circle-fill'"></i>
+            {{ $page.props.session?.success || $page.props.session?.error || $page.props.session?.status }}
+            
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        
+        <div class="row mb-4 align-items-center">
+            <div class="col-md-auto col-12 mb-2">
+            </div>
+            <div class="col-md-6 col-12 mb-2">
+                <form @submit.prevent="handleSearch">
+                    <div class="input-group shadow-sm">
+                        <input type="text" class="form-control border-0" v-model="search"
+                            placeholder="Cari nama peserta atau email dan tekan Enter...">
+                        <span class="input-group-text bg-white border-0">
+                            <i class="bi bi-search text-muted"></i>
+                        </span>
                     </div>
+                </form>
+            </div>
+        </div>
 
-                    <!-- QR Code Modal -->
-                    <div v-if="showModal" class="modal fade show" style="display: block;" tabindex="-1" role="dialog">
-                        <div class="modal-dialog modal-dialog-centered" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">QR Code</h5>
-                                    <button type="button" class="close" @click="closeModal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body text-center">
-                                    <img :src="qrCode" alt="QR Code" v-if="qrCode" />
-                                </div>
-                                <div class="modal-footer">
-                                    <!-- Tautan Unduhan -->
-                                    <a v-if="qrCode" :href="qrCode" download="qr-code.png" class="btn btn-success">
-                                        Download QR Code
-                                    </a>
-                                    <button type="button" class="btn btn-secondary" @click="closeModal">Close</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <iframe id="downloadFrame" style="visibility: hidden;"></iframe>
+        <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0 table-custom">
+                        <thead>
+                            <tr>
+                                <th class="px-4 py-3" style="width: 5%;">No</th>
+                                <th class="px-4 py-3">Nama Peserta</th>
+                                <th class="px-4 py-3" style="width: 15%;">Email</th>
+                                <th class="px-4 py-3" style="width: 20%;">Kelompok Katekese</th> <th class="px-4 py-3" style="width: 15%;">Status</th>
+                                <th class="px-4 py-3 text-center" style="width: 15%;">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(data, index) in datas.data" :key="data.id">
+                                <td class="px-4 fw-bold text-secondary text-center">
+                                    {{ (datas.current_page - 1) * datas.per_page + index + 1 }}
+                                </td>
+                                <td class="px-4 fw-bold text-navy">{{ data.name }}</td>
+                                <td class="px-4">
+                                    <div class="d-flex align-items-center text-muted">
+                                        <i class="bi bi-envelope me-2 text-secondary"></i> 
+                                        <span class="text-truncate" style="max-width: 200px;" :title="data.email">{{ data.email }}</span>
+                                    </div>
+                                </td>
+                                
+                                <td class="px-4">
+                                    <span v-if="getGroupName(data.group)" 
+                                        :class="getGroupBadgeClass(data.group)">
+                                        <i class="me-1" :class="getGroupIconClass(data.group)"></i> {{ getGroupName(data.group) }}
+                                        </span>
+                                    <span v-else class="text-muted small fst-italic">
+                                        - Tidak ditentukan -
+                                    </span>
+                                </td>
 
+                                <td class="px-4 text-center">
+                                    <span :class="getStatusBadgeClass(data.status)">
+                                        {{ formatStatus(data.status) }}
+                                    </span>
+                                </td>
+                                <td class="px-4 text-center">
+                                    <div class="btn-group" role="group">
+                                        <Link :href="`/admin/members/${data.id}`" class="btn btn-sm btn-light text-info border hover-primary" title="Detail">
+                                            <i class="bi bi-eye-fill"></i>
+                                        </Link>
+                                        <button @click.prevent="destroy(data.id)" class="btn btn-sm btn-light text-danger border hover-danger ms-1" title="Hapus">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
 
+                            <tr v-if="!datas.data || datas.data.length === 0">
+                                <td colspan="6" class="text-center py-5">
+                                    <div class="d-flex flex-column align-items-center text-muted">
+                                        <i class="bi bi-inbox display-4 mb-3 opacity-50"></i>
+                                        <p class="mb-0">Data peserta tidak ditemukan.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="card-footer bg-white py-3 border-top border-light d-flex justify-content-between align-items-center">
+                <div class="small text-muted px-2">
+                    Menampilkan {{ datas.data.length }} data 
+                    <span v-if="datas.total">dari total {{ datas.total }}</span>
+                </div>
+                <Pagination :links="datas.links" align="end" />
+            </div>
+        </div>
+    </div>
+</template>
 
-                </template>
+<script>
+import LayoutAdmin from '../../../Layouts/Admin.vue';
+import Pagination from '../../../Components/Pagination.vue';
+import { Head, Link } from '@inertiajs/inertia-vue3';
+import { ref } from 'vue';
+import { Inertia } from '@inertiajs/inertia';
+import Swal from 'sweetalert2';
 
-                <script>
-                //import layout
-                import LayoutAdmin from '../../../Layouts/Admin.vue';
+export default {
+    layout: LayoutAdmin,
+    components: {
+        Head,
+        Link,
+        Pagination,
+    },
+    props: {
+        errors: Object,
+        datas: Object, // Berisi data paginasi
+    },
 
-                import GenerateQRCode from '../../../Components/GenerateQRCode.vue';
+    setup(props) {
+        const search = ref('' || (new URL(document.location)).searchParams.get('q'));
 
-                //import component membercard
-                import MemberCard from '../../../Components/User/MemberCard.vue';
+        const handleSearch = () => {
+            Inertia.get('/admin/members', {
+                q: search.value,
+            }, {
+                preserveState: true,
+                replace: true
+            });
+        }
 
-                //import component pagination
-                import Pagination from '../../../Components/Pagination.vue';
-
-                //import Heade and Link from Inertia
-                import {
-                    Head,
-                    Link,
-                } from '@inertiajs/inertia-vue3';
-
-                //import ref from vue
-                import {
-                    ref
-                } from 'vue';
-
-                //import inertia adapter
-                import { Inertia } from '@inertiajs/inertia';
-
-                //import sweet alert2
-                import Swal from 'sweetalert2';
-
-                import axios from "axios";
-
-
-                export default {
-                    //layout
-                    layout: LayoutAdmin,
-
-                    //register component
-                    components: {
-                        Head,
-                        Link,
-                        Pagination,
-                        GenerateQRCode,
-                        MemberCard
-                    },
-
-                    //props
-                    props: {
-                        errors: Object,
-                        datas: Object,
-
-                    },
-
-                    data() {
-                        return {
-                            showModal: false,
-                            qrCode: null,
-                            text: "",
-                        };
-                    },
-                    methods: {
-                        async showQrModal(nomember) {
-                            try {
-                                const response = await axios.post(`${window.location.origin}/admin/generate-qr`, {
-                                    text: nomember,
-                                }, { responseType: 'blob' });
-
-                                const url = URL.createObjectURL(response.data);
-                                this.qrCode = url;
-                                this.showModal = true;
-                            } catch (error) {
-                                console.error("Error generating QR code:", error);
-                            }
-                        },
-                        closeModal() {
-                            this.showModal = false;
-                            this.qrCode = null;
-                        }
-                    },
-
-
-                    //inisialisasi composition API
-                    setup(props) {
-
-                        // Method to get the URL of the document
-                        const getImageUrl = (imageName) => {
-                            return `/storage/${imageName}`;
-                        }
-
-                        //define state search
-                        const search = ref('' || (new URL(document.location)).searchParams.get('q'));
-
-                        //define method search
-                        const handleSearch = () => {
-                            Inertia.get('/admin/members', {
-
-                                //send params "q" with value from state "search"
-                                q: search.value,
+        const destroy = (id) => {
+            Swal.fire({
+                title: 'Hapus Data?',
+                text: "Anda yakin ingin menghapus data peserta ini secara permanen?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#003366', 
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Inertia.delete(`/admin/members/${id}`, {
+                        onSuccess: () => {
+                            Swal.fire({
+                                title: 'Terhapus!', 
+                                text: 'Data peserta berhasil dihapus.', 
+                                icon: 'success',
+                                confirmButtonColor: '#003366'
                             });
+                        },
+                        onError: (errors) => {
+                            Swal.fire('Gagal!', errors.message || 'Gagal menghapus data.', 'error');
                         }
-
-                        const showModalEmail = ref(false);
-
-                        const downloadCard = async (data) => {
-                        if (data.main.image === null) {
-                            Swal.fire('Error', 'Foto anggota belum diupload', 'error');
-                        } else {
-                            try {
-                                // Select the iframe
-                                const iframe = document.getElementById('downloadFrame');
-
-                                // URL untuk mendownload kartu anggota dan backcard
-                                const downloadUrl = `/admin/member-card/download/${data.main_id}`;   // Untuk render di iframe
-
-                                iframe.src = downloadUrl;
-
-                                // Add an event listener to detect when the iframe is loaded (rendering is done)
-                                iframe.onload = () => {
-                                    console.log('Rendering completed in iframe, starting download of backcard...');
-                                    // Optionally trigger download logic here if needed for the card rendering
-                                }
-                            } catch (error) {
-                                console.error("Error downloading card:", error);
-                                Swal.fire('Error', 'Error', 'error');
-                            }
-                        }
-
-                        };
-
-                        //return
-                        return {
-                            search,
-                            handleSearch,
-                            showModalEmail,
-                            downloadCard,
-                            getImageUrl
-
-                        }
-                    }
+                    });
                 }
+            });
+        }
+        
+        // === FUNGSI KELOMPOK KATEKESE & IKON BARU ===
+        const getGroupName = (groupValue) => {
+             // Asumsi: nilai 'groupValue' bisa berupa boolean (dari Casting Laravel) atau string 'Katekumen'/'Sakramen Baptis Bayi'
+             if (groupValue === true || groupValue === 'Katekumen' || groupValue === 1) {
+                 return 'Katekumen';
+             } else if (groupValue === false || groupValue === 'Sakramen Baptis Bayi' || groupValue === 0) {
+                 return 'Sakramen Baptis Bayi';
+             }
+             return null; // Mengembalikan null jika tidak cocok
+        };
 
-                </script>
+        const getGroupBadgeClass = (groupValue) => {
+             if (groupValue === true || groupValue === 'Katekumen' || groupValue === 1) {
+                 // Katekumen: Warna Cyan
+                 return 'badge bg-info-subtle text-info-emphasis border border-info-subtle fw-normal px-3 py-2';
+             } else if (groupValue === false || groupValue === 'Sakramen Baptis Bayi' || groupValue === 0) {
+                 // Sakramen Baptis Bayi: Warna Hijau
+                return 'badge bg-success-subtle text-success-emphasis border border-success-subtle fw-normal px-3 py-2';
+             }
+             return 'badge bg-light text-muted border border-secondary-subtle fw-normal px-3 py-2';
+        };
 
-                <style scoped>
-                .qr-generator {
-                    text-align: center;
-                    margin-top: 50px;
-                }
+        // FUNGSI BARU UNTUK MENENTUKAN IKON
+        const getGroupIconClass = (groupValue) => {
+             if (groupValue === true || groupValue === 'Katekumen' || groupValue === 1) {
+                 return 'fas fa-user-friends'; // Ikon Katekumen
+             } else if (groupValue === false || groupValue === 'Sakramen Baptis Bayi' || groupValue === 0) {
+                 return 'fas fa-baby'; // Ikon Sakramen Baptis Bayi
+             }
+             return ''; 
+        };
+        // === END FUNGSI IKON BARU ===
 
-                /* input {
-                margin-bottom: 20px;
-                padding: 10px;
-                width: 300px;
-                } */
 
-                #app {
-                    font-family: Avenir, Helvetica, Arial, sans-serif;
-                    -webkit-font-smoothing: antialiased;
-                    -moz-osx-font-smoothing: grayscale;
-                    text-align: center;
-                    color: #2c3e50;
-                    margin-top: 60px;
-                }
-                </style>
+        // Fungsi helper untuk badge status
+        const getStatusBadgeClass = (status) => {
+            switch (status) {
+                case 'verified':
+                    return 'badge bg-success-subtle text-success-emphasis border border-success-subtle fw-normal px-3 py-2';
+                case 'confirm':
+                    return 'badge bg-warning-subtle text-warning-emphasis border border-warning-subtle fw-normal px-3 py-2';
+                case 'pending':
+                    return 'badge bg-secondary-subtle text-secondary-emphasis border border-secondary-subtle fw-normal px-3 py-2';
+                default:
+                    return 'badge bg-light text-muted border border-secondary-subtle fw-normal px-3 py-2';
+            }
+        };
+
+        // Fungsi helper untuk format status
+        const formatStatus = (status) => {
+            switch (status) {
+                case 'verified': // Menggunakan 'verified' dari kode sebelumnya
+                case 'confirmed': // Tambahkan 'confirmed' jika itu yang dimaksud di database
+                    return 'Terverifikasi';
+                case 'confirm':
+                    return 'Menunggu Verifikasi';
+                case 'pending':
+                    return 'Tertunda';
+                default:
+                    return status;
+            }
+        };
+
+        return {
+            search,
+            handleSearch,
+            destroy,
+            getStatusBadgeClass,
+            formatStatus,
+            // Export fungsi group dan ikon baru
+            getGroupName,
+            getGroupBadgeClass,
+            getGroupIconClass,
+        }
+    }
+}
+</script>
+
+<style scoped>
+/* --- Theme Variables --- */
+:root {
+    --navy-primary: #003366;
+    --navy-hover: #002244;
+}
+
+.text-navy { color: #003366 !important; }
+
+/* --- Button Styles --- */
+.btn-navy {
+    background-color: #003366;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.btn-navy:hover {
+    background-color: #002244;
+    color: #ffffff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(0, 51, 102, 0.2);
+}
+
+/* --- Table Styles --- */
+.table-custom thead { background-color: #003366; color: white; }
+.table-custom thead th { 
+    background-color: #003366; 
+    color: white; 
+    font-weight: 500; 
+    border-bottom: none; 
+    letter-spacing: 0.5px; 
+    font-size: 0.9rem; 
+}
+.table-custom tbody tr { transition: background-color 0.2s; }
+
+/* Efek hover pada tombol aksi */
+.hover-primary:hover { background-color: #e6f0ff; border-color: #b3d7ff; color: #0056b3 !important; }
+.hover-danger:hover { background-color: #ffeef0; border-color: #ffccd3; color: #dc3545 !important; }
+.text-info { color: #0dcaf0 !important; }
+
+/* --- Card & Utils --- */
+.card { border-radius: 12px; }
+
+/* Adopsi Warna Subtlety dan Tambahan Warna Baru */
+.bg-success-subtle { background-color: #d1e7dd; }
+.text-success-emphasis { color: #0f5132; }
+.bg-danger-subtle { background-color: #f8d7da; }
+.text-danger-emphasis { color: #842029; }
+.bg-warning-subtle { background-color: #fff3cd; }
+.text-warning-emphasis { color: #664d03; }
+.bg-secondary-subtle { background-color: #e2e3e5; }
+.text-secondary-emphasis { color: #41464b; }
+.bg-info-subtle { background-color: #cff4fc; } /* Custom Info Subtle */
+.text-info-emphasis { color: #055160; } /* Custom Info Emphasis */
+.bg-primary-subtle { background-color: #cfe2ff; }
+.text-primary-emphasis { color: #0a58ca; }
+</style>

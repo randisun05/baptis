@@ -9,16 +9,17 @@
         
         <nav class="navbar navbar-expand-lg fixed-top" :class="{ 'scrolled': isScrolled }">
             <div class="container">
-                <a class="navbar-brand d-flex align-items-center" href="#">
-                    <i class="fas fa-church me-2 fa-lg text-warning"></i>
-                    <div class="d-flex flex-col">
-                        <span class="fw-bold text-white">Paroki Santa Melania</span>
-                        <span class="fs-7 text-white-50" style="font-size: 0.75rem;"></span>
-                    </div>
-                </a>
                 
-                <div class="d-flex gap-2">
-                    <Link href="/login" class="btn btn-outline-light btn-sm px-4">Masuk</Link>
+                <Link href="/" class="navbar-brand d-flex align-items-center">
+                    <i class="fas fa-church me-2 fa-lg text-warning"></i>
+                    <div class="d-flex flex-column lh-sm">
+                        <span class="fw-bold text-white">Paroki Santa Melania</span>
+                        <span class="fs-7 text-white-50" style="font-size: 0.75rem;">Sistem Informasi Katekumen dan Baptis Bayi</span>
+                    </div>
+                </Link>
+                
+                <div class="d-flex gap-2 align-items-center ms-auto">
+                    <Link href="/user/login" class="btn btn-outline-light btn-sm px-4">Masuk</Link>
                 </div>
             </div>
         </nav>
@@ -29,7 +30,7 @@
                 <span class="badge bg-warning text-dark mb-3 px-3 py-2 rounded-pill">Selamat Datang Umat Allah</span>
                 <h1 class="display-4 fw-bold mb-3">Pelayanan Sakramen <br> Kini Lebih Mudah</h1>
                 <p class="lead mb-4 text-white-50 mx-auto" style="max-width: 600px;">
-                   Sistem Informasi Katekumen dan Sakramen Bapstis bayi untuk Anda atau buah hati Anda untuk Sakramen Baptis dan Kelas Katekumen secara online. Terintegrasi, transparan, dan efisien.
+                    Sistem Informasi Katekumen dan Sakramen Bapstis bayi untuk Anda atau buah hati Anda untuk Sakramen Baptis dan Kelas Katekumen secara online. Terintegrasi, transparan, dan efisien.
                 </p>
                 <div class="d-flex justify-content-center gap-3">
                     <Link href="/user/login" class="btn btn-primary btn-lg px-5 shadow-lg">
@@ -59,7 +60,6 @@
                                 </div>
                                 <h4 class="card-title fw-bold text-navy">Baptis Bayi</h4>
                                 <p class="card-text text-muted">Pendaftaran khusus untuk orang tua yang ingin membaptiskan putera-puterinya (usia di bawah 7 tahun).</p>
-                                <Link href="/login" class="btn btn-outline-primary w-100 mt-3">Daftar Sekarang</Link>
                             </div>
                         </div>
                     </div>
@@ -72,7 +72,6 @@
                                 </div>
                                 <h4 class="card-title fw-bold text-navy">Katekumen</h4>
                                 <p class="card-text text-muted">Pendaftaran kelas persiapan penerimaan Gereja Katolik untuk Dewasa dan Anak/Remaja.</p>
-                                <Link href="/login" class="btn btn-outline-success w-100 mt-3">Gabung Kelas</Link>
                             </div>
                         </div>
                     </div>
@@ -84,8 +83,8 @@
                                     <i class="fas fa-users fa-2x"></i>
                                 </div>
                                 <h4 class="card-title fw-bold text-navy">Data Umat</h4>
-                                <p class="card-text text-muted">Pembaruan data umat atau mutasi paroki. Pastikan data Anda terdaftar di sekretariat.</p>
-                                <a href="#dokumen" class="btn btn-outline-warning w-100 mt-3">Unduh Formulir</a>
+                                <p class="card-text text-muted"> Pastikan data Anda terdaftar di sekretariat. Jika belum terdaftar harap datang ke sekretariat gereja.</p>
+                               
                             </div>
                         </div>
                     </div>
@@ -106,23 +105,23 @@
 
                     <div class="col-md-3 mb-4 position-relative">
                         <div class="step-icon bg-navy text-white mx-auto mb-3">1</div>
-                        <h5 class="fw-bold">Buat Akun</h5>
-                        <p class="small text-muted">Registrasi akun menggunakan email aktif Anda.</p>
+                        <h5 class="fw-bold">Pendaftaran</h5>
+                        <p class="small text-muted">Daftarkan diri Anda dengan datang ke Sekretariat.</p>
                     </div>
                     <div class="col-md-3 mb-4 position-relative">
                         <div class="step-icon bg-navy text-white mx-auto mb-3">2</div>
-                        <h5 class="fw-bold">Pilih Layanan</h5>
-                        <p class="small text-muted">Pilih menu Baptis Bayi atau Katekumen di Dashboard.</p>
+                        <h5 class="fw-bold">Penyerahan Dokumen</h5>
+                        <p class="small text-muted">Isi dokumen yang diberikan oleh sekretariat dan serahkan untuk pendataan.</p>
                     </div>
                     <div class="col-md-3 mb-4 position-relative">
                         <div class="step-icon bg-navy text-white mx-auto mb-3">3</div>
-                        <h5 class="fw-bold">Upload Berkas</h5>
-                        <p class="small text-muted">Unggah scan Akta Lahir, KK, dan Surat Nikah (PDF/JPG).</p>
+                        <h5 class="fw-bold">Verifikasi Akun</h5>
+                        <p class="small text-muted">Verifikasi data pada akun Anda yang diberikan oleh sekretariat via email berupa username dan password.</p>
                     </div>
                     <div class="col-md-3 mb-4 position-relative">
                         <div class="step-icon bg-success text-white mx-auto mb-3"><i class="fas fa-check"></i></div>
-                        <h5 class="fw-bold">Verifikasi</h5>
-                        <p class="small text-muted">Sekretariat akan memverifikasi data dan memberi jadwal.</p>
+                        <h5 class="fw-bold">Berhasil</h5>
+                        <p class="small text-muted">Anda memiliki akses untuk masuk ke sistem untuk keperluan kegiatan katekumen atau sakramen baptis bayi.</p>
                     </div>
                 </div>
             </div>
@@ -132,7 +131,7 @@
             <div class="container py-4">
                 <div class="row align-items-center">
                     <div class="col-lg-5 mb-4">
-                        <h2 class="fw-bold text-navy mb-3">Agenda Terdekat</h2>
+                        <h2 class="fw-bold text-navy mb-3">Warta</h2>
                         <p class="text-muted mb-4">Berikut adalah jadwal pembaptisan dan pembukaan kelas katekumen periode mendatang.</p>
                         <div class="card bg-navy text-white p-4 border-0 rounded-3">
                             <h4><i class="fas fa-info-circle me-2"></i> Informasi Penting</h4>
@@ -171,7 +170,7 @@
                                         <span class="badge bg-success rounded-pill px-3">Buka</span>
                                     </div>
 
-                                     <div class="list-group-item p-4 d-flex align-items-center justify-content-between bg-light">
+                                   <div class="list-group-item p-4 d-flex align-items-center justify-content-between bg-light">
                                         <div class="d-flex align-items-center">
                                             <div class="date-box bg-secondary-subtle text-secondary rounded p-2 text-center me-3" style="min-width: 60px;">
                                                 <span class="d-block fw-bold h5 mb-0">15</span>
@@ -192,18 +191,42 @@
             </div>
         </section>
 
+        <section class="py-5 bg-white" id="lokasi">
+    <div class="container py-4">
+        <div class="text-center mb-5">
+            <h6 class="text-primary fw-bold text-uppercase">Lokasi</h6>
+            <h2 class="fw-bold text-navy">Gereja Santa Melania</h2>
+            <div class="divider mx-auto"></div>
+        </div>
+        <div class="card border-0 shadow-lg">
+            <div class="card-body p-0">
+                <div class="map-responsive">
+                    <iframe 
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3959.327942890694!2d107.6212273!3d-6.9003616!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e68e7b306147b35%3A0x44c48d0d2a9d2f59!2sGereja%20Katolik%20Santa%20Melania%2C%20Cihaur%20Geulis!5e0!3m2!1sid!2sid!4v1727260000000!5m2!1sid!2sid" 
+                        width="100%" 
+                        height="450" 
+                        style="border:0;" 
+                        allowfullscreen="" 
+                        loading="lazy" 
+                        referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
         <section class="py-5 bg-navy text-white" id="dokumen">
             <div class="container text-center">
                 <h3 class="fw-bold mb-4 text-white">Butuh Formulir Fisik?</h3>
                 <p class="mb-5 opacity-75">Anda dapat mengunduh formulir pendaftaran manual di bawah ini jika diperlukan.</p>
                 <div class="d-flex justify-content-center flex-wrap gap-3">
-                    <a href="/dokumen/formulirSakramenBaptisBayi.pdf" download class="btn btn-outline-light px-4 py-2">
+                    <a href="/assets/document/formulirSakramenBaptisBayi.pdf" download class="btn btn-outline-light px-4 py-2">
                         <i class="fas fa-file-pdf me-2"></i> Form Baptis Bayi
                     </a>
-                    <a href="/dokumen/formKatekumen.pdf" download class="btn btn-outline-light px-4 py-2">
+                    <a href="/assets/document/formKatekumen.pdf" download class="btn btn-outline-light px-4 py-2">
                         <i class="fas fa-file-pdf me-2"></i> Form Katekumen
                     </a>
-                    <a href="/dokumen/formDataUmat.pdf" download class="btn btn-outline-light px-4 py-2">
+                    <a href="/assets/document/formDataUmat.pdf" download class="btn btn-outline-light px-4 py-2">
                         <i class="fas fa-file-pdf me-2"></i> Form Data Umat
                     </a>
                 </div>
@@ -213,33 +236,29 @@
         <footer class="bg-dark text-white py-5">
             <div class="container">
                 <div class="row g-4">
-                    <div class="col-lg-4">
+                    <div class="col-lg-6">
                         <h5 class="fw-bold text-warning mb-3">Paroki Santa Melania</h5>
                         <p class="small opacity-75">
-                            Jl. Melania No. 1, Bandung, Jawa Barat<br>
-                            Telp: (022) 1234-5678<br>
+                            Jl. Melania No.1-3, Cihaur Geulis, Kec. Cibeunying Kaler, Kota Bandung, Jawa Barat 40122<br>
+                            Telp: (022) 20463790<br>
                             Email: sekretariat@stmelania.org
                         </p>
                     </div>
-                    <div class="col-lg-4">
-                        <h5 class="fw-bold text-warning mb-3">Tautan Cepat</h5>
-                        <ul class="list-unstyled small opacity-75">
-                            <li class="mb-2"><Link href="/login" class="text-white text-decoration-none">Login Peserta</Link></li>
-                            <li class="mb-2"><Link href="/register" class="text-white text-decoration-none">Daftar Baru</Link></li>
-                            <li class="mb-2"><a href="#jadwal" class="text-white text-decoration-none">Jadwal Misa</a></li>
-                        </ul>
-                    </div>
-                    <div class="col-lg-4">
+                    <div class="col-lg-6">
                         <h5 class="fw-bold text-warning mb-3">Jam Sekretariat</h5>
                         <ul class="list-unstyled small opacity-75">
-                            <li class="d-flex justify-content-between mb-2"><span>Senin - Jumat:</span> <span>08.00 - 16.00</span></li>
-                            <li class="d-flex justify-content-between mb-2"><span>Sabtu:</span> <span>08.00 - 12.00</span></li>
-                            <li class="d-flex justify-content-between"><span>Minggu & Libur:</span> <span>Tutup</span></li>
+                            <li class="d-flex justify-content-between mb-2"><span>Senin:</span> <span>08.00 – 16.00</span></li>
+                            <li class="d-flex justify-content-between mb-2"><span>Selasa:</span> <span>08.00 – 16.00</span></li>
+                            <li class="d-flex justify-content-between mb-2"><span>Rabu:</span> <span>08.00 – 16.00</span></li>
+                            <li class="d-flex justify-content-between mb-2"><span>Kamis & Libur Nasional:</span> <span>LIBUR</span></li>
+                            <li class="d-flex justify-content-between mb-2"><span>Jumat:</span> <span>08.00 – 16.00</span></li>
+                            <li class="d-flex justify-content-between mb-2"><span>Jumat Pertama & Sabtu:</span> <span>08.00-14.00 & 16.00-18.00</span></li>
+                            <li class="d-flex justify-content-between"><span>Minggu:</span> <span>07.00 – 12.00</span></li>
                         </ul>
                     </div>
                 </div>
                 <div class="border-top border-secondary mt-5 pt-4 text-center small opacity-50">
-                    &copy; 2025 Paroki Santa Melania - Sistem Informasi Katekumen & Baptis Bayi. All Rights Reserved.
+                    &copy; 2025 Paroki Santa Melania - Sistem Informasi Katekumen & Baptis Bayi.
                 </div>
             </div>
         </footer>
@@ -292,12 +311,15 @@ export default {
 .text-navy { color: #003366; }
 .bg-navy { background-color: #003366; }
 .text-warning { color: #ff9900 !important; }
+.text-primary { color: #003366 !important; } /* Menambahkan primary color */
+
 .btn-primary {
     background-color: #003366;
     border-color: #003366;
 }
 .btn-primary:hover {
     background-color: #002244;
+    border-color: #002244;
 }
 
 /* --- Typography --- */
@@ -312,9 +334,30 @@ export default {
     background: transparent; /* Transparan di awal */
 }
 .navbar.scrolled {
-    background: #003366; /* Navy saat discroll */
+    background: var(--navy-primary); /* Navy saat discroll */
     padding: 0.5rem 0;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+/* Penyesuaian Navbar Brand */
+.navbar-brand .fa-church {
+    font-size: 1.5rem;
+}
+.navbar-brand {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+.lh-sm { line-height: 1.25; } /* Bootstrap class */
+
+/* Navbar Links Styling (TIDAK DIGUNAKAN, tapi kelas style tetap ada) */
+.nav-link {
+    color: rgba(255, 255, 255, 0.8) !important;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+.nav-link:hover,
+.nav-link:focus {
+    color: white !important;
 }
 
 /* --- Hero Section --- */
@@ -323,7 +366,7 @@ export default {
     min-height: 600px;
     background: url('/gambar/hero5.jpg') no-repeat center center/cover; /* Pastikan path gambar benar */
     position: relative;
-    margin-top: -76px; /* Menarik ke atas agar di belakang navbar */
+    margin-top: -76px; /* Menarik ke atas agar di belakang navbar (adjust if necessary) */
 }
 .hero .overlay {
     position: absolute;
@@ -380,4 +423,24 @@ export default {
 
 /* --- Utilities --- */
 .ls-1 { letter-spacing: 1px; }
+
+/* Tambahan Warna Subtle untuk Section Layanan */
+.bg-primary-subtle { background-color: #cfe2ff !important; }
+.text-primary { color: #0a58ca !important; }
+.bg-success-subtle { background-color: #d1e7dd !important; }
+.text-success { color: #198754 !important; }
+.bg-warning-subtle { background-color: #fff3cd !important; }
+.text-warning { color: #ffc107 !important; } /* Mengubah ini agar lebih cerah */
+.bg-secondary-subtle { background-color: #e2e3e5 !important; }
+.text-secondary { color: #6c757d !important; }
+
+/* Menghapus background button kontak saat tidak discroll, karena sudah pakai btn-outline-light */
+.btn-outline-light:hover {
+    background-color: white;
+    color: var(--navy-primary);
+}
+.navbar:not(.scrolled) .btn-primary {
+    background-color: var(--navy-primary); /* Pastikan tombol Masuk tetap navy */
+    border-color: var(--navy-primary);
+}
 </style>
