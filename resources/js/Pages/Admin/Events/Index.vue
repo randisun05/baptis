@@ -5,7 +5,7 @@
 
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
-                <h2 class="fs-3 fw-bold text-navy mb-0">Manajemen Kegiatan</h2>
+                <h2 class="fs-3 fw-bold text-navy mb-0">Data Kegiatan</h2>
                 <p class="text-muted small mb-0">Kelola dan atur jadwal kegiatan.</p>
             </div>
             <Link href="/admin/events/create" class="btn btn-navy shadow-sm">

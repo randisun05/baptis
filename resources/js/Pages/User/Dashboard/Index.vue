@@ -155,9 +155,7 @@
                                     <p class="small mb-0 text-secondary" v-html="truncateText(detail.event.body, 150)"></p>
                                 </div>
                                 
-                                <Link :href="`/user/events/${detail.event.id}`" class="btn btn-sm btn-outline-primary mt-2">
-                                    Detail Kegiatan <i class="fa fa-arrow-right ms-1"></i>
-                                </Link>
+                               
                             </div>
                         </div>
                     </div>

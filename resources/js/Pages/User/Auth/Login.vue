@@ -1,15 +1,13 @@
 <template>
     <Head>
         <title>Login Peserta - Paroki Santa Melania</title>
-        <!-- Mempertahankan link CSS global dari Landing Page -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     </Head>
 
     <div class="landing-wrapper">
-       
+        
 
-        <!-- START: HERO SECTION/HEADER (Mengadopsi gaya Hero) -->
         <section class="hero d-flex align-items-center" style="min-height: 350px;">
             <div class="overlay"></div>
             <div class="container position-relative text-center text-white z-1">
@@ -19,9 +17,7 @@
                 </p>
             </div>
         </section>
-        <!-- END: HERO SECTION/HEADER -->
-
-        <!-- START: LOGIN FORM -->
+        
         <section class="py-5 bg-light d-flex justify-content-center" style="margin-top: -100px; z-index: 10; position: relative;">
             <div class="container">
                 <div class="row d-flex justify-content-center">
@@ -29,7 +25,6 @@
                         <div class="card shadow-lg p-4 p-md-5 border-0 rounded-4">
                             <h3 class="fw-bold text-navy text-center mb-4">Masuk ke Akun Anda</h3>
 
-                            <!-- ALERT MESSAGES -->
                             <div v-if="errors.message" class="alert alert-danger bg-danger-subtle text-danger-emphasis alert-dismissible fade show border-0 rounded-3 small">
                                 <i class="fas fa-exclamation-triangle me-2"></i> {{ errors.message }}
                             </div>
@@ -89,10 +84,12 @@
                                             </span>
                                         </button>
                                         
-                                        <p class="text-center mt-4 small text-muted">
-                                          
+                                        <p class="text-center mt-3 mb-0 small text-muted">
+                                            <Link href="/" class="btn btn-outline-secondary btn-sm w-100 fw-bold rounded-pill">
+                                                <i class="fas fa-home me-2"></i> Kembali ke Beranda
+                                            </Link>
                                         </p>
-                                        <p class="text-center small text-muted">
+                                        <p class="text-center mt-3 small text-muted">
                                             <Link href="/forget-password" class="text-decoration-none fw-bold text-primary-hover">Lupa Password</Link>
                                         </p>
                                     </div>
@@ -283,7 +280,7 @@
 }
 
 .input-tegas:focus {
-    border-color: var(--navy-primary); 	 	
+    border-color: var(--navy-primary);       
     box-shadow: 0 0 0 4px rgba(0, 51, 102, 0.1); 
     outline: none;
 }
@@ -295,4 +292,16 @@
 .text-danger-emphasis { color: #842029; }
 .bg-success-subtle { background-color: #d1e7dd; }
 .text-success-emphasis { color: #0a3622; }
+
+/* Styling tambahan untuk tombol Kembali ke Beranda */
+.btn-outline-secondary {
+    border-color: #adb5bd;
+    color: #6c757d;
+    transition: all 0.3s ease;
+}
+.btn-outline-secondary:hover {
+    background-color: #f8f9fa;
+    color: var(--navy-primary);
+    border-color: var(--navy-primary);
+}
 </style>

@@ -1,241 +1,228 @@
 <template>
-    <div>
+    <div class="container-fluid px-4 py-4">
 
-        <Head>
-            <title>Setting</title>
-        </Head>
-        <form @submit.prevent="submit" class="getin_form border-form padding" id="data">
-            <div class="container-fluid mb-5 mt-5">
-                <div class="row mt-1">
-                    <div class="col-md-12">
-                        <div class="card border-0 shadow">
-                            <div class="card-body">
-                                <h3 class="mb-4"> Buat Akun Admin</h3>
-                                <div class="col-lg-6">
-                                    <div class="mt-2">
-                                        <span> NIP </span>
-                                        <div class="input-group">
-                                            <input type="text" class="form-control" name="nip" id="nip"
-                                                v-model="form.nip" />
-                                        </div>
-                                        <div v-if="errors.nip" class="alert-danger mt-1 rounded">
-                                            {{ errors.nip }}
-                                        </div>
-                                    </div>
+        <Head title="Administrator | Buat Akun Pengguna" />
 
-                                    <div class="mt-2">
-                                        <span> Nama </span>
-                                        <div class="input-group">
-                                            <input type="text" class="form-control" name="name" id="name"
-                                                v-model="form.name" />
-                                        </div>
-                                        <div v-if="errors.name" class="alert-danger mt-1 rounded">
-                                            {{ errors.name }}
-                                        </div>
-                                    </div>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="fs-3 fw-bold text-navy mb-0">Buat Akun Pengguna</h2>
+                <p class="text-muted small mb-0">Isi detail akun pengguna baru.</p>
+            </div>
+        </div>
 
-                                    <div class="mt-2">
-                                        <span> Email </span>
-                                        <div class="input-group">
-                                            <input type="text" class="form-control" name="email" id="email"
-                                                v-model="form.email" />
-                                        </div>
-                                        <div v-if="errors.email" class="alert-danger mt-1 rounded">
-                                            {{ errors.email }}
-                                        </div>
-                                    </div>
+        <div class="row d-flex justify-content-center">
+            <div class="col-lg-8 col-md-10 col-12">
+                <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                    <div class="card-body p-5">
+                        <form @submit.prevent="submit">
 
-                                    <div class="mt-2">
-                                        <span> Role </span>
-                                        <div class="input-group">
-                                                <select type="form-select" class="form-control" v-model="form.role">
-                                                    <option value="" disabled>Pilih Role</option>
-                                                    <option value="administrator">Administrator</option>
-                                                    <option value="humas">Humas</option>
-                                                    <option value="keanggotaan">Keanggotaan</option>
-                                                    <option value="pendanaan">Pendanaan</option>
-                                                    <option value="hukum">Hukum</option>
-                                                    <option value="kapasitas">Kapasitas Insani</option>
-                                                    <option value="sekretariat">Sekretariat</option>
-                                                </select>
-                                                <div v-if="errors.role" class="alert alert-danger mt-2">
-                                                    {{ errors.role }}
-                                                </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="mt-2">
-                                        <span> Posisi </span>
-                                        <div class="input-group">
-                                                <select type="form-select" class="form-control" v-model="form.position">
-                                                    <option value="" disabled>Pilih Posisi</option>
-                                                    <option value="kabid">Ketua Bidang</option>
-                                                    <option value="sekretaris">Sekretaris</option>
-                                                    <option value="bendahara">Bendahara</option>
-                                                    <option value="anggota">Anggota</option>
-                                                </select>
-                                                <div v-if="errors.position" class="alert alert-danger mt-2">
-                                                    {{ errors.position }}
-                                                </div>
-                                        </div>
-                                    </div>
-
-
-                                    <div class="mt-4">
-                                        <span> Password Baru </span>
-                                        <div class="input-group">
-                                            <input v-if="passwordFieldType.password === 'password'" type="password"
-                                                class="form-control" v-model="form.password" />
-                                            <input v-else type="text" class="form-control" v-model="form.password" />
-                                            <button type="button" class="btn btn-outline-secondary"
-                                                @click="togglePassword('password')">
-                                                <i v-if="passwordFieldType.password === 'password'"
-                                                    class="fa fa-eye"></i>
-                                                <i v-else class="fa fa-eye-slash"></i>
-                                            </button>
-                                        </div>
-                                        <div v-if="errors.password" class="alert-danger mt-1 rounded">
-                                            {{ errors.password }}
-                                        </div>
-                                    </div>
-
-                                    <div class="mt-4">
-                                        <span> Ketik Ulang Password Baru </span>
-                                        <div class="input-group">
-                                            <input v-if="passwordFieldType.password_confirmation === 'password'"
-                                                type="password" class="form-control"
-                                                v-model="form.password_confirmation" />
-                                            <input v-else type="text" class="form-control"
-                                                v-model="form.password_confirmation" />
-                                            <button type="button" class="btn btn-outline-secondary"
-                                                @click="togglePassword('password_confirmation')">
-                                                <i v-if="passwordFieldType.password_confirmation === 'password'"
-                                                    class="fa fa-eye"></i>
-                                                <i v-else class="fa fa-eye-slash"></i>
-                                            </button>
-                                        </div>
-                                        <div v-if="errors.password_confirmation" class="alert-danger mt-1 rounded">
-                                            {{ errors.password_confirmation }}
-                                        </div>
-                                    </div>
-                                    <div v-if="form.password !== form.password_confirmation"
-                                        class="alert-danger mt-1 rounded">
-                                        Password Baru dan Konfirmasi Password harus sama.
-                                    </div>
-                                </div>
-                                <div class="row d-flex justify-content-center py-5">
-                                    <button type="submit" class="button btnprimary"
-                                        style="width: 300px;">Simpan</button>
-                                    <Link href="/admin/dashboard" class="button btnsecondary" style="width: 300px;">Batal
-                                    </Link>
+                            <!-- Nama -->
+                            <div class="mb-3">
+                                <label for="name" class="form-label fw-bold text-navy small">Nama</label>
+                                <input type="text" class="form-control rounded-pill shadow-sm" id="name" v-model="form.name" placeholder="Masukkan Nama Lengkap">
+                                <div v-if="errors.name" class="error-message mt-1">
+                                    {{ errors.name }}
                                 </div>
                             </div>
-                        </div>
+
+                            <!-- Email -->
+                            <div class="mb-3">
+                                <label for="email" class="form-label fw-bold text-navy small">Email</label>
+                                <input type="email" class="form-control rounded-pill shadow-sm" id="email" v-model="form.email" placeholder="Masukkan Email">
+                                <div v-if="errors.email" class="error-message mt-1">
+                                    {{ errors.email }}
+                                </div>
+                            </div>
+
+                            <!-- Role -->
+                            <div class="mb-3">
+                                <label for="role" class="form-label fw-bold text-navy small">Role</label>
+                                <select class="form-select rounded-pill shadow-sm" id="role" v-model="form.role">
+                                    <option value="" disabled>Pilih Role</option>
+                                    <option value="administrator">Administrator</option>
+                                    <option value="ketua_wakil_subseksi">Ketua & Wakil Sub-Seksi</option>
+                                    <option value="peserta">Peserta</option>
+                                </select>
+                                <div v-if="errors.role" class="error-message mt-1">
+                                    {{ errors.role }}
+                                </div>
+                            </div>
+                            
+                            <!-- NIP dan Posisi telah dihapus sesuai permintaan -->
+                            <hr class="my-4">
+
+                            <!-- Password Baru -->
+                            <div class="mb-3">
+                                <label for="password" class="form-label fw-bold text-navy small">Password Baru</label>
+                                <div class="input-group shadow-sm rounded-pill overflow-hidden">
+                                    <input :type="passwordFieldType.password" class="form-control border-0" id="password" v-model="form.password" placeholder="Minimal 8 karakter">
+                                    <button type="button" class="btn btn-outline-secondary border-0" @click="togglePassword('password')">
+                                        <i class="bi" :class="passwordFieldType.password === 'password' ? 'bi-eye' : 'bi-eye-slash'"></i>
+                                    </button>
+                                </div>
+                                <div v-if="errors.password" class="error-message mt-1">
+                                    {{ errors.password }}
+                                </div>
+                            </div>
+
+                            <!-- Konfirmasi Password -->
+                            <div class="mb-4">
+                                <label for="password_confirmation" class="form-label fw-bold text-navy small">Ketik Ulang Password</label>
+                                <div class="input-group shadow-sm rounded-pill overflow-hidden">
+                                    <input :type="passwordFieldType.password_confirmation" class="form-control border-0" id="password_confirmation" v-model="form.password_confirmation" placeholder="Ulangi Password Baru">
+                                    <button type="button" class="btn btn-outline-secondary border-0" @click="togglePassword('password_confirmation')">
+                                        <i class="bi" :class="passwordFieldType.password_confirmation === 'password' ? 'bi-eye' : 'bi-eye-slash'"></i>
+                                    </button>
+                                </div>
+                                <div v-if="errors.password_confirmation" class="error-message mt-1">
+                                    {{ errors.password_confirmation }}
+                                </div>
+                            </div>
+
+
+                            <!-- Action Buttons -->
+                            <div class="d-flex justify-content-end gap-3 pt-3">
+                                <Link href="/admin/setting" class="btn btn-outline-secondary rounded-pill px-4 shadow-sm">
+                                    <i class="bi bi-x-circle me-1"></i> Batal
+                                </Link>
+                                <button type="submit" class="btn btn-navy rounded-pill px-4 shadow-sm">
+                                    <i class="bi bi-save me-1"></i> Simpan Pengguna
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
-        </form>
+        </div>
     </div>
 </template>
 
-<script>
-//import layout
-import LayoutAdmin from '../../../Layouts/Admin.vue';
-
-//import Head and Link from Inertia
-import { Head, Link } from '@inertiajs/inertia-vue3';
-
-//import ref from vue
+<script setup>
 import { reactive } from 'vue';
-
-//import inertia adapter
+import { Head, Link } from '@inertiajs/inertia-vue3';
 import { Inertia } from '@inertiajs/inertia';
-
-//import sweet alert2
 import Swal from 'sweetalert2';
 
+// Props
+const props = defineProps({
+    errors: Object,
+});
 
-export default {
+// Form state
+const form = reactive({
+    // NIP dan Position dihapus dari reactive state
+    name: '',
+    email: '',
+    role: '',
+    password: '',
+    password_confirmation: '',
+    // Position dihapus
+});
 
-    //layout
-    layout: LayoutAdmin,
+// Password visibility state
+const passwordFieldType = reactive({
+    password: 'password',
+    password_confirmation: 'password'
+});
 
-    //register component
-    components: {
-        Head,
-        Link,
-    },
-
-    //props
-    props: {
-
-        errors: Object,
-    },
-
-    //inisialisasi composition API
-    setup(props) {
-        const form = reactive({
-            nip: '',
-            name: '',
-            email: '',
-            role: '',
-            password: '',
-            password_confirmation: '',
-            position: '',
-        });
-
-        // Object to hold the current type of password input fields
-        const passwordFieldType = reactive({
-            password: 'password',
-            password_confirmation: 'password'
-        });
-
-        // Function to toggle the password input type between 'password' and 'text'
-        const togglePassword = (fieldType) => {
-            if (fieldType in passwordFieldType) {
-                passwordFieldType[fieldType] = passwordFieldType[fieldType] === 'password' ? 'text' : 'password';
-            }
-        };
-
-        //submit method
-        const submit = () => {
-
-            Inertia.post(
-                `/admin/setting/`,
-                {
-                    //data
-                    nip: form.nip,
-                    name: form.name,
-                    email: form.email,
-                    role: form.role,
-                    password: form.password,
-                    password_confirmation: form.password_confirmation,
-                    position: form.position,
-                },
-                {
-                    onSuccess: () => {
-                        //show success alert
-                        Swal.fire({
-                            title: "Success!",
-                            text: "Admin Berhasil Disimpan.",
-                            icon: "success",
-                            showConfirmButton: false,
-                            timer: 2000,
-                        });
-                    },
-                }
-            );
-        };
-
-        //return
-        return {
-            form,
-            submit,
-            passwordFieldType,
-            togglePassword,
-        }
+// Function to toggle the password input type
+const togglePassword = (fieldType) => {
+    if (fieldType in passwordFieldType) {
+        passwordFieldType[fieldType] = passwordFieldType[fieldType] === 'password' ? 'text' : 'password';
     }
-}
+};
+
+// Submit method
+const submit = () => {
+    // Client-side password match check (optional, but good UX)
+    if (form.password && form.password_confirmation && form.password !== form.password_confirmation) {
+        Swal.fire({
+            title: "Gagal!",
+            text: "Password Baru dan Konfirmasi Password harus sama.",
+            icon: "error",
+            confirmButtonColor: '#003366',
+        });
+        return;
+    }
+
+    Inertia.post(
+        `/admin/setting/`,
+        form, // Pass the whole reactive object
+        {
+            onSuccess: () => {
+                // Show success alert
+                Swal.fire({
+                    title: "Berhasil!",
+                    text: "Akun Pengguna berhasil dibuat.",
+                    icon: "success",
+                    showConfirmButton: false,
+                    timer: 2000,
+                    confirmButtonColor: '#003366'
+                });
+            },
+        }
+    );
+};
 </script>
 
-<style></style>
+<script>
+// Import layout di script biasa
+import LayoutAdmin from '../../../Layouts/Admin.vue';
+export default { layout: LayoutAdmin }
+</script>
+
+<style scoped>
+/* --- Theme Variables --- */
+:root {
+    --navy-primary: #003366;
+    --navy-hover: #002244;
+}
+
+.text-navy { color: #003366; }
+.card { border-radius: 1rem; }
+
+/* --- Form Control Consistency (Matching the Index Page Look) --- */
+.form-control, .form-select {
+    border-color: #e0e0e0;
+    transition: all 0.2s ease;
+}
+.form-control:focus, .form-select:focus {
+    border-color: #003366;
+    box-shadow: 0 0 0 0.25rem rgba(0, 51, 102, 0.25);
+}
+
+/* For input-group to maintain rounded appearance */
+.input-group.rounded-pill > .form-control {
+    border-top-left-radius: 50rem !important;
+    border-bottom-left-radius: 50rem !important;
+}
+.input-group.rounded-pill > .btn {
+    border-top-right-radius: 50rem !important;
+    border-bottom-right-radius: 50rem !important;
+}
+
+/* --- Button Styles --- */
+.btn-navy {
+    background-color: #003366;
+    color: white;
+    border: none;
+    transition: all 0.2s ease;
+}
+
+.btn-navy:hover {
+    background-color: #002244;
+    color: #ffffff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 51, 102, 0.3) !important;
+}
+
+/* --- Error Message Styles --- */
+.error-message {
+    color: #dc3545; /* Bootstrap Red */
+    background-color: #f8d7da; /* Light Red background */
+    border: 1px solid #f5c6cb;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+}
+</style>

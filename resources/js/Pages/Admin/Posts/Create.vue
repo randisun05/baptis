@@ -1,5 +1,5 @@
 <template>
-  <Head title="Tambah Post Baru" />
+  <Head title="Tambah Warta Baru" />
 
   <div class="container-fluid px-4 py-4">
     <div class="row justify-content-center">
@@ -7,8 +7,8 @@
 
         <div class="d-flex justify-content-between align-items-center mb-4">
            <div>
-             <h2 class="fs-3 fw-bold text-navy mb-0">Tambah Post</h2>
-             <p class="text-muted small mb-0">Buat artikel atau berita baru.</p>
+             <h2 class="fs-3 fw-bold text-navy mb-0">Tambah Warta</h2>
+             <p class="text-muted small mb-0">Buat warta baru.</p>
            </div>
            <Link href="/admin/posts" class="btn btn-outline-navy btn-sm shadow-sm">
              <i class="bi bi-arrow-left me-1"></i> Kembali
@@ -28,14 +28,14 @@
             <form @submit.prevent="submit">
 
               <div class="mb-4">
-                <label for="title" class="form-label fw-bold text-navy">Judul Post</label>
+                <label for="title" class="form-label fw-bold text-navy">Judul Warta</label>
                 <input
                     type="text"
                     class="form-control form-control-lg"
                     :class="{ 'is-invalid': form.errors.title }"
                     id="title"
                     v-model="form.title"
-                    placeholder="Masukkan judul kegiatan..."
+                    placeholder="Masukkan judul warta..."
                 >
                 <div v-if="form.errors.title" class="invalid-feedback">
                     {{ form.errors.title }}
@@ -70,7 +70,7 @@
                     id="body"
                     v-model="form.body"
                     rows="8"
-                    placeholder="Tulis konten artikel lengkap di sini..."
+                    placeholder="Tulis konten warta lengkap di sini..."
                 ></textarea>
                 <div v-if="form.errors.body" class="invalid-feedback">
                     {{ form.errors.body }}

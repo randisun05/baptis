@@ -20,12 +20,12 @@
             </li>
             <li class="nav-item mb-1">
                 <Link href="/admin/posts" class="nav-link d-flex align-items-center gap-3" :class="{ 'active-nav': $page.url.startsWith('/admin/posts') }">
-                    <i class="bi bi-newspaper fs-5"></i> <span>Warta / Post</span>
+                    <i class="bi bi-newspaper fs-5"></i> <span>Warta</span>
                 </Link>
             </li>
             <li class="nav-item mb-1">
                 <Link href="/admin/registration" class="nav-link d-flex align-items-center gap-3" :class="{ 'active-nav': $page.url.startsWith('/admin/registration') }">
-                    <i class="bi bi-people-fill fs-5"></i> <span>Registrasi</span>
+                    <i class="bi bi-card-list fs-5"></i> <span>Registrasi</span>
                 </Link>
             </li>
             <li class="nav-item mb-1">
@@ -40,7 +40,7 @@
             </li>
             <li class="nav-item mb-1">
                 <Link href="/admin/setting" class="nav-link d-flex align-items-center gap-3" :class="{ 'active-nav': $page.url.startsWith('/admin/setting') }">
-                    <i class="bi bi-person-gear fs-5"></i> <span>Akun Pengguna</span>
+                    <i class="bi bi-person fs-5"></i> <span>Akun Pengguna</span>
                 </Link>
             </li>
         </ul>
@@ -65,6 +65,12 @@
 
 <script setup>
 import { Link } from '@inertiajs/inertia-vue3';
+</script>
+
+<script>
+export default {
+    name: 'AdminSidebar'
+}
 </script>
 
 <style scoped>

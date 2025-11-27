@@ -8,8 +8,8 @@
 
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
-                <h2 class="fs-3 fw-bold text-navy mb-0"><i class="bi bi-people-fill me-2"></i> Data Peserta</h2>
-                <p class="text-muted small mb-0">Kelola akun peserta yang terdaftar di sistem.</p>
+                <h2 class="fs-3 fw-bold text-navy mb-0"> Data Peserta</h2>
+                <p class="text-muted small mb-0">Kelola pendaftaran akun peserta yang terdaftar di sistem.</p>
             </div>
         </div>
 
@@ -27,13 +27,11 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
         
-        <div class="row mb-4 align-items-center">
-            <div class="col-md-auto col-12 mb-2">
-            </div>
+       <div class="row mb-4 align-items-center">
             <div class="col-md-6 col-12 mb-2">
                 <form @submit.prevent="handleSearch">
-                    <div class="input-group shadow-sm">
-                        <input type="text" class="form-control border-0" v-model="search"
+                    <div class="input-group shadow-sm rounded-pill overflow-hidden bg-white">
+                        <input type="text" class="form-control border-0 bg-white" v-model="search"
                             placeholder="Cari nama peserta atau email dan tekan Enter...">
                         <span class="input-group-text bg-white border-0">
                             <i class="bi bi-search text-muted"></i>

@@ -71,7 +71,7 @@
                         Memproses...
                     </span>
                     <span v-else>
-                        Masuk Dashboard <i class="bi bi-arrow-right ms-2"></i>
+                        Login <i class="bi bi-arrow-right ms-2"></i>
                     </span>
 
                   </button>
