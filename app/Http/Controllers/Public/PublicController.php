@@ -36,12 +36,20 @@ class PublicController extends Controller
 
     public function index()
     {
-    //    $showPopup = Management::where('item', 'popup')->sum('status');
-    //    $datas = Management::where('item', 'popup')->where('status','1')->get();
+
+        $posts = Post::where('status', 'active')
+            ->latest()
+            ->limit(3)
+            ->get();
+
+        $events = Event::latest()
+            ->limit(3)
+            ->get();
 
         return inertia('Public/Website/Index', [
-        //    'showPopup' => $showPopup,
-        //    'datas' => $datas
+            'title' => "Beranda",
+            'posts' => $posts,
+            'events' => $events,
         ]);
     }
 

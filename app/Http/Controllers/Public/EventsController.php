@@ -15,12 +15,11 @@ class EventsController extends Controller
      */
     public function index()
     {
-        $events = Event::whereNot('title', 'media')
-        ->when(request()->q, function($query) {
+        $events = Event::when(request()->q, function($query) {
             $query->where('title', 'like', '%' . request()->q . '%');
         })
         ->latest()
-        ->paginate(3);
+        ->paginate(6);
 
         $events->appends(['q' => request()->q]);
 

@@ -85,7 +85,6 @@ Route::prefix('admin')->group(function() {
         Route::get('/members/report', [\App\Http\Controllers\Admin\DataMembersController::class, 'indexReport'])->name('admin.member.report');
         Route::resource('/members', \App\Http\Controllers\Admin\DataMembersController::class, ['as' => 'admin']);
 
-
     });
 });
 
@@ -104,6 +103,7 @@ Route::get('/user/login', function () {
 
 //login users
 Route::post('/user/login', \App\Http\Controllers\User\LoginController::class)->name('user.login');
+
 
 //prefix "admin"
 Route::prefix('user')->group(function() {
@@ -150,6 +150,12 @@ Route::post('/registration/confirm/{id}', [\App\Http\Controllers\Public\Registra
 Route::get('/registration/success', [\App\Http\Controllers\Public\RegistrationController::class, 'index'])->name('registration.success');
 
 //other public routes
+Route::get('/warta', [\App\Http\Controllers\Public\PostsController::class, 'index'])->name('posts.index');
+Route::get('/warta/{post:slug}', [\App\Http\Controllers\Public\PostsController::class, 'show'])->name('posts.show');
+
+Route::get('/kegiatan', [\App\Http\Controllers\Public\EventsController::class, 'index'])->name('events.index');
+Route::get('/kegiatan/{id}', [\App\Http\Controllers\Public\EventsController::class, 'show'])->name('events.show');
+
 Route::get('/about', [\App\Http\Controllers\Public\PublicController::class, 'about'])->name('about');
 Route::get('/ketua-umum', [\App\Http\Controllers\Public\PublicController::class, 'ketuaUmum'])->name('ketuaUmum');
 Route::get('/peraturan-organisasi', [\App\Http\Controllers\Public\PublicController::class, 'peraturanOrganisasi'])->name('peraturanOrganisasi');
@@ -157,12 +163,9 @@ Route::get('/sejarah', [\App\Http\Controllers\Public\PublicController::class, 's
 Route::get('/struktur-organisasi', [\App\Http\Controllers\Public\PublicController::class, 'strukturOrganisasi'])->name('strukturOrganisasi');
 Route::get('/visi-misi', [\App\Http\Controllers\Public\PublicController::class, 'visiMisi'])->name('visiMisi');
 Route::get('/kontak-kami', [\App\Http\Controllers\Public\PublicController::class, 'kontak'])->name('kontak');
-Route::get('/berita', [\App\Http\Controllers\Public\PublicController::class, 'berita'])->name('berita');
-Route::get('/berita/{post:slug}', [\App\Http\Controllers\Public\PublicController::class, 'beritaView'])->name('berita.view');
+
 Route::get('/faq', [\App\Http\Controllers\Public\PublicController::class, 'faq'])->name('faq');
-Route::get('/events/{event:slug}', [\App\Http\Controllers\Public\EventsController::class, 'show'])->name('event.show');
-Route::resource('/events', \App\Http\Controllers\Public\EventsController::class);
-Route::resource('/berita', \App\Http\Controllers\Public\PostsController::class);
+
 Route::get('/forget-password', [\App\Http\Controllers\Public\PublicController::class, 'forgetPassword'])->name('forget.password');
 Route::get('/forget-password/email', [\App\Http\Controllers\Public\PublicController::class, 'emailforgetPassword'])->name('forget.password.email');
 Route::get('/user/forget-password/{id}', [\App\Http\Controllers\Public\PublicController::class, 'IndexforgetPassword'])->name('forget.password.index');
