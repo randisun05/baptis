@@ -57,7 +57,10 @@
                                         </p>
                                     </div>
                                 </div>
-
+                                
+                                <div v-if="post.image" class="mb-4 post-image-wrapper">
+                                  <img :src="`/storage/${post.image}`" :alt="post.title" class="img-fluid rounded-lg post-image">
+                                </div>
                                 <div class="post-content">
                                     <div v-html="post.body"></div>
                                 </div>
@@ -68,15 +71,6 @@
                                     </Link>
                                 </div>
 
-                            </div>
-                        </div>
-
-                        <div class="text-center mt-5">
-                            <h4 class="text-navy fw-bold">Bagikan Warta Ini</h4>
-                            <div class="d-flex justify-content-center gap-3 mt-3">
-                                <a href="#" class="btn btn-primary rounded-circle"><i class="fab fa-facebook-f"></i></a>
-                                <a href="#" class="btn btn-success rounded-circle"><i class="fab fa-whatsapp"></i></a>
-                                <a href="#" class="btn btn-info rounded-circle"><i class="fab fa-twitter"></i></a>
                             </div>
                         </div>
                     </div>
@@ -186,30 +180,38 @@ export default {
 </script>
 
 <style scoped>
-/* Tambahkan atau salin semua CSS dari halaman index sebelumnya di sini */
-/* Pastikan semua variabel dan kelas kustom (seperti .text-navy, .bg-navy, .sub-hero, .date-box) disalin */
-/* Saya hanya menyertakan CSS esensial yang TIDAK ada di file sebelumnya */
-
+/* Variabel Warna Kustom */
 .text-navy { color: #003366; }
 .bg-navy { background-color: #003366; }
+.btn-outline-navy { color: #003366; border-color: #003366; }
+.btn-outline-navy:hover { background-color: #003366; color: white; }
+
+/* Warna standar Bootstrap yang digunakan */
 .text-warning { color: #ffc107 !important; }
 .text-primary { color: #003366 !important; }
 .bg-primary-subtle { background-color: #cfe2ff !important; }
 .bg-warning-subtle { background-color: #fff3cd !important; } /* Digunakan di date-box */
+
+/* --- Layout dan Komponen Khusus --- */
+.landing-wrapper {
+    font-family: 'Poppins', sans-serif;
+}
 .date-box {
     width: 70px;
     height: 70px;
-    border-radius: 8px; /* Sedikit lebih kotak dari icon-box */
+    border-radius: 8px;
+}
+.fs-7 {
+    font-size: 0.85rem !important;
 }
 
-/* --- Hero Section (disalin dari file index) --- */
+/* --- Hero Section --- */
 .sub-hero {
-    height: 30vh; /* Sedikit ditinggikan untuk halaman sub */
+    height: 30vh;
     min-height: 300px;
     background: url('/gambar/hero5.jpg') no-repeat center center/cover;
     position: relative;
-    /* Margin-top agar di bawah navbar saat navbar tidak discroll */
-    padding-top: 70px;
+    padding-top: 70px; /* Offset dari navbar */
 }
 .sub-hero .overlay {
     position: absolute;
@@ -217,14 +219,21 @@ export default {
     background: linear-gradient(to bottom, rgba(0,51,102,0.8), rgba(0,0,0,0.6));
 }
 
-/* Penyesuaian Navbar (disalin dari file index) */
-.navbar { transition: all 0.3s ease-in-out; padding: 1rem 0; background: transparent; }
-.navbar.scrolled { background: #003366; padding: 0.5rem 0; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-/* ... (pastikan semua CSS dari file sebelumnya disalin ke sini) ... */
+/* --- Navbar Styling --- */
+.navbar { 
+    transition: all 0.3s ease-in-out; 
+    padding: 1rem 0; 
+    background: transparent; 
+}
+.navbar.scrolled { 
+    background: #003366; 
+    padding: 0.5rem 0; 
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
+}
 
-/* Gaya untuk Konten Post (Jika post.body berisi markup) */
+/* --- Post Content Styling --- */
 .post-content h1, .post-content h2, .post-content h3 {
-    color: var(--navy-primary);
+    color: #003366; /* Menggunakan .text-navy */
     margin-top: 1.5rem;
     margin-bottom: 0.8rem;
     font-weight: 700;
@@ -233,5 +242,23 @@ export default {
     line-height: 1.8;
     margin-bottom: 1rem;
     color: #343a40;
+}
+
+/* --- Gaya untuk Gambar Postingan (Baru Ditambahkan) --- */
+.post-image {
+    width: 100%;
+    max-height: 500px; /* Batasi tinggi maksimum */
+    object-fit: cover;
+    border-radius: 0.5rem !important;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+/* --- Share Buttons --- */
+.d-flex.justify-content-center.gap-3 a.btn {
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 </style>

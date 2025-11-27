@@ -24,6 +24,8 @@ class EventController extends Controller
      */
     public function index()
     {
+        $this->cekAuth();
+        
         $events = Event::
              when(request()->q, function($query) {
                  $query->where('title', 'like', '%' . request()->q . '%');
@@ -46,6 +48,7 @@ class EventController extends Controller
      */
     public function create()
     {
+        $this->cekAuth();
         $refevents = RefEvent::all();
         return inertia('Admin/Events/Create', [
             'refevents' => $refevents
@@ -60,29 +63,36 @@ class EventController extends Controller
      */
     public function store(Request $request)
     {
+        $this->cekAuth(); 
 
-        // Validate request including file validation
-    $request->validate([
-        'title' => 'required|string',
-        'date' => 'required',
-        'place' => 'nullable|string',
-        'ref_event_id' => 'nullable|exists:ref_events,id',
-    ]);
+        $request->validate([
+            'title' => 'required|string|unique:events,title',
+            'body' => 'required|string', 
+            'date' => 'required|date',
+            'place' => 'nullable|string',
+            'ref_event_id' => 'nullable|exists:ref_events,id',
+        ]);
 
-    $slug = strtolower(str_replace(' ', '-', $request->title));
+        $slug = Str::slug($request->title);
+        $originalSlug = $slug;
+        $counter = 1;
+
+        while (Event::where('slug', $slug)->exists()) {
+            $slug = $originalSlug . '-' . $counter;
+            $counter++;
+        }
 
         Event::create([
             'title' => $request->title,
+            'body' => $request->body, 
             'date' => $request->date,
             'slug' => $slug,
             'place' => $request->place,
-            'desc' => $request->desc,
             'ref_event_id' => $request->ref_event_id,
-
+            'status' => 'active', 
         ]);
 
-     //redirect
-     return redirect()->route('admin.events.index');
+        return redirect()->route('admin.events.index')->with('success', 'Event berhasil ditambahkan!');
     }
 
     /**
@@ -93,6 +103,8 @@ class EventController extends Controller
      */
     public function show($id)
     {
+        $this->cekAuth();
+
         $event = Event::findOrFail($id);
 
         $details = DetailEvent::where('event_id', $id)
@@ -111,8 +123,6 @@ class EventController extends Controller
             'event' => $event,
             'details' => $details
         ]);
-        //redirect
-        return redirect()->route('admin.events.index');
     }
 
     /**
@@ -123,14 +133,14 @@ class EventController extends Controller
      */
     public function edit($id)
     {
-
+        $this->cekAuth();
         $event = Event::findOrFail($id);
+        $refevents = RefEvent::all();
+        
         return inertia('Admin/Events/Edit', [
             'event' => $event,
+            'refevents' => $refevents 
         ]);
-
-        //redirect
-        return redirect()->route('admin.events.index');
     }
 
     /**
@@ -142,29 +152,43 @@ class EventController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // Validate request including file validation
-      $request->validate([
-        'title' => 'required|string',
-        'date' => 'required',
-        'place' => 'nullable|string',
-        'ref_event_id' => 'nullable|exists:ref_events,id',
+        $this->cekAuth();
 
-    ]);
+        $event = Event::findOrFail($id);
 
-    $slug = strtolower(str_replace(' ', '-', $request->title));
+        $request->validate([
+            'title' => 'required|string|unique:events,title,' . $id,
+            'body' => 'required|string',
+            'date' => 'required|date',
+            'place' => 'nullable|string',
+            'ref_event_id' => 'nullable|exists:ref_events,id',
+            'status' => 'required|in:active,closed',
+        ]);
 
-        Event::where('id',$id)->update([
+        $slug = Str::slug($request->title);
+        
+        if ($event->title !== $request->title) {
+            $originalSlug = $slug;
+            $counter = 1;
+            while (Event::where('slug', $slug)->where('id', '!=', $id)->exists()) {
+                $slug = $originalSlug . '-' . $counter;
+                $counter++;
+            }
+        } else {
+            $slug = $event->slug;
+        }
+
+        $event->update([
             'title' => $request->title,
+            'body' => $request->body,
             'date' => $request->date,
             'slug' => $slug,
             'place' => $request->place,
-            'desc' => $request->desc,
             'ref_event_id' => $request->ref_event_id,
+            'status' => $request->status,
         ]);
 
-
-     //redirect
-     return redirect()->route('admin.events.index');
+      return redirect()->route('admin.events.index')->with('success', 'Event berhasil diperbarui!');
     }
 
     /**
@@ -175,14 +199,49 @@ class EventController extends Controller
      */
     public function destroy($id)
     {
+        $this->cekAuth();
         $event = Event::findOrFail($id);
         $event->delete();
-        //redirect
-        return redirect()->route('admin.events.index');
+        return redirect()->route('admin.events.index')->with('success', 'Event berhasil dihapus!');
     }
+
+
+    // ===============================================
+    //           FUNGSI STATUS & CEK AUTH
+    // ===============================================
+
+    public function activate($id)
+    {
+        $this->cekAuth();
+        $post = Event::findOrFail($id);
+        $post->update(['status' => 'active']);
+        return redirect()->route('admin.events.index')->with('success', 'Event berhasil diaktifkan!');
+    }
+
+    public function close($id)
+    {
+        $this->cekAuth();
+        $post = Event::findOrFail($id);
+        $post->update(['status' => 'closed']);
+        return redirect()->route('admin.events.index')->with('success', 'Event berhasil ditutup!');
+    }
+
+
+    public function cekAuth()
+    {
+        if(!auth()->check()) {
+            auth()->logout();
+            return redirect()->route('login')->with('warning', 'Anda tidak memiliki akses');
+        }
+    }
+
+    // ===============================================
+    //               FUNGSI REF EVENT
+    // ===============================================
 
     public function Indexref()
     {
+        $this->cekAuth();
         $refevents = RefEvent::
              when(request()->q, function($query) {
                  $query->where('title', 'like', '%' . request()->q . '%');
@@ -197,72 +256,77 @@ class EventController extends Controller
          ]);
     }
 
-     public function Storeref(Request $request)
+      public function Storeref(Request $request)
         {
-
-            // Validate request including file validation
-        $request->validate([
-            'title' => 'required|string',
-        ]);
-            RefEvent::create([
-                'title' => $request->title,
-            ]);
-            //redirect
-            return redirect()->route('admin.events.Indexref');
+            $this->cekAuth();
+            $request->validate(['title' => 'required|string']);
+            RefEvent::create(['title' => $request->title]);
+            return redirect()->route('admin.events.Indexref')->with('success', 'Referensi Event berhasil ditambahkan!');
         }
 
-     public function Updateref(Request $request , $id)
+      public function Updateref(Request $request , $id)
         {
-            // Validate request including file validation
-        $request->validate([
-            'title' => 'required|string',
-        ]);
-            RefEvent::where('id',$id)->update([
-                'title' => $request->title,
-            ]);
-            //redirect
-            return redirect()->route('admin.events.Indexref');
+            $this->cekAuth();
+            $request->validate(['title' => 'required|string']);
+            RefEvent::where('id',$id)->update(['title' => $request->title]);
+            return redirect()->route('admin.events.Indexref')->with('success', 'Referensi Event berhasil diperbarui!');
         }
 
-     public function Deleteref($id)
+      public function Deleteref($id)
         {
+            $this->cekAuth();
             $refevent = RefEvent::findOrFail($id);
             $refevent->delete();
-            //redirect
-            return redirect()->route('admin.events.Indexref');
+            return redirect()->route('admin.events.Indexref')->with('success', 'Referensi Event berhasil dihapus!');
         }
 
-         public function enroll($id)
-        {
-          $member_enroled = DetailEvent::where('event_id', $id)->pluck('member_id')->toArray();
-          $members = Member::whereNotIn('id', $member_enroled)->get();
+        // ===============================================
+        //               FUNGSI ENROLL DENGAN CHECK STATUS
+        // ===============================================
 
-          $event = Event::findOrFail($id);
-          return inertia('Admin/Events/Enroll', [
-            'members' => $members,
-            'event' => $event,
-          ]);
+        public function enroll($id)
+        {
+            $this->cekAuth();
+            $event = Event::findOrFail($id);
+
+            // Cek Status: Jika closed, tidak boleh enroll
+            if ($event->status === 'closed') {
+                return redirect()->route('admin.events.show', $id)
+                                ->with('error', 'Event sudah ditutup dan tidak dapat menerima peserta baru.');
+            }
+            
+            $member_enroled = DetailEvent::where('event_id', $id)->pluck('member_id')->toArray();
+            $members = Member::whereNotIn('id', $member_enroled)->get();
+
+            return inertia('Admin/Events/Enroll', [
+                'members' => $members,
+                'event' => $event,
+            ]);
         }
 
         public function storeenroll(Request $request, $id)
         {
-          $request->validate([
-            'member_ids' => 'required|array',
-            'member_ids.*' => 'exists:members,id',
-          ]);
+            $this->cekAuth();
+            $event = Event::findOrFail($id);
+            
+            // Cek Status: Jika closed, tidak boleh store enroll
+            if ($event->status === 'closed') {
+                return redirect()->route('admin.events.show', $id)
+                                ->with('error', 'Event sudah ditutup dan tidak dapat menerima peserta baru.');
+            }
 
-          foreach ($request->member_ids as $member_id) {
-            DetailEvent::create([
-              'event_id' => $id,
-              'member_id' => $member_id,
+            $request->validate([
+                'member_ids' => 'required|array',
+                'member_ids.*' => 'exists:members,id',
             ]);
-          }
 
-          return redirect()->route('admin.events.show', $id);
+            foreach ($request->member_ids as $member_id) {
+                DetailEvent::create([
+                    'event_id' => $id,
+                    'member_id' => $member_id,
+                ]);
+            }
+
+            return redirect()->route('admin.events.show', $id)->with('success', 'Peserta berhasil didaftarkan!');
         }
-
-
-
-
-
 }

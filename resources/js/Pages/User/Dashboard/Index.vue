@@ -75,7 +75,7 @@
                                     <tr><td class="text-muted fw-bold" width="30%">Nama Guru</td><td>: {{ user.data_riwayat?.nameGuru || 'Belum diisi' }}</td></tr>
                                     <tr><td class="text-muted fw-bold">Tanggal Mulai</td><td>: {{ user.data_riwayat?.dateStart ? formatDate(user.data_riwayat.dateStart) : '-' }}</td></tr>
                                     <tr><td class="text-muted fw-bold">Tanggal Selesai</td><td>: {{ user.data_riwayat?.dateEnd ? formatDate(user.data_riwayat.dateEnd) : '-' }}</td></tr>
-                               
+                                
                                 </tbody>
                             </table>
 
@@ -150,6 +150,11 @@
                                 <h5 class="fw-bold text-dark">{{ detail.event.title }}</h5>
                                 <p class="text-muted small mb-2"><i class="fa fa-map-marker-alt me-1"></i> {{ detail.event.place }}</p>
 
+                                <div v-if="detail.event.body" class="mb-3 p-3 border-start border-3 bg-light">
+                                    <p class="small text-dark fw-bold mb-1">Deskripsi Kegiatan:</p>
+                                    <p class="small mb-0 text-secondary" v-html="truncateText(detail.event.body, 150)"></p>
+                                </div>
+                                
                                 <Link :href="`/user/events/${detail.event.id}`" class="btn btn-sm btn-outline-primary mt-2">
                                     Detail Kegiatan <i class="fa fa-arrow-right ms-1"></i>
                                 </Link>
@@ -184,10 +189,23 @@ const props = defineProps({
 
 const processing = ref(false);
 
-// Format Tanggal (Tidak ada perubahan)
+// Helper: Format Tanggal
 const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     return new Date(dateString).toLocaleDateString('id-ID', options);
+};
+
+// Helper BARU: Memotong teks dan menghapus tag HTML
+const truncateText = (text, maxLength) => {
+    if (!text) return '';
+    // 1. Hapus tag HTML
+    let cleanText = text.replace(/<[^>]*>?/gm, '');
+    
+    // 2. Potong teks jika melebihi maxLength
+    if (cleanText.length > maxLength) {
+        return cleanText.substring(0, maxLength) + '...';
+    }
+    return cleanText;
 };
 
 // Fungsi Verifikasi Data (Tidak ada perubahan)

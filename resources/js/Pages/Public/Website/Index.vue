@@ -128,149 +128,150 @@
         </section>
 
         <section class="py-5 bg-light" id="jadwal">
-    <div class="container py-4">
-        <div class="row align-items-center">
+            <div class="container py-4">
+                <div class="row align-items-center">
 
-            <div class="col-lg-5 mb-4">
-                <h2 class="fw-bold text-navy mb-3">Jadwal Sakramen & Katekumen</h2>
-                <p class="text-muted mb-4">Berikut adalah jadwal pembaptisan dan pembukaan kelas katekumen periode mendatang.</p>
-                <div class="card bg-navy text-white p-4 border-0 rounded-3">
-                    <h4><i class="fas fa-info-circle me-2"></i> Informasi Penting</h4>
-                    <p class="mb-0 small opacity-75">Pendaftaran ditutup **H-3** sebelum tanggal pelaksanaan. Harap melengkapi berkas tepat waktu.</p>
-                </div>
-            </div>
+                    <div class="col-lg-5 mb-4">
+                        <h2 class="fw-bold text-navy mb-3">Jadwal Sakramen & Katekumen</h2>
+                        <p class="text-muted mb-4">Berikut adalah jadwal pembaptisan dan pembukaan kelas katekumen periode mendatang.</p>
+                        
+                    </div>
 
-            <div class="col-lg-7">
-                <div class="card shadow-sm border-0">
-                    <div class="card-body p-0">
-                        <div class="list-group list-group-flush">
+                    <div class="col-lg-7">
+                        <div class="card shadow-sm border-0">
+                            <div class="card-body p-0">
+                                <div class="list-group list-group-flush">
 
-                            <div class="list-group-item p-4 d-flex align-items-center justify-content-between"
-                                v-for="event in events"
-                                :key="event.id">
+                                    <div class="list-group-item p-4 d-flex align-items-center justify-content-between"
+                                        v-for="event in events"
+                                        :key="event.id">
 
-                                <div class="d-flex align-items-center">
+                                        <div class="d-flex align-items-center">
 
-                                    <div class="date-box bg-primary-subtle text-primary rounded p-2 text-center me-3" style="min-width: 60px;">
-                                        <span class="d-block fw-bold h5 mb-0">{{ formatDate(event.date, 'day') }}</span>
-                                        <span class="d-block small fw-bold">{{ formatDate(event.date, 'month') }}</span>
+                                            <div class="date-box bg-primary-subtle text-primary rounded p-2 text-center me-3" style="min-width: 60px;">
+                                                <span class="d-block fw-bold h5 mb-0">{{ formatDate(event.date, 'day') }}</span>
+                                                <span class="d-block small fw-bold">{{ formatDate(event.date, 'month') }}</span>
+                                            </div>
+
+                                            <div>
+                                                <h5 class="fw-bold mb-1 text-navy">{{ event.title }}</h5>
+                                                <p class="mb-0 text-muted small">
+                                                    <i class="fas fa-map-marker-alt me-1"></i> {{ event.place }}
+                                                    <span v-if="event.ref_event" class="ms-2 badge bg-info-subtle text-info-emphasis">
+                                                        {{ event.ref_event.title }}
+                                                    </span>
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex flex-column align-items-end gap-2">
+                                            <span class="badge rounded-pill px-3"
+                                                :class="event.status === 'active' ? 'bg-success' : 'bg-secondary'">
+                                                {{ event.status === 'active' ? 'Aktif' : 'Ditutup' }}
+                                            </span>
+                                            </div>
                                     </div>
 
-                                    <div>
-                                        <h5 class="fw-bold mb-1 text-navy">{{ event.title }}</h5>
-                                        <p class="mb-0 text-muted small">
-                                            <i class="far fa-clock me-1"></i> {{ event.time }} - {{ event.place }}
-                                        </p>
+                                    <div v-if="events.length === 0" class="list-group-item text-center text-muted p-4">
+                                        Tidak ada jadwal yang tersedia saat ini.
                                     </div>
+
+                                    <div class="card-footer p-3 text-center">
+                                        <Link href="/kegiatan" class="btn btn-sm btn-outline-navy">Lihat Semua Kegiatan</Link>
+                                    </div>
+
                                 </div>
-
-                                <span class="badge rounded-pill px-3"
-                                    :class="isRegistrationOpen(event.date) ? 'bg-success' : 'bg-secondary'">
-                                    {{ isRegistrationOpen(event.date) ? 'Buka' : 'Tutup' }}
-                                </span>
                             </div>
-
-                            <div v-if="events.length === 0" class="list-group-item text-center text-muted p-4">
-                                Tidak ada jadwal yang tersedia saat ini.
-                            </div>
-
-                            <div class="card-footer p-3 text-center">
-                                <Link href="/kegiatan" class="btn btn-sm btn-outline-navy">Lihat Semua Kegiatan</Link>
-                            </div>
-
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-</section>
+        </section>
+        <section class="py-5 bg-light" id="warta">
+            <div class="container py-4">
+                <div class="row align-items-center">
+
+                    <div class="col-lg-5 mb-4">
+                        <h2 class="fw-bold text-navy mb-3">Warta Paroki Terbaru</h2>
+                        <p class="text-muted mb-4">Informasi dan pengumuman yang baru diterbitkan untuk umat.</p>
 
 
-<section class="py-5 bg-light" id="warta">
-    <div class="container py-4">
-        <div class="row align-items-center">
+                        <div class="card bg-navy text-white p-4 border-0 rounded-3">
+                            <h4><i class="fas fa-bullhorn me-2"></i> Keterangan</h4>
+                            <p class="mb-0 small opacity-75">Klik tombol "Lihat Post" di samping untuk membaca warta selengkapnya.</p>
+                        </div>
+                    </div>
 
-            <div class="col-lg-5 mb-4">
-                <h2 class="fw-bold text-navy mb-3">Warta Paroki Terbaru</h2>
-                <p class="text-muted mb-4">Informasi dan pengumuman yang baru diterbitkan untuk umat.</p>
+                    <div class="col-lg-7">
+                        <div class="card shadow-sm border-0">
+                            <div class="card-body p-0">
+                                <div class="list-group list-group-flush">
 
+                                    <div class="list-group-item p-4 d-flex align-items-center justify-content-between"
+                                        v-for="post in posts"
+                                        :key="post.id">
 
-                <div class="card bg-navy text-white p-4 border-0 rounded-3">
-                    <h4><i class="fas fa-bullhorn me-2"></i> Keterangan</h4>
-                    <p class="mb-0 small opacity-75">Klik tombol "Lihat Post" di samping untuk membaca warta selengkapnya.</p>
-                </div>
-            </div>
+                                        <div class="d-flex align-items-center">
+                                            <div class="date-box bg-primary-subtle text-primary rounded p-2 text-center me-3" style="min-width: 60px;">
+                                                <span class="d-block fw-bold h5 mb-0">{{ formatDate(post.created_at, 'day') }}</span>
+                                                <span class="d-block small fw-bold">{{ formatDate(post.created_at, 'month') }}</span>
+                                            </div>
 
-            <div class="col-lg-7">
-                <div class="card shadow-sm border-0">
-                    <div class="card-body p-0">
-                        <div class="list-group list-group-flush">
+                                            <div>
+                                                <h5 class="fw-bold mb-1 text-navy">{{ post.title }}</h5>
+                                                <p class="mb-0 text-muted small">
+                                                    <i class="far fa-calendar-alt me-1"></i>
+                                                    Diterbitkan: {{ formatDate(post.created_at, 'full') }}
+                                                </p>
+                                            </div>
+                                        </div>
 
-                            <div class="list-group-item p-4 d-flex align-items-center justify-content-between"
-                                v-for="post in posts"
-                                :key="post.id">
-
-                                <div class="d-flex align-items-center">
-                                    <div class="date-box bg-primary-subtle text-primary rounded p-2 text-center me-3" style="min-width: 60px;">
-                                        <span class="d-block fw-bold h5 mb-0">{{ formatDate(post.created_at, 'day') }}</span>
-                                        <span class="d-block small fw-bold">{{ formatDate(post.created_at, 'month') }}</span>
+                                        <Link :href="`/warta/${post.slug}`" class="btn btn-sm btn-outline-primary border-0 shadow" type="button">
+                                            <i class="fas fa-eye me-1"></i> Lihat Post
+                                        </Link>
                                     </div>
 
-                                    <div>
-                                        <h5 class="fw-bold mb-1 text-navy">{{ post.title }}</h5>
-                                        <p class="mb-0 text-muted small">
-                                            <i class="far fa-calendar-alt me-1"></i>
-                                            Diterbitkan: {{ formatDate(post.created_at, 'full') }}
-                                        </p>
+                                    <div v-if="posts.length === 0" class="list-group-item text-center text-muted p-4">
+                                        Belum ada warta paroki terbaru yang diterbitkan.
                                     </div>
+
+                                    <div class="card-footer p-3 text-center">
+                                        <Link href="/warta" class="btn btn-sm btn-outline-navy">Lihat Semua Warta</Link>
+                                    </div>
+
                                 </div>
-
-                                <Link :href="`/warta/${post.slug}`" class="btn btn-sm btn-outline-primary border-0 shadow" type="button">
-                                    <i class="fas fa-eye me-1"></i> Lihat Post
-                                </Link>
                             </div>
-
-                            <div v-if="posts.length === 0" class="list-group-item text-center text-muted p-4">
-                                Belum ada warta paroki terbaru yang diterbitkan.
-                            </div>
-
-                            <div class="card-footer p-3 text-center">
-                                <Link href="/posts" class="btn btn-sm btn-outline-navy">Lihat Semua Warta</Link>
-                            </div>
-
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-</section>
+        </section>
 
         <section class="py-5 bg-white" id="lokasi">
-    <div class="container py-4">
-        <div class="text-center mb-5">
-            <h6 class="text-primary fw-bold text-uppercase">Lokasi</h6>
-            <h2 class="fw-bold text-navy">Gereja Santa Melania</h2>
-            <div class="divider mx-auto"></div>
-        </div>
-        <div class="card border-0 shadow-lg">
-            <div class="card-body p-0">
-                <div class="map-responsive">
-                    <iframe
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3959.327942890694!2d107.6212273!3d-6.9003616!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e68e7b306147b35%3A0x44c48d0d2a9d2f59!2sGereja%20Katolik%20Santa%20Melania%2C%20Cihaur%20Geulis!5e0!3m2!1sid!2sid!4v1727260000000!5m2!1sid!2sid"
-                        width="100%"
-                        height="450"
-                        style="border:0;"
-                        allowfullscreen=""
-                        loading="lazy"
-                        referrerpolicy="no-referrer-when-downgrade">
-                    </iframe>
+            <div class="container py-4">
+                <div class="text-center mb-5">
+                    <h6 class="text-primary fw-bold text-uppercase">Lokasi</h6>
+                    <h2 class="fw-bold text-navy">Gereja Santa Melania</h2>
+                    <div class="divider mx-auto"></div>
+                </div>
+                <div class="card border-0 shadow-lg">
+                    <div class="card-body p-0">
+                        <div class="map-responsive">
+                            <iframe
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3959.327942890694!2d107.6212273!3d-6.9003616!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e68e7b306147b35%3A0x44c48d0d2a9d2f59!2sGereja%20Katolik%20Santa%20Melania%2C%20Cihaur%20Geulis!5e0!3m2!1sid!2sid!4v1727260000000!5m2!1sid!2sid"
+                                width="100%"
+                                height="450"
+                                style="border:0;"
+                                allowfullscreen=""
+                                loading="lazy"
+                                referrerpolicy="no-referrer-when-downgrade">
+                            </iframe>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-</section>
+        </section>
+        
         <section class="py-5 bg-navy text-white" id="dokumen">
             <div class="container text-center">
                 <h3 class="fw-bold mb-4 text-white">Butuh Formulir Fisik?</h3>
@@ -314,7 +315,7 @@
                     </div>
                 </div>
                 <div class="border-top border-secondary mt-5 pt-4 text-center small opacity-50">
-                    &copy; 2025 Paroki Santa Melania - Sistem Informasi Katekumen & Baptis Bayi.
+                    © 2025 Paroki Santa Melania - Sistem Informasi Katekumen & Baptis Bayi.
                 </div>
             </div>
         </footer>
@@ -335,7 +336,7 @@ export default {
     props: {
         title: String,
         posts: Array,
-        events: Array
+        events: Array // Events sekarang diasumsikan memiliki relasi ref_event dan status
     },
 
     setup() {
@@ -361,30 +362,7 @@ export default {
             return dateString;
         };
 
-        // Fungsi untuk menentukan status pendaftaran (Buka/Tutup)
-        const isRegistrationOpen = (eventDateString) => {
-            if (!eventDateString) return false;
-
-            // 1. Dapatkan tanggal hari ini (hanya tanggal, waktu diabaikan)
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-
-            // 2. Dapatkan tanggal acara
-            const eventDate = new Date(eventDateString);
-            eventDate.setHours(0, 0, 0, 0);
-
-            // 3. Hitung tanggal batas penutupan pendaftaran (H-3)
-            // 86400000 milidetik = 1 hari
-            const threeDaysBefore = new Date(eventDate.getTime() - (3 * 86400000));
-            threeDaysBefore.setHours(0, 0, 0, 0);
-
-            // Pendaftaran BUKA jika Hari Ini lebih kecil dari atau sama dengan H-3
-            // Catatan: Jika ingin menggunakan 'date_close' dari database, itu lebih baik.
-            // Di sini kita pakai logika H-3 dari eventDate.
-            return today <= threeDaysBefore;
-        };
-
-        // Logika untuk Navbar berubah warna saat discroll
+        // --- Logika untuk Navbar berubah warna saat discroll ---
         const isScrolled = ref(false);
 
         const handleScroll = () => {
@@ -406,7 +384,6 @@ export default {
         return {
             isScrolled,
             formatDate,
-            isRegistrationOpen
         }
     }
 }
@@ -421,7 +398,7 @@ export default {
 .text-navy { color: #003366; }
 .bg-navy { background-color: #003366; }
 .text-warning { color: #ff9900 !important; }
-.text-primary { color: #003366 !important; } /* Menambahkan primary color */
+.text-primary { color: #003366 !important; } 
 
 .btn-primary {
     background-color: #003366;
@@ -441,10 +418,10 @@ export default {
 .navbar {
     transition: all 0.3s ease-in-out;
     padding: 1rem 0;
-    background: transparent; /* Transparan di awal */
+    background: transparent; 
 }
 .navbar.scrolled {
-    background: var(--navy-primary); /* Navy saat discroll */
+    background: var(--navy-primary); 
     padding: 0.5rem 0;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
@@ -457,26 +434,15 @@ export default {
     padding-top: 0;
     padding-bottom: 0;
 }
-.lh-sm { line-height: 1.25; } /* Bootstrap class */
-
-/* Navbar Links Styling (TIDAK DIGUNAKAN, tapi kelas style tetap ada) */
-.nav-link {
-    color: rgba(255, 255, 255, 0.8) !important;
-    font-weight: 500;
-    transition: color 0.2s ease;
-}
-.nav-link:hover,
-.nav-link:focus {
-    color: white !important;
-}
+.lh-sm { line-height: 1.25; } 
 
 /* --- Hero Section --- */
 .hero {
-    height: 100vh; /* Full Screen */
+    height: 100vh; 
     min-height: 600px;
-    background: url('/gambar/hero5.jpg') no-repeat center center/cover; /* Pastikan path gambar benar */
+    background: url('/gambar/hero5.jpg') no-repeat center center/cover; 
     position: relative;
-    margin-top: -76px; /* Menarik ke atas agar di belakang navbar (adjust if necessary) */
+    margin-top: -76px; 
 }
 
 
@@ -525,7 +491,7 @@ export default {
 /* Garis horizontal penghubung step */
 .process-line {
     position: absolute;
-    top: 25px; /* Setengah dari tinggi step-icon */
+    top: 25px; 
     left: 15%;
     right: 15%;
     height: 2px;
@@ -542,9 +508,12 @@ export default {
 .bg-success-subtle { background-color: #d1e7dd !important; }
 .text-success { color: #198754 !important; }
 .bg-warning-subtle { background-color: #fff3cd !important; }
-.text-warning { color: #ffc107 !important; } /* Mengubah ini agar lebih cerah */
+.text-warning { color: #ffc107 !important; } 
 .bg-secondary-subtle { background-color: #e2e3e5 !important; }
 .text-secondary { color: #6c757d !important; }
+.bg-info-subtle { background-color: #cff4fc !important; }
+.text-info-emphasis { color: #055160 !important; }
+
 
 /* Menghapus background button kontak saat tidak discroll, karena sudah pakai btn-outline-light */
 .btn-outline-light:hover {
@@ -552,7 +521,7 @@ export default {
     color: var(--navy-primary);
 }
 .navbar:not(.scrolled) .btn-primary {
-    background-color: var(--navy-primary); /* Pastikan tombol Masuk tetap navy */
+    background-color: var(--navy-primary); 
     border-color: var(--navy-primary);
 }
 </style>

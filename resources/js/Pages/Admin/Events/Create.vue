@@ -6,7 +6,7 @@
             <div class="col-md-10">
 
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h2 class="fs-3 fw-bold mb-0">Tambah Kegiatan</h2>
+                    <h2 class="fs-3 fw-bold mb-0">Tambah Kegiatan Baru</h2>
                     <Link href="/admin/events" class="btn btn-outline-secondary border-0 shadow-sm">
                         <i class="fa fa-arrow-left me-1"></i> Kembali
                     </Link>
@@ -24,6 +24,9 @@
                                         <input type="text" class="form-control" v-model="form.title" @input="createSlug" :class="{ 'is-invalid': form.errors.title }" placeholder="Contoh: Misa Natal 2025">
                                         <div v-if="form.errors.title" class="invalid-feedback">{{ form.errors.title }}</div>
                                     </div>
+
+                                    <input type="hidden" v-model="form.slug">
+
                                     <div class="mb-3">
                                         <label class="form-label fw-bold">Referensi Kegiatan</label>
                                         <select class="form-select" v-model="form.ref_event_id" :class="{ 'is-invalid': form.errors.ref_event_id }">
@@ -50,14 +53,14 @@
                                         <input type="text" class="form-control" v-model="form.place" :class="{ 'is-invalid': form.errors.place }" placeholder="Contoh: Gereja Utama">
                                         <div v-if="form.errors.place" class="invalid-feedback">{{ form.errors.place }}</div>
                                     </div>
-
+                                    
                                 </div>
                             </div>
 
                             <div class="mb-4">
                                 <label class="form-label fw-bold">Deskripsi Kegiatan</label>
-                                <textarea class="form-control" v-model="form.desc" rows="4" :class="{ 'is-invalid': form.errors.desc }" placeholder="Masukkan detail deskripsi kegiatan..."></textarea>
-                                <div v-if="form.errors.desc" class="invalid-feedback">{{ form.errors.desc }}</div>
+                                <textarea class="form-control" v-model="form.body" rows="6" :class="{ 'is-invalid': form.errors.body }" placeholder="Masukkan detail lengkap dan isi kegiatan..."></textarea>
+                                <div v-if="form.errors.body" class="invalid-feedback">{{ form.errors.body }}</div>
                             </div>
 
                             <div class="d-flex justify-content-end gap-2">
@@ -80,18 +83,23 @@
 <script setup>
 import { useForm, Head, Link } from '@inertiajs/inertia-vue3';
 
-// Menerima props dari controller (Daftar RefEvent untuk dropdown)
 const props = defineProps({
     refevents: Array
 });
 
 const form = useForm({
     title: '',
-    ref_event_id: '', // Foreign Key
+    ref_event_id: '',
     date: '',
     place: '',
-    desc: '',
+    body: '', // Sesuai dengan kolom 'body' (wajib)
+    status: 'active',
 });
+
+
+const createSlug = () => {
+    form.slug = form.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-*|-*$/g, '');
+};
 
 
 const submit = () => {

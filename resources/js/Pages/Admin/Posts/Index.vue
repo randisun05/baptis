@@ -35,18 +35,20 @@
               <tr>
                 <th class="px-4 py-3" style="width: 5%;">No</th>
                 <th class="px-4 py-3 text-center" style="width: 15%;">Gambar</th> 
-                <th class="px-4 py-3" style="width: 25%;">Judul Kegiatan</th>
+                <th class="px-4 py-3" style="width: 20%;">Judul Kegiatan</th>
                 <th class="px-4 py-3">Deskripsi Singkat</th>
-                <th class="px-4 py-3 text-center" style="width: 15%;">Aksi</th>
+                <th class="px-4 py-3 text-center" style="width: 10%;">Status</th> <th class="px-4 py-3 text-center" style="width: 15%;">Aksi</th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="(post, index) in posts.data" :key="post.id">
-                <td class="px-4 fw-bold text-secondary">{{ index + 1 }}</td>
+                <td class="px-4 fw-bold text-secondary">{{ posts.from + index }}</td>
                 
                 <td class="px-4 text-center">
                     <div v-if="post.image">
-                        <img :src="`/storage/${post.image}`" alt="Thumbnail" class="img-thumbnail rounded shadow-sm" style="width: 80px; height: 50px; object-fit: cover;">
+                        <img :src="post.image.startsWith('http') ? post.image : `/storage/${post.image}`" 
+                             alt="Thumbnail" class="img-thumbnail rounded shadow-sm" 
+                             style="width: 80px; height: 50px; object-fit: cover;">
                     </div>
                     <div v-else>
                         <span class="badge bg-light text-secondary border">No Image</span>
@@ -59,20 +61,41 @@
                 <td class="px-4 text-muted small">
                     {{ post.body.length > 60 ? post.body.substring(0, 60) + '...' : post.body }}
                 </td>
+
+                <td class="px-4 text-center">
+                  <span class="badge" :class="{
+                    'bg-success': post.status === 'active' || post.status === 'approved',
+                    'bg-danger': post.status === 'deactive' || post.status === 'rejected',
+                    'bg-warning text-dark': post.status === 'pending'
+                  }">
+                    {{ post.status.charAt(0).toUpperCase() + post.status.slice(1) }}
+                  </span>
+                </td>
+                
                 <td class="px-4 text-center">
                   <div class="btn-group" role="group">
-                      <Link :href="`/admin/posts/${post.id}/edit`" class="btn btn-sm btn-light text-primary border hover-primary" title="Edit">
-                        <i class="bi bi-pencil-square"></i>
-                      </Link>
-                      <button @click="destroy(post.id)" class="btn btn-sm btn-light text-danger border hover-danger ms-1" title="Hapus">
-                        <i class="bi bi-trash"></i>
-                      </button>
+                    
+                    <button v-if="post.status !== 'active'" @click="activate(post.id)" 
+                            class="btn btn-sm btn-light text-success border hover-primary me-1" title="Aktifkan">
+                        <i class="bi bi-check-circle"></i>
+                    </button>
+                    <button v-else @click="deactivate(post.id)" 
+                            class="btn btn-sm btn-light text-warning border hover-danger me-1" title="Nonaktifkan">
+                        <i class="bi bi-x-circle"></i>
+                    </button>
+
+                    <Link :href="`/admin/posts/${post.id}/edit`" class="btn btn-sm btn-light text-primary border hover-primary" title="Edit">
+                      <i class="bi bi-pencil-square"></i>
+                    </Link>
+                    <button @click="destroy(post.id)" class="btn btn-sm btn-light text-danger border hover-danger ms-1" title="Hapus">
+                      <i class="bi bi-trash"></i>
+                    </button>
                   </div>
                 </td>
               </tr>
               
               <tr v-if="posts.data.length === 0">
-                <td colspan="5" class="text-center py-5">
+                <td colspan="6" class="text-center py-5">
                     <div class="d-flex flex-column align-items-center text-muted">
                         <i class="bi bi-inbox display-4 mb-3 opacity-50"></i>
                         <p class="mb-0">Belum ada data postingan.</p>
@@ -113,29 +136,55 @@ defineProps({
 // Fungsi Hapus dengan SweetAlert
 const destroy = (id) => {
     Swal.fire({
-        title: 'Apakah Anda yakin?',
-        text: "Data yang dihapus tidak dapat dikembalikan!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',      // Merah untuk hapus
-        cancelButtonColor: '#003366',    // Navy Blue untuk batal (sesuai tema)
-        confirmButtonText: 'Ya, hapus!',
-        cancelButtonText: 'Batal'
+      title: 'Apakah Anda yakin?',
+      text: "Data yang dihapus tidak dapat dikembalikan!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33', 
+      cancelButtonColor: '#003366', 
+      confirmButtonText: 'Ya, hapus!',
+      cancelButtonText: 'Batal'
     }).then((result) => {
-        if (result.isConfirmed) {
-            // Jika user klik "Ya", jalankan delete inertia
-            Inertia.delete(`/admin/posts/${id}`, {
-                onSuccess: () => {
-                    // Opsional: Tampilkan notifikasi sukses kedua dari SweetAlert
-                    Swal.fire(
-                        'Terhapus!',
-                        'Data berhasil dihapus.',
-                        'success'
-                    )
-                }
-            });
-        }
+      if (result.isConfirmed) {
+          // Jika user klik "Ya", jalankan delete inertia
+          Inertia.delete(`/admin/posts/${id}`, {
+              onSuccess: () => {
+                  Swal.fire(
+                      'Terhapus!',
+                      'Data berhasil dihapus.',
+                      'success'
+                  )
+              },
+              onError: () => {
+                  Swal.fire(
+                      'Gagal!',
+                      'Terjadi kesalahan saat menghapus data.',
+                      'error'
+                  )
+              }
+          });
+      }
     })
+}
+
+// Fungsi Aktivasi Postingan
+const activate = (id) => {
+    Inertia.put(`/admin/posts/${id}/activate`, {}, {
+        preserveScroll: true,
+        onSuccess: () => {
+             // Opsional: notifikasi sukses bisa ditangani via flash message dari controller
+        }
+    });
+}
+
+// Fungsi Deaktivasi Postingan
+const deactivate = (id) => {
+    Inertia.put(`/admin/posts/${id}/deactivate`, {}, {
+        preserveScroll: true,
+        onSuccess: () => {
+            // Opsional
+        }
+    });
 }
 </script>
 
@@ -185,4 +234,9 @@ export default { layout: LayoutAdmin };
 .text-success-emphasis { color: #0f5132; }
 .bg-danger-subtle { background-color: #f8d7da; }
 .text-danger-emphasis { color: #842029; }
+
+/* Menyesuaikan penomoran paginasi di tabel */
+.table-custom tbody tr td:first-child { 
+    font-size: 0.85rem; 
+}
 </style>

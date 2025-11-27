@@ -29,7 +29,7 @@ class PostController extends Controller
         return inertia('Admin/Posts/Index', [
             'posts' => $posts,
 
-         ]);
+          ]);
     }
 
     /**
@@ -43,7 +43,7 @@ class PostController extends Controller
 
         return inertia('Admin/Posts/Create', [
 
-         ]);
+          ]);
     }
 
     /**
@@ -57,43 +57,43 @@ class PostController extends Controller
 
         $this->cekAuth();
        // Validate request including file validation
-      $request->validate([
-        'title' => 'required|string',
-        'body' => 'required|',
-        'image' => '|image|mimes:jpeg,png,jpg,gif,svg|max:2048|nullable',
-        ]);
+       $request->validate([
+         'title' => 'required|string',
+         'body' => 'required|',
+         'image' => '|image|mimes:jpeg,png,jpg,gif,svg|max:2048|nullable',
+         ]);
 
-    // Generate initial slug from title
-    $slug = strtolower(str_replace(' ', '-', $request->title));
-    $slug = preg_replace('/[^a-z0-9-]/', '', $slug);
-    $originalSlug = $slug;
-    $counter = 1;
+     // Generate initial slug from title
+     $slug = strtolower(str_replace(' ', '-', $request->title));
+     $slug = preg_replace('/[^a-z0-9-]/', '', $slug);
+     $originalSlug = $slug;
+     $counter = 1;
 
-    // Check if the generated slug is unique, if not, append a number
-    while (Post::where('slug', $slug)->exists()) {
-        $slug = $originalSlug . '-' . $counter;
-        $counter++;
-    }
+     // Check if the generated slug is unique, if not, append a number
+     while (Post::where('slug', $slug)->exists()) {
+         $slug = $originalSlug . '-' . $counter;
+         $counter++;
+     }
 
-    $body = $request->body;
-    // Ambil 100 kata pertama dari body
-    // Hapus tag HTML dari body
-    $bodyWithoutTags = strip_tags($body);
-    $words = str_word_count($bodyWithoutTags, 1);
-    $excerpt = implode(' ', array_slice($words, 0, 50));
+     $body = $request->body;
+     // Ambil 100 kata pertama dari body
+     // Hapus tag HTML dari body
+     $bodyWithoutTags = strip_tags($body);
+     $words = str_word_count($bodyWithoutTags, 1);
+     $excerpt = implode(' ', array_slice($words, 0, 50));
 
-    // Tambahkan "..." jika body memiliki lebih dari 100 kata
-    if (count($words) > 50) {
-        $excerpt .= '...';
-    }
-    $today = Carbon::now()->format('Y-m-d H:i:s');
+     // Tambahkan "..." jika body memiliki lebih dari 100 kata
+     if (count($words) > 50) {
+         $excerpt .= '...';
+     }
+     $today = Carbon::now()->format('Y-m-d H:i:s');
 
 
-    $image = $request->file('image');
-    if ($image) {
-        $image = $request->file('image')->storePublicly('/images');
-        // Proceed with storing or processing the uploaded file
-    };
+     $image = $request->file('image');
+     if ($image) {
+         $image = $request->file('image')->storePublicly('/images');
+         // Proceed with storing or processing the uploaded file
+     };
 
         Post::create([
             'title' => $request->title,
@@ -106,10 +106,8 @@ class PostController extends Controller
             'status' => 'deactive',
         ]);
 
-
-
-     //redirect
-     return redirect()->route('admin.posts.index');
+       //redirect
+       return redirect()->route('admin.posts.index')->with('success', 'Postingan berhasil ditambahkan!');
     }
 
     /**
@@ -157,50 +155,64 @@ class PostController extends Controller
     {
         $this->cekAuth();
        // Validate request including file validation
-    $request->validate([
-        'title' => 'required|string',
-        'body' => 'required|',
-    ]);
+     $request->validate([
+         'title' => 'required|string',
+         'body' => 'required|',
+     ]);
 
-    $slug = strtolower(str_replace(' ', '-', $request->title));
-    $slug = preg_replace('/[^a-z0-9-]/', '', $slug);
-    $body = $request->body;
+     $post = Post::findOrFail($id); // Ambil data post yang akan diupdate
 
-    // Ambil 100 kata pertama dari body
-    // Hapus tag HTML dari body
-    $bodyWithoutTags = strip_tags($body);
-    $words = str_word_count($bodyWithoutTags, 1);
-    $excerpt = implode(' ', array_slice($words, 0, 50));
+     $slug = strtolower(str_replace(' ', '-', $request->title));
+     $slug = preg_replace('/[^a-z0-9-]/', '', $slug);
+     
+     // Cek keunikan slug hanya jika judul berubah
+     if ($post->title !== $request->title) {
+        $originalSlug = $slug;
+        $counter = 1;
+        while (Post::where('slug', $slug)->where('id', '!=', $id)->exists()) {
+             $slug = $originalSlug . '-' . $counter;
+             $counter++;
+         }
+     } else {
+        $slug = $post->slug; // Pertahankan slug lama jika judul tidak berubah
+     }
 
-    // Tambahkan "..." jika body memiliki lebih dari 100 kata
-    if (count($words) > 50) {
-        $excerpt .= '...';
-    }
-    $today = Carbon::now()->format('Y-m-d H:i:s');
+
+     $body = $request->body;
+
+     // Ambil 50 kata pertama dari body
+     $bodyWithoutTags = strip_tags($body);
+     $words = str_word_count($bodyWithoutTags, 1);
+     $excerpt = implode(' ', array_slice($words, 0, 50));
+
+     // Tambahkan "..." jika body memiliki lebih dari 50 kata
+     if (count($words) > 50) {
+         $excerpt .= '...';
+     }
+     $today = Carbon::now()->format('Y-m-d H:i:s');
 
 
-    $image = $request->file('image');
-    if ($image) {
-        $image = $request->file('image')->storePublicly('/images');
-        // Proceed with storing or processing the uploaded file
-    } else {
-        $image = Post::where ('id', $id)->value('image');
-    };
+     $image = $request->file('image');
+     $image_path = $post->image; // Pertahankan gambar lama secara default
+     
+     if ($image) {
+         // Logika hapus gambar lama (jika ada) di sini bisa ditambahkan
+         $image_path = $request->file('image')->storePublicly('/images');
+     } 
 
-        Post::where('id', $id)->update([
+        $post->update([
             'title' => $request->title,
             'body' =>  $request->body,
             'slug' => $slug,
             'excerpt' => $excerpt,
-            'image' => $image,
+            'image' => $image_path,
             'publish_at' => $today,
             'user_id' => auth()->id(),
-            'status' => 'deactive',
-
+            // Pertahankan status lama saat update
         ]);
 
-     //redirect
-     return redirect()->route('admin.posts.index');
+       //redirect
+       return redirect()->route('admin.posts.index')->with('success', 'Postingan berhasil diperbarui!');
     }
 
     /**
@@ -216,43 +228,56 @@ class PostController extends Controller
         $post = Post::findOrFail($id);
 
         $post->delete();
+        // Opsional: Logika menghapus file gambar di storage
 
         //redirect
-        return redirect()->route('admin.posts.index');
+        return redirect()->route('admin.posts.index')->with('success', 'Postingan berhasil dihapus!');
     }
 
-    public function approve($id)
-    {
 
-        $this->cekAuth();
+    // ===============================================
+    //               FUNGSI BARU (STATUS)
+    // ===============================================
 
-        $post = Post::findOrFail($id);
-
-        $post->update([
-            'status' => 'approved'
-        ]);
-
-        PublicPost::create([
-            'post_id' => $post->id
-        ]);
-
-        //redirect
-        return redirect()->route('admin.posts.index');
-    }
-
-    public function reject($id)
+    /**
+     * Mengubah status post menjadi 'active'.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function activate($id)
     {
         $this->cekAuth();
 
         $post = Post::findOrFail($id);
 
         $post->update([
-            'status' => 'rejected'
+            'status' => 'active'
         ]);
-        //redirect
-        return redirect()->route('admin.posts.index');
+
+        // redirect dengan pesan sukses
+        return redirect()->route('admin.posts.index')->with('success', 'Postingan berhasil diaktifkan!');
     }
 
+    /**
+     * Mengubah status post menjadi 'deactive'.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function deactivate($id)
+    {
+        $this->cekAuth();
+
+        $post = Post::findOrFail($id);
+
+        $post->update([
+            'status' => 'deactive'
+        ]);
+        
+        // redirect dengan pesan sukses
+        return redirect()->route('admin.posts.index')->with('success', 'Postingan berhasil dinonaktifkan!');
+    }
 
 
     public function cekAuth()
@@ -262,7 +287,4 @@ class PostController extends Controller
             return redirect()->route('login')->with('warning', 'Anda tidak memiliki akses');
         }
     }
-
-
-
 }

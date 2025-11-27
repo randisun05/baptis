@@ -65,12 +65,16 @@ Route::prefix('admin')->group(function() {
         Route::resource('/posts', \App\Http\Controllers\Admin\PostController::class, ['as' => 'admin']);
         Route::get('/posts/{id}/approve', [\App\Http\Controllers\Admin\PostController::class, 'approve'])->name('admin.posts.approve');
         Route::get('/posts/{id}/reject', [\App\Http\Controllers\Admin\PostController::class, 'reject'])->name('admin.posts.reject');
+        Route::put('/posts/{post}/activate', [\App\Http\Controllers\Admin\PostController::class, 'activate'])->name('admin.posts.activate');
+        Route::put('/posts/{post}/deactivate', [\App\Http\Controllers\Admin\PostController::class, 'deactivate'])->name('admin.posts.deactivate');
 
         //route events
-         Route::get('/events-ref', [\App\Http\Controllers\Admin\EventController::class, 'Indexref'])->name('admin.events.Indexref');
+        Route::get('/events-ref', [\App\Http\Controllers\Admin\EventController::class, 'Indexref'])->name('admin.events.Indexref');
         Route::post('/events-ref/', [\App\Http\Controllers\Admin\EventController::class, 'Storeref'])->name('admin.events.Storeref');
         Route::put('/events-ref/{id}', [\App\Http\Controllers\Admin\EventController::class, 'Updateref'])->name('admin.events.Updateref');
         Route::delete('/events-ref/{id}/delete', [\App\Http\Controllers\Admin\EventController::class, 'Deleteref'])->name('admin.events.Deleteref');
+        Route::post('/events/{id}/activate', [\App\Http\Controllers\Admin\EventController::class, 'activate'])->name('admin.events.activate');
+        Route::post('/events/{id}/close', [\App\Http\Controllers\Admin\EventController::class, 'close'])->name('admin.events.close');
         Route::post('/events/{id}', [\App\Http\Controllers\Admin\EventController::class, 'update'])->name('admin.events.update');
         Route::get('/events/{id}/enroll', [\App\Http\Controllers\Admin\EventController::class, 'enroll'])->name('admin.events.enroll');
         Route::post('/events/{id}/enroll', [\App\Http\Controllers\Admin\EventController::class, 'Storeenroll'])->name('admin.events.Storeenroll');
@@ -126,6 +130,7 @@ Route::prefix('user')->group(function() {
         Route::get('/posts/list/{post:slug}', [\App\Http\Controllers\User\PostsController::class, 'showlist'])->name('user.posts.showlist');
         Route::post('/posts/{id}', [\App\Http\Controllers\User\PostsController::class, 'update'])->name('user.posts.update');
         Route::resource('/posts', \App\Http\Controllers\User\PostsController::class, ['as' => 'user']);
+      
 
         //route events
         Route::resource('/events', \App\Http\Controllers\User\EventController::class, ['as' => 'user']);
@@ -156,12 +161,12 @@ Route::get('/warta/{post:slug}', [\App\Http\Controllers\Public\PostsController::
 Route::get('/kegiatan', [\App\Http\Controllers\Public\EventsController::class, 'index'])->name('events.index');
 Route::get('/kegiatan/{id}', [\App\Http\Controllers\Public\EventsController::class, 'show'])->name('events.show');
 
-Route::get('/about', [\App\Http\Controllers\Public\PublicController::class, 'about'])->name('about');
-Route::get('/ketua-umum', [\App\Http\Controllers\Public\PublicController::class, 'ketuaUmum'])->name('ketuaUmum');
-Route::get('/peraturan-organisasi', [\App\Http\Controllers\Public\PublicController::class, 'peraturanOrganisasi'])->name('peraturanOrganisasi');
-Route::get('/sejarah', [\App\Http\Controllers\Public\PublicController::class, 'sejarah'])->name('sejarah');
-Route::get('/struktur-organisasi', [\App\Http\Controllers\Public\PublicController::class, 'strukturOrganisasi'])->name('strukturOrganisasi');
-Route::get('/visi-misi', [\App\Http\Controllers\Public\PublicController::class, 'visiMisi'])->name('visiMisi');
+// Route::get('/about', [\App\Http\Controllers\Public\PublicController::class, 'about'])->name('about');
+// Route::get('/ketua-umum', [\App\Http\Controllers\Public\PublicController::class, 'ketuaUmum'])->name('ketuaUmum');
+// Route::get('/peraturan-organisasi', [\App\Http\Controllers\Public\PublicController::class, 'peraturanOrganisasi'])->name('peraturanOrganisasi');
+// Route::get('/sejarah', [\App\Http\Controllers\Public\PublicController::class, 'sejarah'])->name('sejarah');
+// Route::get('/struktur-organisasi', [\App\Http\Controllers\Public\PublicController::class, 'strukturOrganisasi'])->name('strukturOrganisasi');
+// Route::get('/visi-misi', [\App\Http\Controllers\Public\PublicController::class, 'visiMisi'])->name('visiMisi');
 Route::get('/kontak-kami', [\App\Http\Controllers\Public\PublicController::class, 'kontak'])->name('kontak');
 
 Route::get('/faq', [\App\Http\Controllers\Public\PublicController::class, 'faq'])->name('faq');
@@ -170,6 +175,7 @@ Route::get('/forget-password', [\App\Http\Controllers\Public\PublicController::c
 Route::get('/forget-password/email', [\App\Http\Controllers\Public\PublicController::class, 'emailforgetPassword'])->name('forget.password.email');
 Route::get('/user/forget-password/{id}', [\App\Http\Controllers\Public\PublicController::class, 'IndexforgetPassword'])->name('forget.password.index');
 Route::put('/user/forget-password/{id}/reset', [\App\Http\Controllers\Public\PublicController::class, 'ResetPassword'])->name('forget.password.reset');
+
 
 
 //maintenance route

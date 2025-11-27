@@ -22,23 +22,29 @@
                     <div class="card-body p-4">
                         <div class="row">
                             <div class="col-md-6">
-                                <table class="table table-borderless table-sm">
+                                <table class="table table-borderless table-sm detail-table">
                                     <tbody>
                                         <tr>
                                             <td class="fw-bold text-muted" style="width: 150px;">Tanggal</td>
-                                            <td>: {{ event.date }}</td>
+                                            <td>: **{{ formatDate(event.date) }}**</td>
                                         </tr>
                                         <tr>
                                             <td class="fw-bold text-muted">Tempat</td>
-                                            <td>: {{ event.place }}</td>
+                                            <td>: {{ event.place || '-' }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-bold text-muted">Status</td>
+                                            <td>
+                                                : <span :class="getStatusBadgeClass(event.status)" class="badge py-2 px-3 fw-normal">
+                                                    {{ formatStatus(event.status) }}
+                                                </span>
+                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
                             <div class="col-md-6">
-                                <table class="table table-borderless table-sm">
-                                </table>
-                            </div>
+                                </div>
                         </div>
 
                         <hr class="my-4">
@@ -68,15 +74,18 @@
                                 </form>
                             </div>
                            <div class="col-md-6 mb-2 text-md-end">
-                            <Link :href="`/admin/events/${event.id}/enroll`" class="btn btn-success shadow-sm">
+                            <Link v-if="event.status === 'active'" :href="`/admin/events/${event.id}/enroll`" class="btn btn-success shadow-sm">
                                 <i class="fa fa-check-circle me-1"></i> Enroll Peserta
                             </Link>
+                            <button v-else class="btn btn-secondary shadow-sm" disabled>
+                                <i class="fa fa-lock me-1"></i> Event Ditutup
+                            </button>
                         </div>
                         </div>
 
                         <ul class="nav nav-tabs mb-3">
                             <li class="nav-item">
-                                <a class="nav-link active fw-bold" href="#">List Peserta</a>
+                                <a class="nav-link active fw-bold" href="#">List Peserta (Total: {{ details.total }})</a>
                             </li>
                         </ul>
 
@@ -85,8 +94,9 @@
                                 <thead class="thead-dark table-light">
                                     <tr>
                                         <th class="border-0 rounded-start text-center" style="width:5%">No.</th>
-                                        <th class="border-0">Nama</th>
-                                        <th class="border-0 rounded-end text-center">Status</th>
+                                        <th class="border-0">Nama Peserta</th>
+                                        <th class="border-0">Email / Kontak</th>
+                                        <th class="border-0 rounded-end text-center">Status Pendaftaran</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -95,6 +105,7 @@
                                             {{ ++index + (details.current_page - 1) * details.per_page }}
                                         </td>
                                         <td>{{ detail.member.name }}</td>
+                                        <td>{{ detail.member.email }} / {{ detail.member.contact || '-' }}</td>
                                         <td class="text-center">
                                             <span class="badge bg-secondary">{{ detail.status }}</span>
                                         </td>
@@ -147,34 +158,58 @@ export default {
     props: {
         errors: Object,
         event: Object,
-        details: Object
+        details: Object,
     },
 
     setup(props) {
-        //define state search
+        // --- Helpers ---
+        
+        const formatDate = (dateString) => {
+            if (!dateString) return '-';
+            const date = new Date(dateString);
+            const options = { day: 'numeric', month: 'long', year: 'numeric' };
+            
+            return date.toLocaleDateString('id-ID', options);
+        };
+        
+        const getStatusBadgeClass = (status) => {
+            return status === 'active' 
+                ? 'bg-success text-white' 
+                : 'bg-secondary text-white';
+        };
+
+        const formatStatus = (status) => {
+            if (!status) return '';
+            const formatted = status === 'closed' ? 'Ditutup' : 'Aktif'; 
+            return formatted.charAt(0).toUpperCase() + formatted.slice(1);
+        };
+
+        // --- Search Logic ---
+        
         const search = ref('' || (new URL(document.location)).searchParams.get('q'));
 
-        //define method search
         const handleSearch = () => {
             Inertia.get(`/admin/events/${props.event.id}`, {
-                //send params "q" with value from state "search"
                 q: search.value,
             }, {
-                preserveState: true, // Supaya tidak refresh full page
+                preserveState: true,
                 preserveScroll: true
             });
         }
 
         return {
             search,
-            handleSearch
+            handleSearch,
+            formatDate,
+            getStatusBadgeClass,
+            formatStatus
         }
     }
 }
 </script>
 
 <style scoped>
-/* Styling untuk Modal Custom */
+/* Styling untuk Modal Custom (dipertahankan) */
 .modal-backdrop-custom {
     position: fixed;
     top: 0;
@@ -214,5 +249,18 @@ export default {
 @keyframes slideIn {
     from { transform: translateY(-20px); opacity: 0; }
     to { transform: translateY(0); opacity: 1; }
+}
+
+/* Penambahan styling untuk tabel detail agar rapi */
+.detail-table tr td {
+    padding-top: 0.25rem !important;
+    padding-bottom: 0.25rem !important;
+}
+
+.text-primary {
+    color: #003366 !important;
+}
+.bg-light {
+    background-color: #f8f9fa !important;
 }
 </style>

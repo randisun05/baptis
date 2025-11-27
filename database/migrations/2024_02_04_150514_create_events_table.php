@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('title')->unique();
             $table->string('slug')->nullable();
+            $table->longText('body')->nullable();
             $table->date('date');
             $table->enum('status',['active','closed']);
             $table->string('place')->nullable();

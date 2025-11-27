@@ -82,6 +82,7 @@ class DatabaseSeeder extends Seeder
             'ref_event_id' => 1,
             'date' => '2024-01-20',
             'place' => 'Gereja St. Maria',
+             'body' => 'tes',
         ]);
 
           Event::create([
@@ -89,6 +90,7 @@ class DatabaseSeeder extends Seeder
             'ref_event_id' => 2,
             'date' => '2024-02-15',
             'place' => 'Gereja St. Yosef',
+            'body' => 'tes',
         ]);
 
             Event::create([
@@ -96,6 +98,7 @@ class DatabaseSeeder extends Seeder
                 'ref_event_id' => 3,
                 'date' => '2024-03-10',
                 'place' => 'Gereja St. Paulus',
+                'body' => 'tes',
             ]);
     }
 
