@@ -12,15 +12,18 @@ use Illuminate\Queue\SerializesModels;
 class SendEmailRegistration extends Mailable
 {
     use Queueable, SerializesModels;
-    public $data;
+    public $registration;
+    public $password;
+
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($data)
+    public function __construct($registration, string $password)
     {
-        $this->data = $data;
+        $this->registration = $registration;
+        $this->password = $password;
     }
 
     /**
@@ -29,8 +32,8 @@ class SendEmailRegistration extends Mailable
      * @return $this
      */
     public function build()
-    {       
-        return $this->subject('No-Reply-Registrasi Keanggotaan Aspro')
+    {
+        return $this->subject('No-Reply-Registrasi Pendaftaran Baptis / Ketakumen')
                     ->view('Emails.Registration');
     }
 

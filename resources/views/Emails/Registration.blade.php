@@ -13,67 +13,97 @@
             padding: 20px;
             text-align: left;
             font-family: Arial, sans-serif;
+            background-color: #f8f8f8;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .header {
+            text-align: center;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #4CAF50;
         }
 
         .message {
-            margin-bottom: 20px;
+            margin-top: 20px;
+            line-height: 1.6;
+            color: #333;
         }
 
-        .cta-button {
+        .credentials-box {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #e6ffe6;
+            border-left: 5px solid #4CAF50;
+            border-radius: 4px;
+        }
+
+        .cta-link {
             display: inline-block;
+            margin-top: 15px;
             padding: 10px 20px;
             background-color: #4CAF50;
-            color: white;
+            color: white !important;
             text-decoration: none;
             border-radius: 5px;
+            font-weight: bold;
         }
 
-        .logo-container {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .logo-container img {
-            width: 50%;
-        }
-
-        hr {
-            border: none;
+        .footer {
+            margin-top: 30px;
+            padding-top: 15px;
             border-top: 1px solid #ccc;
-            margin: 20px auto;
-            width: 100%;
+            font-size: 0.9em;
+            color: #777;
+        }
+
+        .warning {
+            color: #d9534f;
+            font-weight: bold;
+            margin-top: 20px;
         }
     </style>
 </head>
 
 <body>
     <div class="container">
-        {{-- <div class="logo-container">
-            <a class="navbar-brand" href="index.html">
-                <img src="{{ asset('assets/images/logo.png') }}" alt="Logo">
-            </a>
-        </div> --}}
-        <hr>
-        <div class="message">
-            <p>Dear <strong>{{ $data['name'] }}</strong>,</p>
-            <p>Terimakasih telah melakukan registrasi keanggotaan Asosiasi Profesi SDM Aparatur. Token usul anda adalah:
-                <strong>{{ $data['id'] }}</strong>.</p>
-            <p>Pembayaran uang pangkal iuran dapat dilakukan dengan cara transfer via ATM Non-Tunai, Internet Banking,
-                dan setoran tunai hanya ke <strong> Nomor Rekening Bank BNI 1925300643 a.n. ASOSIASI PROFESI SDM APARATUR </strong> sebesar
-                <strong> Rp. 120.000 untuk pejabat Fungsional Analis SDM Aparatur </strong>
-                dan <strong> Rp. 100.000 bagi Pejabat Fungsional Pranata SDM Aparatur</strong> dengan mencantumkan
-                berita transfer sebagai berikut: <strong>{{ $data['name'] }}</strong>.</p>
-            <p> <strong> Waspada terhadap penipuan yang mengatasnamakan Asosiasi Profesi SDM Aparatur, pembayaran hanya
-                    dilakukan ke nomor rekening diatas.</strong></p>
-            <p>Jika Anda sudah melakukan pembayaran silakan untuk melakukan konfirmasi melalui Halaman Konfirmasi Pembayaran <a
-                    href="https://asprosdma.id/registration/paid/{{ $data['id'] }}" class="button">https://asprosdma.id/konfirmasi-pembayaran</a></p>
-            <p>Jika anda mendapatkan <strong> kendala atau butuh informasi lebih lanjut </strong> dapat menghubungi <strong>sdr. Dimas melalui
-                pesan whatsapp </strong> dengan kontak 0812-1559-3147 </p>
-            <p>atau kunjungi halaman <a href="https://asprosdma.id/kontak-kami"><u>hubungi kami.</u></a></p>
+        <div class="header">
+            <h2>Informasi Akun Paroki Melania</h2>
+        </div>
 
-            <p>Demikian informasi dari kami.</p>
-            <p>Terimakasih,</p>
-            <p>Tim Bidang Keanggotaan dan Organisasi</p>
+        <div class="message">
+            {{-- Mengakses properti 'name' dari model $registration --}}
+            <p>Yth. Saudara/i <strong>{{ $registration->name ?? $registration->email }}</strong>,</p>
+
+            <p>Terima kasih telah melakukan registrasi pendaftaran Baptis / Katekumen. Berikut kami sampaikan
+                informasi akun Anda:</p>
+
+            <div class="credentials-box">
+                <p>
+                    <strong>Email (Username) :</strong> <code>{{ $registration->email }}</code>
+                    <br>
+                    {{-- Akses langsung variabel $password yang diteruskan dari Mailable --}}
+                    <strong>Password :</strong> <code>{{ $password }}</code>
+                </p>
+            </div>
+
+            <p class="warning">
+                <strong>Waspada terhadap penipuan yang mengatasnamakan Paroki Melania. Informasi hanya
+                    akan disampaikan oleh pihak Paroki Melania.</strong>
+            </p>
+
+            <p>Silakan login pada halaman berikut untuk melengkapi data dan memantau status pendaftaran Anda:</p>
+
+            <a href="http://localhost:8000/user/login" class="cta-link" style="color: white; text-decoration: none;">
+                LOGIN KE AKUN ANDA
+            </a>
+
+        </div>
+
+        <div class="footer">
+            <p>Demikian informasi ini kami sampaikan.</p>
+            <p>Hormat kami,</p>
+            <p><strong>Tim Administrasi Paroki Melania</strong></p>
         </div>
     </div>
 </body>

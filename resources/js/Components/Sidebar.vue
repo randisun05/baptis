@@ -1,6 +1,6 @@
 <template>
     <div class="d-flex flex-column p-3 text-white sidebar-container flex-shrink-0" style="width: 280px; min-height: 100vh;">
-        
+
         <Link href="/admin/dashboard" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
             <div class="d-flex align-items-center gap-2">
                 <div class="d-flex flex-column">
@@ -9,44 +9,44 @@
                 </div>
             </div>
         </Link>
-        
+
         <hr class="border-white opacity-25">
-        
+
         <ul class="nav nav-pills flex-column mb-auto">
             <li class="nav-item mb-1">
                 <Link href="/admin/dashboard" class="nav-link d-flex align-items-center gap-3" :class="{ 'active-nav': $page.url.startsWith('/admin/dashboard') }">
                     <i class="bi bi-speedometer2 fs-5"></i> <span>Dashboard</span>
                 </Link>
             </li>
-            <li class="nav-item mb-1">
+            <li v-if="$page.props.auth.user.role === 'administrator'" class="nav-item mb-1">
                 <Link href="/admin/posts" class="nav-link d-flex align-items-center gap-3" :class="{ 'active-nav': $page.url.startsWith('/admin/posts') }">
                     <i class="bi bi-newspaper fs-5"></i> <span>Warta</span>
                 </Link>
             </li>
-            <li class="nav-item mb-1">
+            <li v-if="$page.props.auth.user.role === 'administrator' || $page.props.auth.user.role === 'peserta'" class="nav-item mb-1">
                 <Link href="/admin/registration" class="nav-link d-flex align-items-center gap-3" :class="{ 'active-nav': $page.url.startsWith('/admin/registration') }">
                     <i class="bi bi-card-list fs-5"></i> <span>Registrasi</span>
                 </Link>
             </li>
-            <li class="nav-item mb-1">
+            <li v-if="$page.props.auth.user.role === 'administrator' || $page.props.auth.user.role === 'peserta'" class="nav-item mb-1">
                 <Link href="/admin/members" class="nav-link d-flex align-items-center gap-3" :class="{ 'active-nav': $page.url.startsWith('/admin/members') }">
                     <i class="bi bi-people-fill fs-5"></i> <span>Data Peserta</span>
                 </Link>
             </li>
-            <li class="nav-item mb-1">
+            <li v-if="$page.props.auth.user.role === 'administrator' || $page.props.auth.user.role === 'ketua_wakil_subseksi'" class="nav-item mb-1">
                 <Link href="/admin/events" class="nav-link d-flex align-items-center gap-3" :class="{ 'active-nav': $page.url.startsWith('/admin/events') }">
                     <i class="bi bi-calendar-event fs-5"></i> <span>Kegiatan</span>
                 </Link>
             </li>
-            <li class="nav-item mb-1">
+            <li  v-if="$page.props.auth.user.role === 'administrator'" class="nav-item mb-1">
                 <Link href="/admin/setting" class="nav-link d-flex align-items-center gap-3" :class="{ 'active-nav': $page.url.startsWith('/admin/setting') }">
                     <i class="bi bi-person fs-5"></i> <span>Akun Pengguna</span>
                 </Link>
             </li>
         </ul>
-        
+
         <hr class="border-white opacity-25">
-        
+
         <div class="dropdown">
             <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle p-2 rounded hover-bg" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
                 <div class="bg-white text-navy rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px;">
@@ -57,7 +57,7 @@
             <ul class="dropdown-menu dropdown-menu-dark text-small shadow border-0" aria-labelledby="dropdownUser1" style="background-color: #002244;">
                 <li><Link class="dropdown-item" href="/profile">Profile</Link></li>
                 <li><hr class="dropdown-divider border-white opacity-25"></li>
-                <li><Link class="dropdown-item text-danger" href="/logout" method="post" as="button">Sign out</Link></li>
+                <li><Link class="dropdown-item text-danger" href="/logout" method="post" as="button" :data="{role : 'admin'}">Sign out</Link></li>
             </ul>
         </div>
     </div>
@@ -77,10 +77,10 @@ export default {
 .text-navy { color: #003366 !important; }
 .sidebar-container {
     background-color: #003366;
-    position: sticky; 
+    position: sticky;
     top: 0;
     height: auto;
-    overflow-y: auto; 
+    overflow-y: auto;
 }
 .nav-link {
     color: rgba(255, 255, 255, 0.8);

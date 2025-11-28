@@ -55,23 +55,18 @@ class AuthAdminController extends Controller
     {
         // Validate request including file validation
       $request->validate([
-        'nip' => 'required|string',
         'name' => 'required|',
         'email' => 'required',
         'role' => 'required',
         'password' => 'required',
-        'position' => 'required',
     ]);
 
-        $password = Hash::make($request->nip);
+        $password = Hash::make($request->password);
         User::create([
-            'nip' => $request->nip,
             'name' => $request->name,
             'email' => $request->email,
             'role' =>  $request->role,
             'password' => $password,
-            'position' => $request->position,
-            'ref' => in_array($request->position, ['kabid', 'bendahara', 'sekretaris']) ? 1 : ($request->position === 'anggota' ? 2 : 3),
         ]);
 
 
@@ -116,25 +111,19 @@ class AuthAdminController extends Controller
 
         // Validate request including file validation
       $request->validate([
-        'nip' => 'required|string',
         'name' => 'required|',
         'email' => 'required',
         'role' => 'required',
         'password' => 'required',
-        'position' => 'required',
     ]);
 
     $password = Hash::make($request->password);
 
         User::where('id', $id)->update([
-            'nip' => $request->nip,
             'name' => $request->name,
             'email' => $request->email,
             'role' =>  $request->role,
             'password' => $password,
-            'position' => $request->position,
-            'ref' => in_array($request->position, ['kabid', 'bendahara', 'sekretaris']) ? 1 : ($request->position === 'anggota' ? 2 : 3),
-
         ]);
 
 

@@ -15,6 +15,7 @@ use Symfony\Component\Mime\Email;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redirect;
 
 class RegistrationController extends Controller
@@ -74,13 +75,7 @@ class RegistrationController extends Controller
             'email' => 'required|email|unique:registrations,email|unique:members,email',
             'contact' => 'required|unique:registrations,contact',
             'kelompok' => 'required|in:Katekumen,Sakramen Baptis Bayi',
-            // Validasi Data Keluarga (Array)
-            // 'family_members' => 'required|array|min:1',
-            // 'family_members.*.name' => 'required|string|max:255',
-            // 'family_members.*.relation' => 'required|string|max:50',
-            // 'family_members.*.religion' => 'required|string|max:50',
-            // 'family_members.*.address' => 'required|string',
-            // 'family_members.*.contact' => 'required|string|max:15',
+
         ];
 
         // 1b. Validasi Kondisional berdasarkan Kelompok
@@ -89,12 +84,12 @@ class RegistrationController extends Controller
             // $rules['address'] = 'required|string';
             // $rules['education'] = 'required|string|max:100';
             // $rules['namePenjamin'] = 'required|string|max:255';
-            
+
             // DataRiwayat
-            // $rules['religion'] = 'required|string|max:50'; 
-            // $rules['location'] = 'required|string|max:255'; 
+            // $rules['religion'] = 'required|string|max:50';
+            // $rules['location'] = 'required|string|max:255';
             // $rules['schedule'] = 'nullable|string|max:255';
-            // $rules['dateStart'] = 'required|date'; 
+            // $rules['dateStart'] = 'required|date';
             // $rules['dateEnd'] = 'nullable|date';
             // $rules['participateBefore'] = 'boolean';
             // $rules['nameGuru'] = 'nullable|string|max:255';
@@ -103,17 +98,17 @@ class RegistrationController extends Controller
             // $rules['namePriest'] = 'nullable|string|max:255';
             // $rules['dateBaptis'] = 'nullable|date';
             // $rules['numberBaptis'] = 'nullable|string|max:50';
-            
+
             // DataMenikah
             // $rules['statusMarried'] = 'required|string|max:50';
-            
+
             // Aturan kompleks lainnya (misalnya, jika statusMarried = Menikah Katolik, maka namePasangan wajib)
             if ($request->statusMarried && $request->statusMarried !== 'Belum Menikah') {
                 // $rules['namePasangan'] = 'required|string|max:255';
                 // $rules['religionPasangan'] = 'required|string|max:50';
                 // ... dan validasi lainnya sesuai kompleksitas form Menikah
             }
-            
+
         } elseif ($request->kelompok === 'Sakramen Baptis Bayi') {
             // DataBaptis
             // $rules['namePastoor'] = 'required|string|max:255';
@@ -129,13 +124,14 @@ class RegistrationController extends Controller
             // 'family_members.required' => 'Data anggota keluarga wajib diisi.',
             // ... Tambahkan pesan error kondisional lainnya
         ];
-        
+
         $request->validate($rules, $messages);
 
         // 2. Mapping Data Dasar
         $isMale = $request->gender === 'Laki-laki';
         $isCatechumen = $request->kelompok === 'Katekumen';
-        $password = Hash::make('password'); // Default password
+        $password = self::generateSecurePassword(8);
+        $passwordHashed = Hash::make($password);
 
         // Mulai Transaksi Database
         DB::beginTransaction();
@@ -156,7 +152,7 @@ class RegistrationController extends Controller
             Member::create([
                 'number' => $request->number,
                 'name' => $request->name,
-                'password' => $password,
+                'password' => $passwordHashed,
                 'email' => $request->email,
                 'contact' => $request->contact,
                 'group' => $isCatechumen,
@@ -189,12 +185,12 @@ class RegistrationController extends Controller
                     'dateBaptis' => $request->dateBaptis ?? null,
                     'numberBaptis' => $request->numberBaptis ?? null,
                 ]);
-                
+
                 // 5c. Data Menikah (LENGKAP)
                 DataMenikah::create([
                     'number' => $request->number,
                     'statusMarried' => $request->statusMarried,
-                    'namePasangan' => $request->namePasangan ?? null, 
+                    'namePasangan' => $request->namePasangan ?? null,
                     'religionPasangan' => $request->religionPasangan ?? null,
                     'placeMarried1' => $request->placeMarried1 ?? null,
                     'cityMarried1' => $request->cityMarried1 ?? null,
@@ -230,7 +226,7 @@ class RegistrationController extends Controller
                     'namePastoor' => $request->namePastoor,
                 ]);
             }
-            
+
             // 6. Simpan Data Keluarga (Berulang untuk kedua kelompok)
             foreach ($request->family_members as $memberData) {
                 DataKeluarga::create([
@@ -244,6 +240,8 @@ class RegistrationController extends Controller
             }
 
             DB::commit(); // Commit (Simpan Permanen)
+
+            Mail::to($request->email)->send(new \App\Mail\SendEmailRegistration($registration, $password));
 
             // 7. Respon ke Vue/Inertia
             return Redirect::route('admin.registration.index')->with('success', 'Pendaftaran baru berhasil diproses dan disimpan.');
@@ -268,7 +266,7 @@ class RegistrationController extends Controller
         $number = $registration->number; // Gunakan 'number' sebagai kunci relasi
 
         // 2. Tentukan kelompok dan ambil data terkait
-        $isCatechumen = $registration->group; 
+        $isCatechumen = $registration->group;
         $data = [
             'registration' => $registration,
             'family_members' => DataKeluarga::where('number', $number)->get(),
@@ -315,7 +313,7 @@ class RegistrationController extends Controller
             'email' => 'required|email|unique:registrations,email,' . $id . '|unique:members,email,' . $oldNumber . ',number', // Gunakan 'number' sebagai unique key di tabel Member
             'contact' => 'required|string|max:255|unique:registrations,contact,' . $id,
             'kelompok' => 'required|in:Katekumen,Sakramen Baptis Bayi',
-            
+
             // Validasi Data Keluarga (Array)
             // 'family_members' => 'required|array|min:1',
             // 'family_members.*.name' => 'required|string|max:255',
@@ -328,9 +326,9 @@ class RegistrationController extends Controller
             // $rules['address'] = 'required|string';
             // $rules['education'] = 'required|string|max:100';
             // $rules['namePenjamin'] = 'required|string|max:255';
-            
+
             // DataRiwayat
-            // $rules['religion'] = 'required|string|max:50'; 
+            // $rules['religion'] = 'required|string|max:50';
             // // ... (tambahkan validasi DataRiwayat dan DataMenikah lainnya)
         } else {
             // DataBaptis
@@ -339,7 +337,7 @@ class RegistrationController extends Controller
         }
 
         $request->validate($rules);
-        
+
         // 2. Mapping Data Dasar
         $newIsMale = $request->gender === 'Laki-laki';
 
@@ -388,11 +386,11 @@ class RegistrationController extends Controller
                     'dateBaptis' => $request->dateBaptis,
                     'numberBaptis' => $request->numberBaptis,
                 ]);
-                
+
                 // 5c. Data Menikah
                 DataMenikah::updateOrCreate(['number' => $oldNumber], [
                     'statusMarried' => $request->statusMarried,
-                    'namePasangan' => $request->namePasangan, 
+                    'namePasangan' => $request->namePasangan,
                     'religionPasangan' => $request->religionPasangan,
                     // ... (lanjutkan update semua field DataMenikah)
                     'placeMarried1' => $request->placeMarried1,
@@ -428,7 +426,7 @@ class RegistrationController extends Controller
                     'namePastoor' => $request->namePastoor,
                 ]);
             }
-            
+
             // 6. Update Data Keluarga (Hapus yang lama, simpan yang baru/diperbarui)
             // Hapus semua anggota keluarga yang terkait dengan registrasi ini
             DataKeluarga::where('number', $oldNumber)->delete();
@@ -472,9 +470,9 @@ public function destroy($id)
 {
     // 1. Cari data Registration berdasarkan ID
     $register = Registration::findOrFail($id);
-    
+
     // Simpan email sebelum data dihapus
-    $email = $register->email; 
+    $email = $register->email;
 
     // 2. Hapus data Member terkait
     // Cari member yang memiliki email yang sama dengan registrasi yang akan dihapus
@@ -483,11 +481,45 @@ public function destroy($id)
     if ($member) {
         $member->delete();
     }
-    
+
     // 3. Hapus data Registration
     $register->delete();
 
     // 4. Redirect dengan pesan sukses
     return Redirect::route('admin.registration.index')->with('success', 'Data peserta dan akun member terkait berhasil dihapus.');
 }
+
+
+public function sendEmail()
+{
+    $registration = Registration::first();
+    $password = 'password'; // Ganti dengan logika pengambilan password yang sesuai
+
+
+    Mail::to($registration->email)->send(new \App\Mail\SendEmailRegistration($registration, $password));
+
+    return Redirect::back()->with('success', 'Email registrasi berhasil dikirim ulang.');
+}
+
+ public static function generateSecurePassword(int $length = 8): string
+    {
+        // Kumpulan karakter yang aman dan tidak ambigu.
+        // Dihindari: 0, 1, I, L, O, i, l, o.
+        $characters = '23456789'
+                    . 'ABCDEFGHJKMNPQRSTUVWXYZ'
+                    . 'abcdefghkmnpqrstuvwxyz'
+                    . '@#$%&'; // Tambahkan simbol untuk keamanan tambahan
+
+        $password = '';
+        $max = strlen($characters) - 1;
+
+        // Loop untuk memilih karakter acak dari set yang ditentukan
+        for ($i = 0; $i < $length; $i++) {
+            // Menggunakan random_int untuk menghasilkan angka acak yang aman secara kriptografi
+            $password .= $characters[random_int(0, $max)];
+        }
+
+        // Tidak ada pemeriksaan kompleksitas atau pengacakan ulang (sesuai permintaan "simpel")
+        return $password;
+    }
 }

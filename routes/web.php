@@ -28,7 +28,9 @@ Route::get('/email', function () {
     return view('Emails.Registration', [
         'data' => [
             'name' => "randi",
-            'id' => "123"
+            'id' => "123",
+              'password' => "randi",
+              'email' => "randisun1995@gmail.com"
         ]
         // Add any data you want to pass to the view here
     ]);
@@ -43,51 +45,55 @@ Route::prefix('admin')->group(function() {
 
         //route management
         Route::resource('/management', App\Http\Controllers\Admin\ManagementController::class, ['as' => 'admin']);
-        Route::get('/managementfilter', [\App\Http\Controllers\Admin\ManagementController::class, 'filter'])->name('admin.menegemnet.filter');
+        Route::get('/managementfilter', [\App\Http\Controllers\Admin\ManagementController::class, 'filter'])->name('admin.menegemnet.filter')->middleware('role:administrator');
         Route::post('/management/store', [\App\Http\Controllers\Admin\ManagementController::class, 'store'])->name('admin.menegemnet.store');
         Route::post('/management/update', [\App\Http\Controllers\Admin\ManagementController::class, 'update'])->name('admin.menegemnet.update');
         Route::post('/management/update/status', [\App\Http\Controllers\Admin\ManagementController::class, 'status'])->name('admin.menegemnet.status');
-        Route::get('/registration/', [\App\Http\Controllers\Admin\RegistrationController::class, 'index'])->name('admin.registration.index');
+        Route::get('/registration/', [\App\Http\Controllers\Admin\RegistrationController::class, 'index'])->name('admin.registration.index')->middleware('role:administrator,peserta');
 
         //route registration
-        Route::post('/registration/store', [\App\Http\Controllers\Admin\RegistrationController::class, 'store'])->name('admin.registration.store');
-        Route::put('/registration/{id}/update', [\App\Http\Controllers\Admin\RegistrationController::class, 'update'])->name('admin.registration.update');
-        Route::get('/registration/{id}/email-approve', [\App\Http\Controllers\Admin\RegistrationController::class, 'Sendemailapprove'])->name('admin.registration.email.approve');
-        Route::get('/registration/{id}/approve', [\App\Http\Controllers\Admin\RegistrationController::class, 'approve'])->name('admin.registration.approve');
-        Route::get('/registration/{id}/confirm', [\App\Http\Controllers\Admin\RegistrationController::class, 'confirm'])->name('admin.registration.confirm');
-        Route::get('/registration/{id}/reject', [\App\Http\Controllers\Admin\RegistrationController::class, 'reject'])->name('admin.registration.reject');
-        Route::get('/registration/{id}/email', [\App\Http\Controllers\Admin\RegistrationController::class, 'sendEmail'])->name('admin.registration.sendEmail');
+          Route::get('/registration/email', [\App\Http\Controllers\Admin\RegistrationController::class, 'sendEmail'])->name('admin.registration.sendEmail')->middleware('role:administrator,peserta');
+        Route::post('/registration/store', [\App\Http\Controllers\Admin\RegistrationController::class, 'store'])->name('admin.registration.store')->middleware('role:administrator,peserta');
+        Route::put('/registration/{id}/update', [\App\Http\Controllers\Admin\RegistrationController::class, 'update'])->name('admin.registration.update')->middleware('role:administrator,peserta');
+        Route::get('/registration/{id}/email-approve', [\App\Http\Controllers\Admin\RegistrationController::class, 'Sendemailapprove'])->name('admin.registration.email.approve')->middleware('role:administrator,peserta');
+        Route::get('/registration/{id}/approve', [\App\Http\Controllers\Admin\RegistrationController::class, 'approve'])->name('admin.registration.approve')->middleware('role:administrator,peserta');
+        Route::get('/registration/{id}/confirm', [\App\Http\Controllers\Admin\RegistrationController::class, 'confirm'])->name('admin.registration.confirm')->middleware('role:administrator,peserta');
+        Route::get('/registration/{id}/reject', [\App\Http\Controllers\Admin\RegistrationController::class, 'reject'])->name('admin.registration.reject')->middleware('role:administrator,peserta');
+        // Route::get('/registration/{id}/email', [\App\Http\Controllers\Admin\RegistrationController::class, 'sendEmail'])->name('admin.registration.sendEmail')->middleware('role:administrator,peserta');
         Route::resource('/registration', \App\Http\Controllers\Admin\RegistrationController::class, ['as' => 'admin']);
 
+
+
         //route posts
-        Route::get('/admin/posts/', [\App\Http\Controllers\Admin\PostController::class, 'list'])->name('admin.posts.list');
-        Route::post('/posts/{id}', [\App\Http\Controllers\Admin\PostController::class, 'update'])->name('admin.posts.update');
-        Route::resource('/posts', \App\Http\Controllers\Admin\PostController::class, ['as' => 'admin']);
-        Route::get('/posts/{id}/approve', [\App\Http\Controllers\Admin\PostController::class, 'approve'])->name('admin.posts.approve');
-        Route::get('/posts/{id}/reject', [\App\Http\Controllers\Admin\PostController::class, 'reject'])->name('admin.posts.reject');
-        Route::put('/posts/{post}/activate', [\App\Http\Controllers\Admin\PostController::class, 'activate'])->name('admin.posts.activate');
-        Route::put('/posts/{post}/deactivate', [\App\Http\Controllers\Admin\PostController::class, 'deactivate'])->name('admin.posts.deactivate');
+        Route::get('/admin/posts/', [\App\Http\Controllers\Admin\PostController::class, 'list'])->name('admin.posts.list')->middleware('role:administrator');
+        Route::post('/posts/{id}', [\App\Http\Controllers\Admin\PostController::class, 'update'])->name('admin.posts.update')->middleware('role:administrator');
+        Route::resource('/posts', \App\Http\Controllers\Admin\PostController::class, ['as' => 'admin'])->middleware('role:administrator');
+        Route::get('/posts/{id}/approve', [\App\Http\Controllers\Admin\PostController::class, 'approve'])->name('admin.posts.approve')->middleware('role:administrator');
+        Route::get('/posts/{id}/reject', [\App\Http\Controllers\Admin\PostController::class, 'reject'])->name('admin.posts.reject')->middleware('role:administrator');
+        Route::put('/posts/{post}/activate', [\App\Http\Controllers\Admin\PostController::class, 'activate'])->name('admin.posts.activate')->middleware('role:administrator');
+        Route::put('/posts/{post}/deactivate', [\App\Http\Controllers\Admin\PostController::class, 'deactivate'])->name('admin.posts.deactivate')->middleware('role:administrator');
 
         //route events
-        Route::get('/events-ref', [\App\Http\Controllers\Admin\EventController::class, 'Indexref'])->name('admin.events.Indexref');
-        Route::post('/events-ref/', [\App\Http\Controllers\Admin\EventController::class, 'Storeref'])->name('admin.events.Storeref');
-        Route::put('/events-ref/{id}', [\App\Http\Controllers\Admin\EventController::class, 'Updateref'])->name('admin.events.Updateref');
-        Route::delete('/events-ref/{id}/delete', [\App\Http\Controllers\Admin\EventController::class, 'Deleteref'])->name('admin.events.Deleteref');
-        Route::post('/events/{id}/activate', [\App\Http\Controllers\Admin\EventController::class, 'activate'])->name('admin.events.activate');
-        Route::post('/events/{id}/close', [\App\Http\Controllers\Admin\EventController::class, 'close'])->name('admin.events.close');
-        Route::post('/events/{id}', [\App\Http\Controllers\Admin\EventController::class, 'update'])->name('admin.events.update');
-        Route::get('/events/{id}/enroll', [\App\Http\Controllers\Admin\EventController::class, 'enroll'])->name('admin.events.enroll');
-        Route::post('/events/{id}/enroll', [\App\Http\Controllers\Admin\EventController::class, 'Storeenroll'])->name('admin.events.Storeenroll');
+        Route::get('/events-ref', [\App\Http\Controllers\Admin\EventController::class, 'Indexref'])->name('admin.events.Indexref')->middleware('role:administrator,ketua_wakil_subseksi');
+
+        Route::post('/events-ref/', [\App\Http\Controllers\Admin\EventController::class, 'Storeref'])->name('admin.events.Storeref')->middleware('role:administrator,ketua_wakil_subseksi');
+        Route::put('/events-ref/{id}', [\App\Http\Controllers\Admin\EventController::class, 'Updateref'])->name('admin.events.Updateref')->middleware('role:administrator,ketua_wakil_subseksi');
+        Route::delete('/events-ref/{id}/delete', [\App\Http\Controllers\Admin\EventController::class, 'Deleteref'])->name('admin.events.Deleteref')->middleware('role:administrator,ketua_wakil_subseksi');
+        Route::post('/events/{id}/activate', [\App\Http\Controllers\Admin\EventController::class, 'activate'])->name('admin.events.activate')->middleware('role:administrator,ketua_wakil_subseksi');
+        Route::post('/events/{id}/close', [\App\Http\Controllers\Admin\EventController::class, 'close'])->name('admin.events.close')->middleware('role:administrator,ketua_wakil_subseksi');
+        Route::post('/events/{id}', [\App\Http\Controllers\Admin\EventController::class, 'update'])->name('admin.events.update')->middleware('role:administrator,ketua_wakil_subseksi');
+        Route::get('/events/{id}/enroll', [\App\Http\Controllers\Admin\EventController::class, 'enroll'])->name('admin.events.enroll')->middleware('role:administrator,ketua_wakil_subseksi');
+        Route::post('/events/{id}/enroll', [\App\Http\Controllers\Admin\EventController::class, 'Storeenroll'])->name('admin.events.Storeenroll')->middleware('role:administrator,ketua_wakil_subseksi');
         Route::resource('/events', \App\Http\Controllers\Admin\EventController::class, ['as' => 'admin']);
 
         //route setting
-        Route::resource('/setting', \App\Http\Controllers\Admin\AuthAdminController::class, ['as' => 'admin']);
+        Route::resource('/setting', \App\Http\Controllers\Admin\AuthAdminController::class, ['as' => 'admin'])->middleware('role:administrator,ketua_wakil_subseksi,peserta');
 
         //route users
-        Route::post('/users/{id}', [\App\Http\Controllers\Admin\DataMembersController::class, 'update'])->name('admin.users.update');
-        Route::get('/members/report/export', [\App\Http\Controllers\Admin\DataMembersController::class, 'exportReport'])->name('admin.member.export');
-        Route::get('/members/report', [\App\Http\Controllers\Admin\DataMembersController::class, 'indexReport'])->name('admin.member.report');
-        Route::resource('/members', \App\Http\Controllers\Admin\DataMembersController::class, ['as' => 'admin']);
+        Route::post('/users/{id}', [\App\Http\Controllers\Admin\DataMembersController::class, 'update'])->name('admin.users.update')->middleware('role:administrator,ketua_wakil_subseksi,peserta');
+        Route::get('/members/report/export', [\App\Http\Controllers\Admin\DataMembersController::class, 'exportReport'])->name('admin.member.export')->middleware('role:administrator,ketua_wakil_subseksi,peserta');
+        Route::get('/members/report', [\App\Http\Controllers\Admin\DataMembersController::class, 'indexReport'])->name('admin.member.report')->middleware('role:administrator,ketua_wakil_subseksi,peserta');
+        Route::resource('/members', \App\Http\Controllers\Admin\DataMembersController::class, ['as' => 'admin'])->middleware('role:administrator,ketua_wakil_subseksi,peserta');
 
     });
 });
@@ -130,7 +136,6 @@ Route::prefix('user')->group(function() {
         Route::get('/posts/list/{post:slug}', [\App\Http\Controllers\User\PostsController::class, 'showlist'])->name('user.posts.showlist');
         Route::post('/posts/{id}', [\App\Http\Controllers\User\PostsController::class, 'update'])->name('user.posts.update');
         Route::resource('/posts', \App\Http\Controllers\User\PostsController::class, ['as' => 'user']);
-      
 
         //route events
         Route::resource('/events', \App\Http\Controllers\User\EventController::class, ['as' => 'user']);
