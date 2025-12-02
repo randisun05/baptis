@@ -40,7 +40,6 @@ class DashboardController extends Controller
                                'dataRiwayat',
                                'dataMenikah',
                                'dataBaptis',
-                               // Relasi 'dataKeluarga' harus diambil
                                'dataKeluarga',
                            ])
                            ->firstOrFail();

@@ -1,289 +1,451 @@
 <template>
+    <Head title="Detail Profil Pengguna" />
 
-    <Head>
-        <title>Profile Anggota</title>
-    </Head>
-
-    <section id="profile" class="container padding">
-        <div class="container-fluid px-5">
-            <div class="row d-flex justify-content-center">
-                <!-- First group of columns -->
-                <div class="col-sm-12 card shadow">
-                    <div class="row">
-                        <h3 class="text-center mt-4 text-black">
-                            Profile Anggota
-                        </h3>
-                        <div class="col-md-2 col-12 ms-4">
-                            <Link href="/user/profile/edit" class="btn btn-md btn-primary border-0 shadow w-100"
-                                type="button"><i class="fa fa-plus-circle"></i> Update
-                            Data</Link>
-                        </div>
+    <div class="container-fluid px-4 py-4">
+        <div class="row justify-content-center fade-in">
+            <div class="col-lg-10">
+                
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h2 class="fs-3 fw-bold text-navy mb-0">Detail Data Profil: {{ user.name }}</h2>
+                        <p class="text-muted small mb-0">
+                            Grup Katekese: 
+                            <span class="badge bg-info text-dark ms-1 fw-bold">{{ user.group == 1 ? 'Katekumen' : (user.group == 0 ? 'Sakramen Baptis Bayi' : 'Lainnya') }}</span>
+                        </p>
                     </div>
-
-                    <div class="row mt-4">
-                        <ul class="nav nav-tabs">
-                            <li class="nav-item">
-                                <Link href="/user/profile/" class="nav-link active" type="button">
-                                Profile</Link>
-                            </li>
-
-                            <li class="nav-item">
-                                <Link class="nav-link" href="/user/profile/data-jabatan">Data Jabatan</Link>
-                            </li>
-
-                        </ul>
+                    <div>
+                        <p class="text-muted mb-0 small text-end">
+                            Status Akun: 
+                            <span :class="{'text-success': user.status === 'confirmed', 'text-warning': user.status !== 'confirmed'}" class="fw-bold">
+                                {{ user.status === 'confirmed' ? 'Terverifikasi' : 'Menunggu Konfirmasi' }}
+                            </span>
+                        </p>
                     </div>
+                </div>
 
-                    <!-- Our Team-->
+                <!-- 1. INFORMASI DATA DIRI UTAMA -->
+                <div class="card shadow-sm border-0 rounded-4 mb-4">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold text-navy mb-4 border-bottom pb-2"><i class="fa fa-user me-2"></i> 1. Informasi Data Diri Utama</h5>
 
-                    <div class="container py-4">
                         <div class="row">
-                            <div class="col-lg-2 col-md-2">
-                                <div class="text-center">
-                                    <img v-if="form.image" :src="getImageUrl(form.image)" alt=""
-                                        class="img-fluid rounded-circle" title="Ubah foto profil"
-                                        style="width: 100%; height: 200px;" />
-                                    <img v-else src="/assets/images/team-grey-1.jpg" alt=""
-                                        class="img-fluid rounded-circle" title="Ubah foto profil"
-                                        style="width: 100%; height: 200px;" />
-                                </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold text-navy">Nama Lengkapp</label>
+                                <p class="form-control-static detail-value">{{ user.name }}</p>
                             </div>
-
-                            <div class="col-lg-2 ms-5">
-                                <div class="mt-3">
-                                    <span> NIP </span>
-                                </div>
-
-                                <div class="mt-4">
-                                    <span> Nama </span>
-                                </div>
-
-                                <div class="mt-4">
-                                    <span> Instansi </span>
-                                </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold text-navy">Email</label>
+                                <p class="form-control-static detail-value">{{ user.email }}</p>
                             </div>
-
-                            <div class="col-lg-6">
-                                <div class="mt-2">
-                                    <input type="text" class="form-control" v-model="form.nip" disabled
-                                        maxlength="16" />
-                                </div>
-
-                                <div class="mt-2">
-                                    <input type="text" class="form-control" v-model="form.name" disabled />
-                                </div>
-
-                                <div class="mt-2">
-                                    <input type="text" class="form-control" v-model="form.agency" disabled />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Our Team ends-->
-                </div>
-                <div class="col-sm-12 card shadow mt-4">
-                    <div class="py-4">
-                        <span> Data Pribadi </span>
-                    </div>
-
-                    <div class="row ms-2 mb-3">
-                        <div class="col-md-6 col-sm-6">
-                            <span class="text-black"> Tempat Lahir </span>
-                            <div class="form-group mt-1">
-                                <input type="text" class="form-control" v-model="form.place" disabled />
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-sm-6">
-                            <span class="text-black"> Tanggal Lahir </span>
-                            <div class="form-group mt-1">
-                                <input type="text" class="form-control" v-model="form.dob" disabled />
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- <div class="row ms-2 mb-3">
-                        <div class="col-md-6 col-sm-6">
-                            <span class="text-black">
-                                Jenis Dokumen Identitas
-                            </span>
-                            <div class="form-group mt-1">
-                                <input type="text" class="form-control" v-model="form.docid" disabled />
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-sm-6">
-                            <span class="text-black">
-                                Nomor Dokumen Identitas
-                            </span>
-                            <div class="form-group mt-1">
-                                <input type="text" class="form-control" v-model="form.nodocid" disabled />
-                            </div>
-                        </div>
-                    </div> -->
-                    <div class="row ms-2 mb-3">
-                        <div class="col-md-6 col-sm-6">
-                            <span class="text-black"> Kontak </span>
-                            <div class="form-group mt-1">
-                                <input type="text" class="form-control" v-model="form.contact" disabled />
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-sm-6">
-                            <span class="text-black"> Email </span>
-                            <div class="form-group mt-1">
-                                <input type="text" class="form-control" v-model="form.email" disabled />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row ms-2 mb-3">
-                        <div class="col-md-6 col-sm-6">
-                            <span class="text-black"> Jenis Kelamin </span>
-                            <div class="form-group mt-1">
-                                <input type="text" class="form-control" v-model="form.gender" disabled />
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-sm-6">
-                            <span class="text-black"> Agama </span>
-                            <div class="form-group mt-1">
-                                <input type="text" class="form-control" v-model="form.religion" disabled />
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold text-navy">No. Telepon</label>
+                                <p class="form-control-static detail-value">{{ user.contact || '-' }}</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="col-sm-12 card shadow mt-4">
-                    <div class="py-4">
-                        <span> Data Pendidikan </span>
-                    </div>
+                <!-- BAGIAN TAMBAHAN: GANTI PASSWORD -->
+                <div class="card shadow-sm border-0 rounded-4 mb-4 fade-in">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold text-navy mb-4 border-bottom pb-2"><i class="fa fa-lock me-2"></i> Ganti Password Akun</h5>
+                        
+                        <form @submit.prevent="submitPasswordChange">
+                            <p class="text-muted small mb-3">
+                                <strong>Gunakan kolom di bawah ini untuk mengatur password baru Anda. Kosongkan jika Anda tidak ingin mengubah password.</strong>
+                            </p>
 
-                    <div class="row ms-2 mb-3">
-                        <div class="col-md-6 col-sm-6">
-                            <span class="text-black"> Tingkat Pendidikan </span>
-                            <div class="form-group mt-1">
-                                <input type="text" class="form-control" v-model="form.leveledu" disabled
-                                    maxlength="16" />
+                            <div class="row">
+                                <!-- Password Baru -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="password" class="form-label fw-bold text-navy">Password Baru</label>
+                                    <div class="input-group shadow-sm rounded-pill overflow-hidden">
+                                        <input :type="passwordFieldType.password" class="form-control border-0" id="password" v-model="form.password" placeholder="Minimal 8 karakter">
+                                        <button type="button" class="btn btn-outline-secondary border-0" @click="togglePassword('password')">
+                                            <!-- Ikon diperbaiki ke Font Awesome (fa) -->
+                                            <i class="fa" :class="passwordFieldType.password === 'password' ? 'bi-eye' : 'bi-eye-slash'"></i>
+                                        </button>
+                                    </div>
+                                    <div v-if="errors.password" class="error-message mt-1">
+                                        {{ errors.password }}
+                                    </div>
+                                </div>
+
+                                <!-- Konfirmasi Password -->
+                                <div class="col-md-6 mb-4">
+                                    <label for="password_confirmation" class="form-label fw-bold text-navy">Ketik Ulang Password</label>
+                                    <div class="input-group shadow-sm rounded-pill overflow-hidden">
+                                        <input :type="passwordFieldType.password_confirmation" class="form-control border-0" id="password_confirmation" v-model="form.password_confirmation" placeholder="Ulangi Password Baru">
+                                        <button type="button" class="btn btn-outline-secondary border-0" @click="togglePassword('password_confirmation')">
+                                            <!-- Ikon diperbaiki ke Font Awesome (fa) -->
+                                            <i class="fa" :class="passwordFieldType.password_confirmation === 'password' ? 'bi-eye' : 'bi-eye-slash'"></i>
+                                        </button>
+                                    </div>
+                                    <div v-if="errors.password_confirmation" class="error-message mt-1">
+                                        {{ errors.password_confirmation }}
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-6 col-sm-6">
-                            <span class="text-black">
-                                Pendidikan Terakhir
-                            </span>
-                            <div class="form-group mt-1">
-                                <input type="text" class="form-control" v-model="form.lastedu" disabled />
+                            
+                            <div class="d-flex justify-content-end pt-2">
+                                <button type="submit" class="btn btn-primary rounded-pill px-4 shadow-sm" :disabled="isSubmitting">
+                                    <i class="fa fa-save me-1"></i> Simpan
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- 2. DATA KHUSUS KATEKUMEN/BAPTIS BAYI -->
+                <div v-if="user.group == 1">
+                    <div class="card shadow-sm border-0 rounded-4 mb-4 fade-in">
+                        <div class="card-body p-4">
+                            <h5 class="fw-bold text-navy mb-4 border-bottom pb-2"><i class="fa fa-book me-2"></i> 2. Data Khusus Katekumen</h5>
+                            
+                            <h6 class="fw-bold text-secondary mb-3 pt-3 border-top">Detail Umum Katekumen</h6>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold text-navy">Pendidikan Terakhir</label>
+                                    <p class="form-control-static detail-value">{{ user.data_katekumen?.education || '-' }}</p>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold text-navy">Nama Penjamin</label>
+                                    <p class="form-control-static detail-value">{{ user.data_katekumen?.namePenjamin || '-' }}</p>
+                                </div>
+                                <div class="col-12 mb-3">
+                                    <label class="form-label fw-bold text-navy">Alamat</label>
+                                    <p class="form-control-static detail-value">{{ user.data_katekumen?.address || 'Belum diisi' }}</p>
+                                </div>
+                            </div>
+                            
+                            <h6 class="fw-bold text-secondary mb-3 pt-3 border-top">Detail Riwayat</h6>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold text-navy">Nama Guru</label>
+                                    <p class="form-control-static detail-value">{{ user.data_riwayat?.nameGuru || 'Belum diisi' }}</p>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold text-navy">Tanggal Mulai</label>
+                                    <p class="form-control-static detail-value">{{ user.data_riwayat?.dateStart ? formatDate(user.data_riwayat.dateStart) : '-' }}</p>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold text-navy">Tanggal Selesai</label>
+                                    <p class="form-control-static detail-value">{{ user.data_riwayat?.dateEnd ? formatDate(user.data_riwayat.dateEnd) : '-' }}</p>
+                                </div>
+                            </div>
+                            
+                            <h6 class="fw-bold text-secondary mb-3 pt-3 border-top">Detail Menikah</h6>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold text-navy">Status Menikah</label>
+                                    <p class="form-control-static detail-value">{{ user.data_menikah?.statusMarried || '-' }}</p>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold text-navy">Nama Pasangan</label>
+                                    <p class="form-control-static detail-value">{{ user.data_menikah?.namePasangan || '-' }}</p>
+                                </div>
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <div v-else-if="user.group == 0">
+                    <div class="card shadow-sm border-0 rounded-4 mb-4 fade-in">
+                        <div class="card-body p-4">
+                            <h5 class="fw-bold text-navy mb-4 border-bottom pb-2"><i class="fa fa-hands-holding-child me-2"></i> 2. Data Khusus Baptis Bayi</h5>
+                            
+                            <h6 class="fw-bold text-secondary mb-3 pt-3">Detail Baptis</h6>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold text-navy">Nama Calon Baptis</label>
+                                    <p class="form-control-static detail-value">{{ user.data_baptis?.name || 'Belum diisi' }}</p>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold text-navy">Nama Pastoor</label>
+                                    <p class="form-control-static detail-value">{{ user.data_baptis?.namePastoor || '-' }}</p>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold text-navy">Status</label>
+                                    <p class="form-control-static detail-value">{{ user.data_baptis?.status || '-' }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 3. DATA ANGGOTA KELUARGA -->
+                <div class="card shadow-sm border-0 rounded-4 mb-4">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold text-navy mb-4 border-bottom pb-2"><i class="fa fa-users me-2"></i> 3. Data Anggota Keluarga</h5>
+
+                        <div v-if="user.data_keluarga && user.data_keluarga.length > 0" class="row">
+                            <div v-for="(family, fIndex) in user.data_keluarga" :key="fIndex" class="col-md-6 mb-3">
+                                <div class="card card-body bg-light h-100 p-3 shadow-sm border-0">
+                                    <span class="fw-bold text-dark">{{ family.name }}</span>
+                                    <small class="text-secondary mb-2">Hubungan: {{ family.relation }} | Agama: {{ family.religion || '-' }}</small>
+                                    <small class="text-muted">Kontak: {{ family.contact || '-' }}</small>
+                                    <small class="text-muted">Alamat: {{ family.address || 'Alamat tidak tersedia' }}</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div v-else class="alert alert-warning small">Data keluarga belum diisi atau tidak tersedia.</div>
+                    </div>
+                </div>
+
+                <div class="mt-4 text-center">
+                    <a href="/user/dashboard" class="btn btn-outline-secondary ">
+                        <i class="fa fa-arrow-left me-2"></i> Kembali ke Dashboard
+                    </a>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
 </template>
 
-<script>
-//import layout
-import LayoutUser from "../../../Layouts/User.vue";
+<script setup>
+import { Head } from '@inertiajs/inertia-vue3';
+import LayoutWebsite from '../../../Layouts/User.vue';
+// Tambahkan impor yang diperlukan untuk fungsionalitas ganti password
+import { reactive, ref } from 'vue'; // ref untuk isSubmitting
+import { Inertia } from '@inertiajs/inertia'; // Digunakan untuk mengirim data form
+import Swal from 'sweetalert2'; // Digunakan untuk notifikasi
 
-//import Head from Inertia
-import { Head, Link } from "@inertiajs/inertia-vue3";
-
-//import reactive
-import { reactive } from "vue";
-
-//import sweet alert2
-import Swal from "sweetalert2";
-
-//import inertia adapter
-import { Inertia } from "@inertiajs/inertia";
-
-export default {
-    data() {
-        return {
-            activeTab: "profile", // Set the default active tab
-        };
+// PROPS yang diterima dari ProfileDetailController
+const props = defineProps({
+    registrationData: {
+        type: Object,
+        default: () => ({})
     },
-
-    methods: {
-        setActiveTab(tabName) {
-            this.activeTab = tabName;
-        },
+    user: {
+        type: Object,
+        required: true
     },
+    // Tambahkan props errors untuk menampilkan validasi (diperlukan dari controller)
+    errors: {
+        type: Object,
+        default: () => ({})
+    }
+});
 
-    //layout
-    layout: LayoutUser,
-
-    //register component
-    components: {
-        Head,
-        Link,
-    },
-
-    //props
-    props: {
-        errors: Object,
-        session: Object,
-        data: Object,
-    },
-
-    //define composition API
-    setup(props) {
-        //define form state
-        const form = reactive({
-            nip: props.data.main.nip,
-            name: props.data.main.name,
-            email: props.data.main.email,
-            contact: props.data.main.contact,
-            fname: props.data.main.fname,
-            lname: props.data.main.lname,
-            leveledu: props.data.main.leveledu,
-            lastedu: props.data.main.lastedu,
-            place: props.data.main.place,
-            dob: props.data.main.dob,
-            docid: props.data.main.docid,
-            nodocid: props.data.main.nodocid,
-            gender: props.data.main.gender,
-            religion: props.data.main.religion,
-            address: props.data.main.address,
-            villages: props.data.main.villages,
-            district: props.data.main.district,
-            regency: props.data.main.regency,
-            province: props.data.main.province,
-            religion: props.data.main.religion,
-            agency: props.data.agency,
-            image: props.data.main.image,
-        });
-
-        // Method to get the URL of the document
-        const getImageUrl = (imageName) => {
-            return `/storage/${imageName}`;
+// Helper: Format Tanggal (diambil dari DashboardController)
+const formatDate = (dateString) => {
+    if (!dateString) return '-';
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    try {
+        const date = new Date(dateString);
+        if (dateString.length === 10) {
+            return new Date(dateString + 'T00:00:00Z').toLocaleDateString('id-ID', options);
         }
-
-        //return form state and submit method
-        return {
-            form,
-            getImageUrl
-        };
-    },
+        return date.toLocaleDateString('id-ID', options);
+    } catch (e) {
+        return dateString;
+    }
 };
 
 
 
+// Form state untuk password
+const form = reactive({
+    password: '',
+    password_confirmation: '',
+});
+
+// Objek untuk tipe input password
+const passwordFieldType = reactive({
+    password: 'password',
+    password_confirmation: 'password'
+});
+
+// Status pengiriman form
+const isSubmitting = ref(false);
+
+// Fungsi untuk toggle tipe input password
+const togglePassword = (fieldType) => {
+    if (fieldType in passwordFieldType) {
+        passwordFieldType[fieldType] = passwordFieldType[fieldType] === 'password' ? 'text' : 'password';
+    }
+};
+
+// Metode submit untuk ganti password (Diselaraskan dengan route: /user/data-profile/{id}/update-password)
+const submitPasswordChange = () => {
+    if (isSubmitting.value) return;
+
+    // Klien-side check untuk memastikan password match (sesuai referensi)
+    if ((form.password || form.password_confirmation) && form.password !== form.password_confirmation) {
+        Swal.fire({
+            title: "Gagal!",
+            text: "Password Baru dan Konfirmasi Password harus sama.",
+            icon: "error",
+            confirmButtonColor: '#003366',
+        });
+        return;
+    }
+    
+    if (!form.password && !form.password_confirmation) {
+        Swal.fire({
+            title: "Peringatan",
+            text: "Kolom Password Baru harus diisi jika Anda ingin mengubah password.",
+            icon: "warning",
+            confirmButtonColor: '#003366',
+        });
+        return;
+    }
+
+    isSubmitting.value = true;
+
+    // *** PERBAIKAN ROUTE URL DI SINI ***
+    Inertia.put(
+        `/user/data-profile/${props.user.id}/update-password`, // Menggunakan path yang sesuai dengan Canvas route
+        {
+            password: form.password,
+            password_confirmation: form.password_confirmation,
+        },
+        {
+            preserveScroll: true,
+            onSuccess: () => {
+                isSubmitting.value = false;
+                // Bersihkan kolom password
+                form.password = '';
+                form.password_confirmation = '';
+                
+                Swal.fire({
+                    title: "Berhasil!",
+                    text: "Password berhasil diperbarui.",
+                    icon: "success",
+                    showConfirmButton: false,
+                    timer: 2000,
+                    confirmButtonColor: '#003366'
+                });
+            },
+            onError: (errors) => {
+                isSubmitting.value = false;
+                // SweetAlert untuk error umum (jika validasi server gagal)
+                if (Object.keys(errors).length > 0) {
+                     Swal.fire({
+                        title: "Gagal Update",
+                        text: "Terdapat kesalahan validasi. Silakan periksa kolom.",
+                        icon: "error",
+                        confirmButtonColor: '#003366',
+                    });
+                }
+            },
+            onFinish: () => {
+                isSubmitting.value = false;
+            }
+        }
+    );
+};
 </script>
-<style>
-.round-circle {
-    width: 300px;
-    /* Lebar bingkai tetap */
-    height: 200px;
-    /* Tinggi bingkai tetap */
-    border: 1px solid #03BFCB;
-    border-radius: 50%;
-    padding: 7px;
-    overflow: hidden;
-    /* Menyembunyikan bagian gambar yang melewati batas bingkai */
-    border: 2px solid black;
-    /* Garis tepi bingkai */
-    display: flex;
-    /* Menggunakan flexbox untuk menengahkannya */
-    justify-content: center;
-    /* Menengahkan gambar secara horizontal */
-    align-items: center;
-    /* Menengahkan gambar secara vertikal */
+
+<script>
+export default { 
+    // Menggunakan Layout yang sama seperti Dashboard
+    layout: LayoutWebsite,
+    // Menambahkan nama route ke sini agar bisa diakses di template
+    methods: {
+        route(name) {
+            return window.route(name);
+        }
+    }
+}
+</script>
+
+<style scoped>
+/* CSS dari komponen awal */
+.fade-in { animation: fadeIn 0.8s ease-in-out; }
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* CSS Kustom yang dipindahkan dari mounted() dan disesuaikan */
+:root {
+    --navy-primary: #003366;
+}
+.text-navy { 
+    color: var(--navy-primary); 
+}
+.card { 
+    border-radius: 16px; 
+}
+.card-header { /* Kelas ini tidak digunakan lagi, tapi dipertahankan untuk referensi */
+    border-bottom: none; 
+    border-radius: 15px 15px 0 0 !important; 
+}
+
+/* Gaya baru untuk meniru tampilan form yang non-aktif */
+.form-control-static {
+    display: block;
+    padding: 0.7rem 1rem;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: #495057; /* Warna teks yang jelas */
+    background-color: #f8f9fa; /* Warna latar belakang ringan */
+    border: 1px solid #e9ecef; /* Border lembut */
+    border-radius: 8px;
+    margin-top: 0.2rem;
+    word-wrap: break-word; 
+}
+.form-label {
+    margin-bottom: 0.1rem;
+    font-size: 0.9rem; /* Lebih kecil untuk label */
+}
+.detail-value {
+    min-height: calc(1.5em + 1.4rem + 2px); /* Menjaga konsistensi tinggi */
+}
+
+/* Tambahan CSS untuk form password (dari referensi) */
+/* --- Theme Variables --- */
+:root {
+    --navy-primary: #003366;
+    --navy-hover: #002244;
+}
+
+.text-navy { color: #003366; }
+.card { border-radius: 1rem; }
+
+/* --- Form Control Consistency (Matching the Index Page Look) --- */
+.form-control, .form-select {
+    border-color: #e0e0e0;
+    transition: all 0.2s ease;
+}
+.form-control:focus, .form-select:focus {
+    border-color: #003366;
+    box-shadow: 0 0 0 0.25rem rgba(0, 51, 102, 0.25);
+}
+
+/* For input-group to maintain rounded appearance */
+.input-group.rounded-pill > .form-control {
+    border-top-left-radius: 50rem !important;
+    border-bottom-left-radius: 50rem !important;
+}
+.input-group.rounded-pill > .btn {
+    border-top-right-radius: 50rem !important;
+    border-bottom-right-radius: 50rem !important;
+}
+
+/* --- Button Styles --- */
+.btn-primary { /* Mengubah .btn-navy menjadi .btn-primary */
+    background-color: #003366;
+    color: white;
+    border: none;
+    transition: all 0.2s ease;
+}
+
+.btn-primary:hover:not(:disabled) {
+    background-color: #002244;
+    color: #ffffff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 51, 102, 0.3) !important;
+}
+
+/* --- Error Message Styles --- */
+.error-message {
+    color: #dc3545; /* Bootstrap Red */
+    background-color: #f8d7da; /* Light Red background */
+    border: 1px solid #f5c6cb;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
 }
 </style>

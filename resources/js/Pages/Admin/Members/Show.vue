@@ -124,6 +124,7 @@
                             <div v-else-if="getGroupName(form.group) === 'Sakramen Baptis Bayi'">
                                 <h6 class="fw-bold text-navy mb-3 border-bottom pb-1">Data Baptis</h6>
                                 <table class="table table-borderless table-detail">
+                                    <tr><td class="fw-bold text-muted" width="30%">Nama Wali Baptis</td><td width="5%">:</td><td>{{ form.baptis.nameWali || '-' }}</td></tr>
                                     <tr><td class="fw-bold text-muted" width="30%">Nama Pastoor</td><td width="5%">:</td><td>{{ form.baptis.namePastoor || '-' }}</td></tr>
                                     <tr><td class="fw-bold text-muted">Status Data Baptis</td><td>:</td><td>{{ form.baptis.status || '-' }}</td></tr>
                                 </table>

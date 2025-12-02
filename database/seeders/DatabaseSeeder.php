@@ -57,7 +57,6 @@ class DatabaseSeeder extends Seeder
         ]);
 
           User::create([
-            'nik'      => '0000000000000000',
             'name'      => 'Administrator',
             'email'     => 'admin@gmail.com',
             'role'     => 'administrator',

@@ -1,895 +1,229 @@
-                                        <template>
+<template>
+    <Head>
+        <title>Profil Akun (Admin Management)</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    </Head>
 
-                                            <!-- Our Blogs -->
-                                            <section id="dashboard" class="container-fluid padding px-5">
-                                                <div class="card shadow py-5">
-                                                    <h3 class="text-center">Management Website</h3>
+    <div class="container-fluid px-4 py-4">
 
-                                                    <div class="row">
-                                                        <div class="col-md-3">
-                                                            <ul class="nav nav-pills flex-column" id="item-list">
-                                                                <li class="nav-item" v-for="tab in tabs" :key="tab.value">
-                                                                    <a class="nav-link" @click="setActiveTab(tab.value)"
-                                                                        style="cursor: pointer;">
-                                                                        {{ tab.label }}
-                                                                    </a>
-                                                                </li>
-                                                            </ul>
-                                                        </div>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="fs-3 fw-bold text-navy mb-0"> Profil Akun</h2>
+                <p class="text-muted small mb-0">Informasi akun dan pengaturan keamanan.</p>
+            </div>
+        </div>
 
-                                                        <div class="col-md-8 mt-4">
-                                                            <!-- <button type="button" class="btn btn-primary" @click="ModalCreate()"
-                                                                v-show="activeTab === 'popup' || activeTab === 'peraturan' || activeTab === 'dataanggota' || activeTab === 'strukturorganisasi' || activeTab === 'proker' || activeTab === 'faq'">
-                                                                <i class="fa fa-plus-circle"></i>Tambah
-                                                            </button> -->
+        <div v-if="$page.props.session?.success"
+             class="alert alert-dismissible fade show shadow-sm border-0 mb-4 alert-success bg-success-subtle text-success-emphasis"
+             role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            {{ $page.props.session?.success }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        
+        <div class="card shadow-sm border-0 rounded-4 overflow-hidden mb-4">
+            <div class="card-header bg-navy-light text-white d-flex align-items-center py-3">
+                <i class="fas fa-user-tie fa-lg me-3"></i>
+                <h5 class="mb-0 fw-bold">Detail Pengguna</h5>
+            </div>
+            <div class="card-body p-4">
+                <div class="row">
+                    <div class="col-md-4 col-12 fw-bold text-muted mb-2"><i class="bi bi-person-fill me-2"></i> Nama Lengkap</div>
+                    <div class="col-md-8 col-12 mb-2 fw-bold text-navy">{{ user.name }}</div>
+                    <hr class="my-3 text-light">
+                    
+                    <div class="col-md-4 col-12 fw-bold text-muted mb-2"><i class="bi bi-envelope-fill me-2"></i> Alamat Email</div>
+                    <div class="col-md-8 col-12 mb-2 fw-bold text-primary">{{ user.email }}</div>
+                    <hr class="my-3 text-light">
+                    
+                    <div class="col-md-4 col-12 fw-bold text-muted mb-2"><i class="bi bi-person-badge-fill me-2"></i> Role/Jabatan</div>
+                    <div class="col-md-8 col-12 mb-2">
+                        <span :class="getRoleBadgeClass(user.role)">
+                            {{ formatRole(user.role) }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-                                                            <button type="button" class="btn btn-primary"
-                                                                @click="ModalCreate()">
-                                                                <i class="fa fa-plus-circle"></i>Tambah
-                                                            </button>
+        <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+            <div class="card-header bg-danger-subtle text-danger-emphasis d-flex align-items-center py-3">
+                <i class="fas fa-lock fa-lg me-3"></i>
+                <h5 class="mb-0 fw-bold">Ganti Password</h5>
+            </div>
+            <div class="card-body p-4">
+                <form @submit.prevent="updatePassword">
+                    <p class="text-danger small mb-4">
+                        <i class="bi bi-exclamation-triangle-fill me-1"></i> Perhatian: Anda tidak perlu memasukkan password lama untuk pembaruan ini.
+                    </p>
+                    
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password Baru <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <input :type="passwordVisibility.new ? 'text' : 'password'" 
+                                   class="form-control" 
+                                   :class="{'is-invalid': errors.password}"
+                                   id="password" 
+                                   v-model="form.password" 
+                                   autocomplete="new-password" required>
+                            <span class="input-group-text bg-white" 
+                                  @click="togglePasswordVisibility('new')" 
+                                  style="cursor: pointer;">
+                                <i :class="passwordVisibility.new ? 'bi bi-eye-fill' : 'bi bi-eye-slash-fill'"></i>
+                            </span>
+                        </div>
+                        <div v-if="errors.password" class="invalid-feedback d-block">
+                            {{ errors.password }}
+                        </div>
+                    </div>
 
-                                                            <span>
-                                                                <h3 class="text-center">Daftar {{ Active }}</h3>
-                                                            </span>
-                                                            <!-- ACTIVETAB = {{ activeTab }}
-                                                            {{ filteredData }} -->
-                                                            <table
-                                                                class="table table-bordered table-centered table-nowrap mb-0 rounded">
-                                                                <thead class="thead-dark">
-                                                                    <tr class="border-0 text-center">
-                                                                        <th class="border-0 rounded-start" style="width:5%">
-                                                                            No.</th>
-                                                                        <th class="border-0">Title</th>
-                                                                        <th class="border-0" style="width:12%">Status</th>
-                                                                        <th class="border-0 rounded-end" style="width:15%">
-                                                                            Aksi</th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <div class="mt-2"></div>
-                                                                <tbody>
-                                                                    <tr v-for="(data, index) in datas.data" :key="index">
-                                                                        <td class="fw-bold text-center">{{ ++index +
-                                                                            (datas.current_page - 1) *
-                                                                            datas.per_page
-                                                                            }}</td>
-                                                                        <td>{{ data.sub }}</td>
-                                                                        <td class="text-center">
-                                                                            <button type="button" class="btn btn-sm"
-                                                                                :class="data.status == 1 ? 'btn-success' : 'btn-danger'"
-                                                                                @click="data.status == 1 ? nonactive(data) : active(data)">
-                                                                                {{ data.status == 1 ? 'Active' : 'Nonactive'
-                                                                                }}
-                                                                            </button>
-                                                                        </td>
-                                                                        <td class="text-center">
-                                                                            <a class="btn btn-sm btn-primary border-0 ms-2"
-                                                                                data-fancybox=""
-                                                                                :href="showImage(data.image)"><i
-                                                                                    class="fa fa-eye"></i></a>
-                                                                            <a v-show="data.document !== '' && data.document !== '-'"
-                                                                                :href="showDoc(data.document)"
-                                                                                target="_blank"
-                                                                                class="btn btn-sm btn-warning border-0 ms-2"><i
-                                                                                    class="fa fa-file-pdf-o"></i></a>
-                                                                            <button type="button"
-                                                                                class="btn btn-sm btn-success border-0 ms-2"
-                                                                                @click="ModalEdit(data)">
-                                                                                <i class="fa fa-pencil"></i>
+                    <div class="mb-4">
+                        <label for="password_confirmation" class="form-label">Konfirmasi Password Baru <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <input :type="passwordVisibility.confirm ? 'text' : 'password'" 
+                                   class="form-control" 
+                                   :class="{'is-invalid': errors.password_confirmation}"
+                                   id="password_confirmation" 
+                                   v-model="form.password_confirmation" 
+                                   autocomplete="new-password" required>
+                            <span class="input-group-text bg-white" 
+                                  @click="togglePasswordVisibility('confirm')" 
+                                  style="cursor: pointer;">
+                                <i :class="passwordVisibility.confirm ? 'bi bi-eye-fill' : 'bi bi-eye-slash-fill'"></i>
+                            </span>
+                        </div>
+                        <div v-if="errors.password_confirmation" class="invalid-feedback d-block">
+                            {{ errors.password_confirmation }}
+                        </div>
+                    </div>
+                    
+                    <button type="submit" 
+                            class="btn btn-navy" 
+                            :disabled="form.processing">
+                        <span v-if="form.processing">
+                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            Mengubah...
+                        </span>
+                        <span v-else><i class="bi bi-key-fill me-2"></i> Simpan Password Baru</span>
+                    </button>
+                </form>
+            </div>
+        </div>
 
-                                                                            </button>
-                                                                            <button @click.prevent="destroy(data.id)"
-                                                                                class="btn btn-sm btn-danger border-0 ms-2"
-                                                                                v-show="activeTab === 'popup' || activeTab === 'peraturan' || activeTab === 'dataanggota' || activeTab === 'strukturorganisasi' || activeTab === 'proker' || activeTab === 'faq'"><i
-                                                                                    class="fa fa-trash"
-                                                                                    title="hapus"></i></button>
-                                                                        </td>
-                                                                    </tr>
-                                                                </tbody>
-                                                            </table>
-                                                            <Pagination :links="datas.links" align="end" />
-                                                        </div>
-                                                    </div>
-                                                </div>
+    </div>
+</template>
 
-                                                <!-- ModalCreate -->
-                                                <div class="modal fade" id="ModalCreate" tabindex="-1"
-                                                    aria-labelledby="popupModalLabel" aria-hidden="true">
-                                                    <div class="modal-dialog modal-lg modal-dialog-centered">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header">
-                                                                <h5 class="modal-title" id="popupModalLabel">Create</h5>
-                                                                <button type="button" class="btn-close"
-                                                                    data-bs-dismiss="modal" aria-label="Close"></button>
-                                                            </div>
-                                                            <div class="modal-body">
-                                                                <div class="program-description" id="program-description-1">
+<script>
+import LayoutAdmin from '@/Layouts/Admin.vue'; 
+import { Head, Link, useForm } from '@inertiajs/inertia-vue3';
+import { reactive } from 'vue'; 
 
-                                                                    <div class="row py-4 ms-5">
-                                                                        <!-- <div class="col-md-11">
-                                                                                <span class="text-black">Item</span>
-                                                                                <div class="form-group mt-1 mb-4">
-                                                                                    <select class="form-select" v-model="form.item">
-                                                                                        <option value="" disabled selected>Pilih salah satu opsi</option>
-                                                                                        <option value="popup">Pop Up</option>
-                                                                                        <option value="siapakita">Siapa Kita ?</option>
-                                                                                        <option value="ketuaumum">Ketua Umum</option>
-                                                                                        <option value="strukturorganisasi">Struktur Organisasi</option>
-                                                                                        <option value="visimisi">Visi Misi</option>
-                                                                                        <option value="sejarah">Sejarah</option>
-                                                                                        <option value="peraturan">Peraturan</option>
-                                                                                        <option value="proker">Program Kerja</option>
-                                                                                        <option value="dataanggota">Data Anggota</option>
-                                                                                        <option value="faq">FAQ</option>
-                                                                                        <option value="kontak">Kontak Kami</option>
-                                                                                    </select>
-                                                                                </div>
-                                                                                <div v-if="errors.item" class="alert alert-danger mt-2">{{ errors.item }}</div>
-                                                                            </div> -->
-                                                                        <div class="col-md-11">
-                                                                            <span class="text-black">Item</span>
-                                                                            <div class="form-group mt-1 mb-4">
-                                                                                <input type="text" class="form-control"
-                                                                                    v-model="tab" disabled>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="col-md-11">
-                                                                            <span class="text-black">Sub</span>
-                                                                            <div class="form-group mt-1 mb-4">
-                                                                                <input type="text" class="form-control"
-                                                                                    placeholder="Masukan Sub"
-                                                                                    v-model="form.sub">
-                                                                            </div>
-                                                                            <div v-if="errors.sub"
-                                                                                class="alert alert-danger mt-2">{{
-                                                                                    errors.sub
-                                                                                }}</div>
-                                                                        </div>
-
-                                                                        <div class="col-md-11" v-show="tab == 'proker'">
-                                                                            <span class="text-black">Sub</span>
-                                                                            <div class="form-group mt-1 mb-4">
-                                                                                <div class="form-group mt-1 mb-4">
-                                                                                    <select class="form-select"
-                                                                                        v-model="form.item">
-                                                                                        <option value="" disabled selected>
-                                                                                            Pilih salah satu opsi
-                                                                                        </option>
-                                                                                        <option value="humas">Bidang
-                                                                                            Hubungan Masyarakat
-                                                                                        </option>
-                                                                                        <option value="hukum">Bidang Hukum
-                                                                                            dan Advokasi</option>
-                                                                                        <option value="anggota">Bidang
-                                                                                            Keanggotaan</option>
-                                                                                        <option value="pengembangan">Bidang
-                                                                                            Pengembangan
-                                                                                            Kapasitas Insani
-                                                                                        </option>
-                                                                                        <option value="pendanaan">Bidang
-                                                                                            Sumber Pendanaan
-                                                                                            Organisasi</option>
-
-                                                                                    </select>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div v-if="errors.sub"
-                                                                                class="alert alert-danger mt-2">{{
-                                                                                    errors.sub
-                                                                                }}</div>
-                                                                        </div>
-
-                                                                        <div class="col-md-11"
-                                                                            v-show="activeTab == 'proker' || tab == 'faq'">
-                                                                            <span class="text-black">Subitem</span>
-                                                                            <div class="form-group mt-1 mb-4">
-                                                                                <input type="text" class="form-control"
-                                                                                    placeholder="Masukan Sub Item"
-                                                                                    v-model="form.subitem">
-                                                                            </div>
-                                                                            <div v-if="errors.subitem"
-                                                                                class="alert alert-danger mt-2">{{
-                                                                                    errors.subitem }}
-                                                                            </div>
-                                                                        </div>
-
-
-                                                                        <div class="col-md-11" v-show="tab != 'popup'">
-                                                                            <span class="text-black">Body</span>
-
-                                                                            <div class="form-group mt-1 mb-4">
-                                                                                <Editor
-                                                                                    api-key="1r5zhfhbvfala2snldia4kj7eub4vbev5i6i4mnf9r8smbsb"
-                                                                                    v-model="form.body"
-                                                                                    style="height: 500px;" :init="{
-                                                                                        menubar: false,
-                                                                                        plugins: 'lists link image emoticons media',
-                                                                                        toolbar: 'styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist | link image emoticons | media'
-                                                                                    }" />
-                                                                            </div>
-                                                                            <div v-if="errors.body"
-                                                                                class="alert alert-danger mt-2">{{
-                                                                                    errors.body }}</div>
-                                                                        </div>
-
-
-                                                                        <div class="col-md-11"
-                                                                            v-show="tab == 'popup' || tab == 'peraturan' || tab == 'dataanggota'">
-                                                                            <span class="text-black">Link</span>
-                                                                            <div class="form-group mt-1 mb-4">
-                                                                                <input type="text" class="form-control"
-                                                                                    placeholder="Masukan Link"
-                                                                                    v-model="form.link">
-                                                                            </div>
-                                                                            <div v-if="errors.link"
-                                                                                class="alert alert-danger mt-2">{{
-                                                                                    errors.link }}</div>
-                                                                        </div>
-
-                                                                        <div class="col-md-5"
-                                                                            v-show="tab == 'proker' || tab == 'faq'">
-                                                                            <span class="text-black">Posisi</span>
-                                                                            <div class="form-group mt-1 mb-4">
-                                                                                <select class="form-select"
-                                                                                    v-model="form.button">
-                                                                                    <option value="" disabled selected>Pilih
-                                                                                        salah satu opsi
-                                                                                    </option>
-                                                                                    <option value="1">1</option>
-                                                                                    <option value="2">2</option>
-                                                                                    <option value="3">3</option>
-                                                                                </select>
-                                                                            </div>
-                                                                            <div v-if="errors.position"
-                                                                                class="alert alert-danger mt-2">{{
-                                                                                    errors.position }}
-                                                                            </div>
-                                                                        </div>
-
-                                                                        <div class="col-md-5" v-show="tab == 'popup'">
-                                                                            <span class="text-black">Button</span>
-                                                                            <div class="form-group mt-1 mb-4">
-                                                                                <select class="form-select"
-                                                                                    v-model="form.button">
-                                                                                    <option value="" disabled selected>Pilih
-                                                                                        salah satu opsi
-                                                                                    </option>
-                                                                                    <option value="1">Yes</option>
-                                                                                    <option value="0">No</option>
-                                                                                </select>
-                                                                            </div>
-                                                                            <div v-if="errors.button"
-                                                                                class="alert alert-danger mt-2">{{
-                                                                                    errors.button }}</div>
-                                                                        </div>
-
-                                                                        <div class="col-md-5" v-show="tab === ''">
-                                                                            <span class="text-black">Keterangan</span>
-                                                                            <div class="form-group mt-1 mb-4">
-                                                                                <Editor
-                                                                                    api-key="1r5zhfhbvfala2snldia4kj7eub4vbev5i6i4mnf9r8smbsb"
-                                                                                    v-model="form.desc"
-                                                                                    style="height: 500px;" :init="{
-                                                                                        menubar: false,
-                                                                                        plugins: 'lists link image emoticons media',
-                                                                                        toolbar: 'styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist | link image emoticons | media'
-                                                                                    }" />
-                                                                            </div>
-                                                                            <div v-if="errors.desc"
-                                                                                class="alert alert-danger mt-2">{{
-                                                                                    errors.desc }}</div>
-                                                                        </div>
-
-                                                                        <div class="row">
-                                                                            <div class="col-md-5">
-                                                                                <span class="text-black">Gambar/Foto</span>
-                                                                                <div class="form-group mt-1">
-                                                                                    <input type="file" class="form-control"
-                                                                                        placeholder="Masukan Gambar/Foto"
-                                                                                        @change="updateImage"
-                                                                                        accept=".jpg, .jpeg, .png, .svg, .gif">
-                                                                                </div>
-                                                                                <div v-if="errors.picture"
-                                                                                    class="alert alert-danger mt-2">{{
-                                                                                        errors.picture
-                                                                                    }}</div>
-                                                                                <div v-if="errors[0]"
-                                                                                    class="alert alert-danger mt-2">{{
-                                                                                        errors[0] }}</div>
-                                                                            </div>
-
-                                                                            <div class="col-md-5"
-                                                                                v-show="tab === 'peraturan' || tab === 'dataanggota'">
-                                                                                <span class="text-black">Dokumen</span>
-                                                                                <div class="form-group mt-1">
-                                                                                    <input type="file" class="form-control"
-                                                                                        placeholder="Masukan Dokumen"
-                                                                                        @change="updateDocument">
-                                                                                </div>
-                                                                                <div v-if="errors.document"
-                                                                                    class="alert alert-danger mt-2">{{
-                                                                                        errors.document }}</div>
-                                                                                <div v-if="errors[0]"
-                                                                                    class="alert alert-danger mt-2">{{
-                                                                                        errors[0] }}</div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="row d-flex justify-content-center">
-                                                                        <div class="col-md-4">
-                                                                            <button type="submit"
-                                                                                class="btn btn-md btn-primary border-0 shadow me-2"
-                                                                                @click="store"
-                                                                                data-bs-dismiss="modal">Simpan</button>
-                                                                            <button type="reset"
-                                                                                class="btn btn-md btn-warning border-0 shadow">Reset</button>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <!-- ModalEdit -->
-                                                <div class="modal fade" id="ModalEdit" tabindex="-1"
-                                                    aria-labelledby="popupModalLabel" aria-hidden="true">
-                                                    <div class="modal-dialog modal-lg modal-dialog-centered">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header">
-                                                                <h5 class="modal-title" id="popupModalLabel">Edit</h5>
-                                                                <button type="button" class="btn-close"
-                                                                    data-bs-dismiss="modal" aria-label="Close"></button>
-                                                            </div>
-                                                            <div class="modal-body">
-                                                                <div class="program-description" id="program-description-1">
-                                                                    <div class="tab-pane fade show active" id="modaledit">
-                                                                        <div class="row py-4 ms-5">
-                                                                            <div class="col-md-11">
-                                                                                <span class="text-black">Item</span>
-                                                                                <div class="form-group mt-1 mb-4">
-                                                                                    <input type="text" class="form-control"
-                                                                                        placeholder="Masukan Item"
-                                                                                        v-model="form.item" disabled>
-
-                                                                                </div>
-                                                                                <div v-if="errors.sub"
-                                                                                    class="alert alert-danger mt-2">{{
-                                                                                        errors.item }}</div>
-                                                                            </div>
-
-                                                                            <div class="col-md-11"
-                                                                                v-show="tab == 'proker' || tab == 'faq' || tab == 'popup'">
-                                                                                <span class="text-black">Sub</span>
-                                                                                <div class="form-group mt-1 mb-4">
-                                                                                    <input type="text" class="form-control"
-                                                                                        placeholder="Masukan Sub"
-                                                                                        v-model="form.sub">
-                                                                                </div>
-                                                                                <div v-if="errors.sub"
-                                                                                    class="alert alert-danger mt-2">{{
-                                                                                        errors.sub }}</div>
-                                                                            </div>
-
-                                                                            <div class="col-md-11"
-                                                                                v-show="tab == 'proker' || tab == 'faq'">
-                                                                                <span class="text-black">Subitem</span>
-                                                                                <div class="form-group mt-1 mb-4">
-                                                                                    <input type="text" class="form-control"
-                                                                                        placeholder="Masukan Sub Item"
-                                                                                        v-model="form.subitem">
-                                                                                </div>
-                                                                                <div v-if="errors.subitem"
-                                                                                    class="alert alert-danger mt-2">{{
-                                                                                        errors.subitem }}
-                                                                                </div>
-                                                                            </div>
-
-
-                                                                            <div class="col-md-11" v-show="tab != 'popup'">
-                                                                                <span class="text-black">Body</span>
-                                                                                <div class="form-group mt-1 mb-4">
-                                                                                    <Editor
-                                                                                        api-key="1r5zhfhbvfala2snldia4kj7eub4vbev5i6i4mnf9r8smbsb"
-                                                                                        v-model="form.body"
-                                                                                        style="height: 500px;" :init="{
-                                                                                            menubar: false,
-                                                                                            plugins: 'lists link image emoticons media',
-                                                                                            toolbar: 'styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist | link image emoticons | media'
-                                                                                        }" />
-                                                                                </div>
-                                                                                <div v-if="errors.body"
-                                                                                    class="alert alert-danger mt-2">{{
-                                                                                        errors.body }}</div>
-                                                                            </div>
-
-
-                                                                            <div class="col-md-11"
-                                                                                v-show="tab == 'popup' || tab == 'peraturan' || tab == 'dataanggota'">
-                                                                                <span class="text-black">Link</span>
-                                                                                <div class="form-group mt-1 mb-4">
-                                                                                    <input type="text" class="form-control"
-                                                                                        placeholder="Masukan Link"
-                                                                                        v-model="form.link">
-                                                                                </div>
-                                                                                <div v-if="errors.body"
-                                                                                    class="alert alert-danger mt-2">{{
-                                                                                        errors.link }}</div>
-                                                                            </div>
-
-                                                                            <div class="col-md-5"
-                                                                                v-show="tab == 'proker' || tab == 'faq'">
-                                                                                <span class="text-black">Posisi</span>
-                                                                                <div class="form-group mt-1 mb-4">
-                                                                                    <select class="form-select"
-                                                                                        v-model="form.button">
-                                                                                        <option value="" disabled selected>
-                                                                                            Pilih salah satu opsi
-                                                                                        </option>
-                                                                                        <option value="1">1</option>
-                                                                                        <option value="2">2</option>
-                                                                                        <option value="3">3</option>
-                                                                                    </select>
-                                                                                </div>
-                                                                                <div v-if="errors.position"
-                                                                                    class="alert alert-danger mt-2">{{
-                                                                                        errors.position
-                                                                                    }}</div>
-                                                                            </div>
-
-                                                                            <div class="col-md-5" v-show="tab === 'popup'">
-                                                                                <span class="text-black">Button</span>
-                                                                                <div class="form-group mt-1 mb-4">
-                                                                                    <select class="form-select"
-                                                                                        v-model="form.button">
-                                                                                        <option value="" disabled selected>
-                                                                                            Pilih salah satu opsi
-                                                                                        </option>
-                                                                                        <option value="1">Yes</option>
-                                                                                        <option value="0">No</option>
-                                                                                    </select>
-                                                                                </div>
-                                                                                <div v-if="errors.button"
-                                                                                    class="alert alert-danger mt-2">{{
-                                                                                        errors.button }}
-                                                                                </div>
-                                                                            </div>
-
-                                                                            <div class="col-md-5" v-show="tab === ''">
-                                                                                <span class="text-black">Keterangan</span>
-                                                                                <div class="form-group mt-1 mb-4">
-                                                                                    <Editor
-                                                                                        api-key="1r5zhfhbvfala2snldia4kj7eub4vbev5i6i4mnf9r8smbsb"
-                                                                                        v-model="form.desc"
-                                                                                        style="height: 500px;" :init="{
-                                                                                            menubar: false,
-                                                                                            plugins: 'lists link image emoticons media',
-                                                                                            toolbar: 'styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist | link image emoticons | media'
-                                                                                        }" />
-                                                                                </div>
-                                                                                <div v-if="errors.desc"
-                                                                                    class="alert alert-danger mt-2">{{
-                                                                                        errors.desc }}</div>
-                                                                            </div>
-
-
-
-                                                                            <div class="row">
-                                                                                <div class="col-md-5">
-                                                                                    <span
-                                                                                        class="text-black">Gambar/Foto</span>
-                                                                                    <div class="form-group mt-1">
-                                                                                        <input type="file"
-                                                                                            class="form-control"
-                                                                                            placeholder="Masukan Gambar/Foto"
-                                                                                            @change="updateImage"
-                                                                                            accept=".jpg, .jpeg, .png, .svg, .gif">
-                                                                                    </div>
-                                                                                    <div v-if="errors.image"
-                                                                                        class="alert alert-danger mt-2">{{
-                                                                                            errors.picture
-                                                                                        }}</div>
-                                                                                    <div v-if="errors[0]"
-                                                                                        class="alert alert-danger mt-2">{{
-                                                                                            errors[0] }}</div>
-                                                                                </div>
-
-                                                                                <div class="col-md-5"
-                                                                                    v-show="tab === 'peraturan' || tab === 'dataanggota'">
-                                                                                    <span class="text-black">Dokumen</span>
-                                                                                    <div class="form-group mt-1">
-                                                                                        <input type="file"
-                                                                                            class="form-control"
-                                                                                            placeholder="Masukan Dokumen"
-                                                                                            @change="updateDocument">
-                                                                                    </div>
-                                                                                    <div v-if="errors.document"
-                                                                                        class="alert alert-danger mt-2">
-                                                                                        {{
-                                                                                            errors.document }}</div>
-                                                                                    <div v-if="errors[0]"
-                                                                                        class="alert alert-danger mt-2">{{
-                                                                                            errors[0] }}</div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="row d-flex justify-content-center">
-                                                                            <div class="col-md-2">
-                                                                                <button type="submit"
-                                                                                    class="btn btn-md btn-primary border-0 shadow me-2"
-                                                                                    data-bs-dismiss="modal"
-                                                                                    @click="update">Simpan</button>
-
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </section>
-                                            <!--Our Blogs Ends-->
-
-                                        </template>
-
-    <script>
-    //import layout Admin
-    import LayoutAdmin from '../../../Layouts/Admin.vue';
-
-    //import component pagination
-    import Pagination from '../../../Components/Pagination.vue';
-
-    //import Heade from Inertia
-    import {
-        Head,
-    } from '@inertiajs/inertia-vue3';
-
-    //import sweet alert2
-    import Swal from 'sweetalert2';
-
-    //import ref from vue
-    import {
-        reactive, ref, watch
-    } from 'vue';
-
-    //import tinyMCE
-    import Editor from '@tinymce/tinymce-vue';
-
-    //import inertia adapter
-    import { Inertia } from '@inertiajs/inertia';
-
-    export default {
-
-        // data() {
-        //     return {
-        //         activeTab: 'popup', // Set the default active tab
-
-        //     };
-        // },
-
-        // methods: {
-        //     setActiveTab(tabName) {
-        //         this.activeTab = tabName;
-        //     },
-        // },
-
-        //layout
-        layout: LayoutAdmin,
-
-        //register components
-        components: {
-            Head,
-            Pagination,
-            Editor
+export default {
+    // Definisi layout
+    layout: LayoutAdmin, 
+    components: {
+        Head, Link, 
+    },
+    props: {
+        user: {
+            type: Object,
+            required: true,
         },
-
-        //props
-        props: {
-            datas: Object,
-            errors: Object,
+        errors: {
+            type: Object,
+            default: () => ({}),
         },
+    },
 
-        //inisialisasi composition API
-        setup() {
-            const activeTab = ref('');
+    setup(props) {
+        // Form state untuk pembaruan password
+        const form = useForm({
+            password: '',
+            password_confirmation: '',
+        });
 
-            // State untuk pencarian
-            const search = ref(activeTab.value || new URL(document.location).searchParams.get('q'));
+        // State untuk melacak visibilitas password
+        const passwordVisibility = reactive({
+            new: false,
+            confirm: false,
+        });
 
+        // Fungsi untuk meng-toggle visibilitas
+        const togglePasswordVisibility = (field) => {
+            passwordVisibility[field] = !passwordVisibility[field];
+        };
 
-
-            // Daftar tab dalam bentuk array
-            const tabs = ref([
-                { value: 'popup', label: 'Pop Up' },
-                { value: 'siapakita', label: 'Siapa Kita ?' },
-                { value: 'ketuaumum', label: 'Ketua Umum' },
-                { value: 'strukturorganisasi', label: 'Struktur Organisasi' },
-                { value: 'visimisi', label: 'Visi Misi' },
-                { value: 'sejarah', label: 'Sejarah' },
-                { value: 'peraturan', label: 'Peraturan' },
-                { value: 'proker', label: 'Program Kerja' },
-                { value: 'dataanggota', label: 'Data Anggota' },
-                { value: 'faq', label: 'FAQ' },
-                { value: 'kontak', label: 'Kontak Kami' },
-            ]);
-
-            // Fungsi untuk mengubah tab dan otomatis melakukan pencarian
-            const setActiveTab = (tab) => {
-                activeTab.value = tab;
-                handleSearch();
-            };
-
-            // Fungsi untuk pencarian otomatis
-            const handleSearch = () => {
-                Inertia.get('/admin/managementfilter', {
-                    q: activeTab.value, // Menggunakan activeTab langsung sebagai parameter pencarian
-                });
-            };
-
-            //define form state
-            const form = reactive({
-                item: '',
-                sub: '',
-                subitem: '',
-                status: '',
-                position: '',
-                body: '',
-                image: '',
-                link: '',
-                document: '',
-                button: '',
-                desc: '',
+        // Fungsi untuk submit formulir update password
+        const updatePassword = () => {
+            const updateUrl = '/admin/profile/password'; 
+            form.put(updateUrl, { 
+                preserveScroll: true, // Mempertahankan posisi scroll setelah redirect
+                onSuccess: () => {
+                    // Reset field form setelah sukses
+                    form.reset('password', 'password_confirmation'); 
+                },
+                onError: (errors) => {
+                    console.error('Validation Errors:', errors);
+                    // Inertia secara otomatis mengisi props.errors
+                }
             });
+        };
 
-            const store = () => {
-                // Kirim data ke server
-                Inertia.post('/admin/management/store', {
-                    item: tab,
-                    sub: form.sub,
-                    subitem: form.subitem,
-                    status: form.status,
-                    position: form.position,
-                    body: form.body,
-                    image: form.image,
-                    link: form.link,
-                    document: form.document,
-                    button: form.button,
-                    desc: form.desc,
-                }, {
-                    onSuccess: () => {
-                        // Tampilkan alert sukses
-                        Swal.fire({
-                            title: 'Success!',
-                            text: 'Data Anda Berhasil Disimpan.',
-                            icon: 'success',
-                            showConfirmButton: false,
-                            timer: 2000
-                        }).then(() => {
-                            // Ambil instance modal
-                            const modalElement = document.getElementById('ModalCreate');
-                            if (modalElement) {
-                                const modalInstance = bootstrap.Modal.getInstance(modalElement);
-                                if (modalInstance) {
-                                    modalInstance.hide(); // Tutup modal jika instance valid
-                                }
-                            }
-                            Inertia.reload({ preserveState: true });
-                        });
-                    },
-                    onError: (errors) => {
-                        console.error("Terjadi kesalahan:", errors);
-                        Swal.fire({
-                            title: 'Error!',
-                            text: 'Terjadi kesalahan saat menyimpan data. Silakan coba lagi.',
-                            icon: 'error',
-                            confirmButtonText: 'OK'
-                        });
-                    }
-                });
-            };
-
-            //update method
-            const update = () => {
-                //send data to server
-                Inertia.post(`/admin/management/update`, {
-                    //data
-                    id: form.id,
-                    item: form.item,
-                    sub: form.sub,
-                    subitem: form.subitem,
-                    status: form.status,
-                    position: form.position,
-                    body: form.body,
-                    image: form.image,
-                    link: form.link,
-                    document: form.document,
-                    button: form.button,
-                    desc: form.desc,
-                }, {
-                    onSuccess: () => {
-                        //show success alert
-                        Swal.fire({
-                            title: 'Success!',
-                            text: 'Data Anda Berhasil Disimpan.',
-                            icon: 'success',
-                            showConfirmButton: false,
-                            timer: 2000
-                        });
-                    },
-                });
-            };
-
-            const active = (data) => {
-                Swal.fire({
-                    title: 'Apakah Anda yakin?',
-                    text: "Mengaktifkan Status!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, Approve it!'
-                })
-                    .then((result) => {
-                        if (result.isConfirmed) {
-                            Inertia.post(`/admin/management/update/status`, {
-                                id: data.id,
-                                status: 1,
-                                item: data.item,
-                            });
-                            Swal.fire({
-                                title: 'Success!',
-                                text: 'Status Active!.',
-                                icon: 'success',
-                                timer: 2000,
-                                showConfirmButton: false,
-                            });
-                        }
-                    })
+        // Fungsi untuk memformat role agar lebih mudah dibaca
+        const formatRole = (roleValue) => {
+            switch (roleValue) {
+                case 'admin': return 'Administrator Sistem';
+                case 'ketua_subseksi': return 'Ketua Subseksi';
+                case 'peserta': return 'Peserta';
+                default: return roleValue.charAt(0).toUpperCase() + roleValue.slice(1).replace(/_/g, ' ');
             }
+        };
 
-            const nonactive = (data) => {
-                Swal.fire({
-                    title: 'Apakah Anda yakin?',
-                    text: "Menonaktifkan Status!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, Approve it!'
-                })
-                    .then((result) => {
-                        if (result.isConfirmed) {
-                            Inertia.post(`/admin/management/update/status`, {
-                                id: data.id,
-                                status: 0,
-                                item: data.item,
-                            });
-                            Swal.fire({
-                                title: 'Success!',
-                                text: 'Status NonActive!.',
-                                icon: 'success',
-                                timer: 2000,
-                                showConfirmButton: false,
-                            });
-                        }
-                    })
-            }
+        // Fungsi untuk menentukan kelas badge role
+        const getRoleBadgeClass = (roleValue) => {
+            return 'badge bg-secondary-subtle text-secondary-emphasis border border-secondary-subtle fw-bold px-3 py-2';
+        };
 
-            const ModalEdit = (data) => {
-                Object.assign(form, {
-                    id: data.id,
-                    item: data.item,
-                    sub: data.sub,
-                    subitem: data.subitem,
-                    status: data.status,
-                    position: data.position,
-                    body: data.body,
-                    image: data.image,
-                    link: data.link,
-                    document: data.document,
-                    button: data.button,
-                    desc: data.desc,
-                }); // Isi form dengan data yang dipilih
-                const modal = new bootstrap.Modal(document.getElementById('ModalEdit'));
-                modal.show();
-            };
-
-            const ModalCreate = () => {
-                Object.assign(form, {
-                    item: '',
-                    sub: '',
-                    subitem: '',
-                    status: '',
-                    position: '',
-                    body: '',
-                    image: '',
-                    link: '',
-                    document: '',
-                    button: '',
-                    desc: '',
-                }); // Isi form dengan data yang dipilih
-                const modal = new bootstrap.Modal(document.getElementById('ModalCreate'));
-                modal.show();
-            };
-
-
-            //define method destroy
-            const destroy = (id) => {
-                Swal.fire({
-                    title: 'Apakah Anda yakin?',
-                    text: "Anda tidak akan dapat mengembalikan ini!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, delete it!'
-                })
-                    .then((result) => {
-                        if (result.isConfirmed) {
-
-                            Inertia.delete(`/admin/management/${id}`);
-
-                            Swal.fire({
-                                title: 'Deleted!',
-                                text: 'Media Berhasil Dihapus!.',
-                                icon: 'success',
-                                timer: 2000,
-                                showConfirmButton: false,
-                            });
-                        }
-                    })
-            }
-
-            // Method to update the document file
-            const updateDocument = (event) => {
-                form.document = event.target.files[0];
-            };
-
-            const updateImage = (event) => {
-                form.image = event.target.files[0];
-            };
-
-
-            const showImage = (imageName) => {
-                return `/storage/${imageName}`;
-            };
-
-            const showDoc = (documentName) => {
-                return `/storage/${documentName}`;
-            };
-
-
-            const urlParams = new URLSearchParams(window.location.search);
-            const tab = urlParams.get('q'); // Mengambil nilai setelah q=
-            //return
-            return {
-                form,
-                store,
-                update,
-                updateDocument,
-                updateImage,
-                ModalEdit,
-                ModalCreate,
-                active,
-                nonactive,
-                setActiveTab,
-                activeTab,
-                destroy,
-                showImage,
-                showDoc,
-                search,
-                handleSearch,
-                tabs,
-                urlParams,
-                tab
-
-            };
-        }
-
-
-
+        return {
+            user: props.user,
+            errors: props.errors, 
+            form, 
+            updatePassword, 
+            formatRole,
+            getRoleBadgeClass,
+            passwordVisibility,
+            togglePasswordVisibility,
+        };
     }
+}
+</script>
 
-    </script>
+<style scoped>
+/* --- Gaya CSS Kustom (Dipertahankan dari aslinya) --- */
 
-    <style></style>
+/* Definisi Warna Kustom */
+.text-navy { color: #003366 !important; }
+.bg-navy-light { background-color: #004488 !important; } 
+.btn-navy { background-color: #003366; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; transition: all 0.2s ease; }
+.btn-navy:hover { background-color: #002244; color: #ffffff; }
+
+/* Gaya Kartu dan Badge */
+.card { border-radius: 12px; }
+
+/* Gaya Subtlety (Bootstrap 5.3+ like) */
+.bg-success-subtle { background-color: #d1e7dd !important; }
+.text-success-emphasis { color: #0f5132 !important; }
+.bg-danger-subtle { background-color: #f8d7da !important; }
+.text-danger-emphasis { color: #842029 !important; }
+.bg-secondary-subtle { background-color: #e2e3e5 !important; }
+.text-secondary-emphasis { color: #41464b !important; }
+.text-primary { color: #007bff !important; }
+
+/* Menjamin invalid-feedback tetap muncul di Input Group */
+.invalid-feedback.d-block {
+    display: block !important;
+    width: 100%;
+    margin-top: 0.25rem;
+}
+</style>

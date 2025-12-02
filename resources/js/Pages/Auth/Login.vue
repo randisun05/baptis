@@ -15,7 +15,7 @@
                 <div class="bg-navy text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3 shadow-sm" style="width: 70px; height: 70px;">
                   <i class="bi bi-person-badge fs-1"></i>
                 </div>
-                <h2 class="fw-bold text-navy">Admin Portal</h2>
+                <h2 class="fw-bold text-navy">Portal Pengurus</h2>
                 <p class="text-muted small">Paroki Santa Melania</p>
               </div>
 

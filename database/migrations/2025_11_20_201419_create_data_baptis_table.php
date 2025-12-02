@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('data_baptis', function (Blueprint $table) {
             $table->id();
             $table->string('number')->nullable();
-            $table->string('name')->nullable();
+            $table->string('nameWali')->nullable();
             $table->string('status')->nullable();
             $table->string('namePastoor')->nullable();
              $table->timestamps();

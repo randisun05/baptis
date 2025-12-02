@@ -2,370 +2,100 @@
 
 namespace App\Http\Controllers\User;
 
-use Inertia\Inertia;
-use App\Models\instansi;
-use Illuminate\Http\Request;
-use App\Models\ProfileDataMain;
-use App\Models\ProfileDataPosition;
-use App\Http\Controllers\Controller;
-use App\Models\refCity;
-use App\Models\refProvince;
-use Intervention\Image\ImageManager;
-use Intervention\Image\Laravel\Facades\Image;
+use App\Models\Member;
+use App\Models\DataBaptis;
+use App\Models\DataMenikah;
+use App\Models\DataRiwayat;
 
+// Import semua model relasi yang diperlukan untuk Eager Loading
+use App\Models\DataKeluarga;
+use Illuminate\Http\Request;
+use App\Models\DataKatekumen;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Hash;
+use App\Models\Registration; // Diperlukan untuk data tambahan/jabatan
 
 class DataProfileController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Menampilkan halaman detail profil pengguna yang sudah terautentikasi HANYA JIKA statusnya 'confirmed'.
+     * Data dimuat dengan Eager Loading untuk semua relasi.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Inertia\Response|\Illuminate\Http\RedirectResponse
      */
-    public function index()
+  public function showProfileOnly()
     {
+        // 1. Ambil data user dari guard 'member'
+        $loggedInUser = auth()->guard('member')->user();
 
-        if (auth()->guard('member')->check()) {
-
-        $main = ProfileDataMain::where('nip',auth()->guard('member')->user()->nip)
-        ->first();
-
-        $data = ProfileDataPosition::with('main')
-        ->where('main_id',$main->id)
-        ->first();
-
-        return inertia('User/DataProfile/Index', [
-           'data' => $data,
-        ]);
-
-        } else {
-            return redirect()->route('login');
-        }
-    }
-
-    public function indexIndiv()
-    {
-        if (!auth()->guard('member')->check())
-        {
-            return redirect()->route('login');
-        }
-        $main = ProfileDataMain::where('nip',auth()->guard('member')->user()->nip)
-        ->first();
-
-        $data = ProfileDataPosition::with('main')
-        ->where('main_id',$main->id)
-        ->first();
-
-        return inertia('User/DataProfile/IndexIndiv', [
-           'data' => $data,
-        ]);
-    }
-
-    public function indexPosition()
-    {
-        if (!auth()->guard('member')->check())
-        {
-            return redirect()->route('login');
+        if (!$loggedInUser) {
+            return redirect('/login')->with('error', 'Akses ditolak. Silakan login terlebih dahulu.');
         }
 
-        $main = ProfileDataMain::where('nip',auth()->guard('member')->user()->nip)
-        ->first();
+        // 2. Ambil objek Member LENGKAP dengan Eager Loading SEMUA relasi
+        $memberData = Member::where('number', $loggedInUser->number)
+                           ->with([
+                               'dataKatekumen',
+                               'dataRiwayat',
+                               'dataMenikah',
+                               'dataBaptis',
+                               'dataKeluarga',
+                           ])
+                           ->firstOrFail();
 
-        $data = ProfileDataPosition::with('main')
-        ->where('main_id',$main->id)
-        ->first();
+        // 3. Mengambil data registrasi (untuk detail tambahan seperti jabatan/role)
+        $registrationData = Registration::where('email', $loggedInUser->email)->first();
 
-        return inertia('User/DataProfile/IndexPosition', [
-           'data' => $data,
+        // 4. Kirim data yang dibutuhkan ke frontend
+        return inertia('User/DataProfile/Index', [ 
+            'registrationData' => $registrationData, // Data Registrasi
+            'user'             => $memberData,       // Data Member LENGKAP dengan semua relasi
+            'errors'           => session('errors') ? session('errors')->getBag('default')->toArray() : [], // Kirimkan errors (jika ada)
         ]);
-    }
-
-    public function indexOther()
-    {
-        if (!auth()->guard('member')->check())
-        {
-            return redirect()->route('login');
-        }
-
-        $main = ProfileDataMain::where('nip',auth()->guard('member')->user()->nip)
-        ->first();
-
-        $data = ProfileDataPosition::with('main')
-        ->where('main_id',$main->id)
-        ->first();
-
-        return inertia('User/DataProfile/IndexOther', [
-           'data' => $data,
-        ]);
-    }
-
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Memperbarui password pengguna yang sedang login.
      *
      * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id (ID User)
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function updatePassword(Request $request, $id)
     {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit()
-    {
-        if (!auth()->guard('member')->check())
-        {
-            return redirect()->route('login');
+        // Pastikan pengguna yang login adalah pemilik ID ini
+        $loggedInUser = auth()->guard('member')->user();
+        if (!$loggedInUser || $loggedInUser->id != $id) {
+            return response()->json(['message' => 'Unauthorized or invalid user ID.'], 403);
         }
 
-        $main = ProfileDataMain::where('nip',auth()->guard('member')->user()->nip)
-        ->first();
-
-        $data = ProfileDataPosition::with('main')
-        ->where('main_id',$main->id)
-        ->first();
-
-        $instansis = instansi::get();
-        return inertia('User/DataProfile/Edit', [
-           'data' => $data,
-           'instansis' => $instansis,
-        ]);
-    }
-
-    public function editPosition()
-    {
-        if (!auth()->guard('member')->check())
-        {
-            return redirect()->route('login');
-        }
-
-        $main = ProfileDataMain::where('nip',auth()->guard('member')->user()->nip)
-        ->first();
-
-        $data = ProfileDataPosition::with('main')
-        ->where('main_id',$main->id)
-        ->first();
-        $instansis = instansi::get();
-
-        return inertia('User/DataProfile/EditPosition', [
-           'data' => $data,
-           'instansis' => $instansis,
-
-        ]);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request)
-    {
-
-        if (!auth()->guard('member')->check())
-        {
-            return redirect()->route('login');
-        }
-
-          $request->validate([
-                'nip' => ['required','string', 'regex:/^\d{18}$/'],
-                'name' => 'required',
-                'leveledu' => 'required',
-                'lastedu' => 'required',
-                'place' => 'required',
-                'dob' => 'required',
-                // 'docid' => 'required',
-                // 'nodocid' => 'required',
-                'email' => 'required|email|',
-                'contact' => 'required|string|',
-                'gender' => 'required',
-                // 'address' => 'required',
-                // 'villages' => 'required',
-                // 'district' => 'required',
-                // 'regency' => 'required',
-                // 'province' => 'required',
-                'religion' => 'required',
-                'agency' => 'required',
-        ],[
-            'nip.regex' => 'NIP harus terdiri dari 18 angka.',
-            // 'nip.unique' => 'Data NIP sudah digunakan.',
-            // 'email.unique' => 'Data email sudah digunakan.',
-            // 'contact.unique' => 'Data kontak sudah digunakan.',
-            'nip.required' => 'NIP harus diisi.',
-            'name.required' => 'Nama harus diisi.',
-            'email.required' => 'Email harus diisi.',
-            'contact.required' => 'Kontak harus diisi.',
-            'agency.required' => 'Instansi harus diisi.',
-            'gender.required' => 'Jenis kelamin harus diisi.',
-            'leveledu.required' => 'Jenjang pendidikan harus diisi.',
-            'lastedu.required' => 'Pendidikan terakhir harus diisi.',
-            'place.required' => 'Tempat lahir harus diisi.',
-            'dob.required' => 'Tanggal lahir harus diisi.',
-            // 'docid.required' => 'Jenis dokumen identitas harus diisi.',
-            // 'nodocid.required' => 'Nomor dokumen identitas harus diisi.',
-            // 'address.required' => 'Alamat harus diisi.',
-            // 'villages.required' => 'Desa/Kelurahan harus diisi.',
-            // 'district.required' => 'Kecamatan harus diisi.',
-            // 'regency.required' => 'Kabupaten/Kota harus diisi.',
-            // 'province.required' => 'Provinsi harus diisi.',
-            'religion.required' => 'Agama harus diisi.',
+        // 1. Validasi Input Password
+        // 'nullable' berarti jika kosong, tidak ada validasi lain yang dijalankan.
+        // 'required_with:password_confirmation' memastikan jika salah satu diisi, yang lain juga harus diisi.
+        $request->validate([
+            'password' => 'nullable|string|min:8|confirmed',
+        ], [
+            'password.min' => 'Password minimal harus 8 karakter.',
+            'password.confirmed' => 'Konfirmasi Password tidak cocok.',
         ]);
 
-        $main = ProfileDataMain::where('nip',auth()->guard('member')->user()->nip)
-        ->first();
-
-        //update data main
-        $main->update([
-                'nip' => $request->nip,
-                'name' => $request->name,
-                'fname' => $request->fname,
-                'lname' => $request->lname,
-                'leveledu' => $request->leveledu,
-                'lastedu' => $request->lastedu,
-                'place' => $request->place,
-                'dob' => $request->dob,
-                // 'docid' => $request->docid,
-                // 'nodocid' => $request->nodocid,
-                'email' => $request->email,
-                'contact' => $request->contact,
-                'gender' => $request->gender,
-                // 'address' => $request->address,
-                // 'villages' => $request->villages,
-                // 'district' => $request->district,
-                // 'regency' => $request->regency,
-                // 'province' => $request->province,
-                'religion' => $request->religion,
-
-        ]);
-
-        $position = ProfileDataPosition::where('main_id',$main->id)
-        ->first();
-
-        $position->update([
-                'agency' => $request->agency,
-             ]);
-
-             return redirect()->route('user.profile')->with('success','data berhasil diupdate');
-    }
-
-    public function updatePosition(Request $request)
-    {
-        if (!auth()->guard('member')->check())
-        {
-            return redirect()->route('login');
-        }
-
-          $request->validate([
-                'type' => 'required',
-                'status' => 'required',
-                'agency' => 'required',
-                'unit' => 'required',
-                'subunit' => 'required',
-                'position' => 'required',
-                'level' => 'required',
-                'location' => 'required',
-                'tmtpos' => 'required',
-                'golru' => 'required',
-                'tmtgolru' => 'required',
-
-        ],[
-                'type.required' => 'Jenis ASN harus diisi.',
-                'status.required' => 'Status Kepegawaian harus diisi.',
-                'agency.required' => 'Instansi harus diisi.',
-                'unit.required' => 'Unit organisasi harus diisi.',
-                'subunit.required' => 'Sub unit organisasi harus diisi.',
-                'position.required' => 'Jabatan harus diisi.',
-                'level.required' => 'Jenjang harus diisi.',
-                'location.required' => 'Penempatan harus diisi.',
-                'tmtpos.required' => 'TMT jabatan harus diisi.',
-                'golru.required' => 'Golru harus diisi.',
-                'tmtgolru.required' => 'TMT golru harus diisi.',
-
-        ]);
-
-        $main = ProfileDataMain::where('nip',auth()->guard('member')->user()->nip)
-        ->first();
-
-        $position = ProfileDataPosition::where('main_id',$main->id)
-        ->first();
-
-        $position->update([
-                'agency' => $request->agency,
-                'type' => $request->type,
-                'status' => $request->status,
-                'unit' => $request->unit,
-                'subunit' => $request->subunit,
-                'position' => $request->position,
-                'level' => $request->level,
-                'location' => $request->location,
-                'tmtpos' => $request->tmtpos,
-                'golru' => $request->golru,
-                'tmtgolru' => $request->tmtgolru,
-                // 'wyear' => $request->wyear,
-                // 'wmonth' => $request->wmonth,
-             ]);
-
-             return redirect()->route('user.profile.jabatan');
-    }
-
-        public function updateImage(Request $request)
-        {
-            if (!auth()->guard('member')->check())
-        {
-            return redirect()->route('login');
-        }
-
-            $image = $request->file('image');
-            if ($image) {
-                $image = $request->file('image')->storePublicly('/images');
-                // Proceed with storing or processing the uploaded file
-            };
-            $main = ProfileDataMain::where('nip',auth()->guard('member')->user()->nip)
-            ->first();
-            //update data main
-            $main->update([
-                    'image' => $image,
+        // 2. Cek apakah password baru diisi
+        if (!empty($request->password)) {
+            // Dapatkan model User berdasarkan ID (ID dari guard 'member' biasanya dari tabel 'members')
+            // Di sini kita berasumsi model Member adalah model yang digunakan untuk autentikasi.
+            $member = Member::findOrFail($id);
+            
+            // 3. Update password
+            $member->update([
+                'password' => Hash::make($request->password),
             ]);
 
-            return Inertia::location('/user/profile/edit');
-    }
+            // 4. Redirect atau kembali dengan pesan sukses
+            return redirect()->back()->with('success', 'Password berhasil diperbarui.');
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+        } else {
+            // Jika password kosong, kembali tanpa update, mungkin dengan pesan peringatan
+            return redirect()->back()->with('warning', 'Tidak ada perubahan password yang dilakukan.');
+        }
     }
 }

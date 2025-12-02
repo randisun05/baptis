@@ -13,9 +13,11 @@ use Illuminate\Http\Request;
 use App\Models\DataKatekumen;
 use Symfony\Component\Mime\Email;
 use Illuminate\Support\Facades\DB;
+use App\Exports\RegistrationsExport;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Redirect;
 
 class RegistrationController extends Controller
@@ -64,7 +66,7 @@ class RegistrationController extends Controller
     }
 
 
-  public function store(Request $request)
+    public function store(Request $request)
     {
 
         // 1. Validasi Input Dasar
@@ -75,21 +77,28 @@ class RegistrationController extends Controller
             'email' => 'required|email|unique:registrations,email|unique:members,email',
             'contact' => 'required|unique:registrations,contact',
             'kelompok' => 'required|in:Katekumen,Sakramen Baptis Bayi',
+            // Tambahkan validasi untuk anggota keluarga wajib diisi
+            'family_members' => 'required|array|min:1',
+            'family_members.*.name' => 'required|string|max:255',
+            'family_members.*.religion' => 'required|string|max:50',
+            'family_members.*.relation' => 'required|string|max:50',
+            'family_members.*.address' => 'required|string',
+            'family_members.*.contact' => 'required|string|max:255',
 
         ];
 
         // 1b. Validasi Kondisional berdasarkan Kelompok
         if ($request->kelompok === 'Katekumen') {
             // DataKatekumen
-            // $rules['address'] = 'required|string';
-            // $rules['education'] = 'required|string|max:100';
-            // $rules['namePenjamin'] = 'required|string|max:255';
+             $rules['address'] = 'required|string';
+             $rules['education'] = 'required|string|max:100';
+             $rules['namePenjamin'] = 'required|string|max:255';
 
             // DataRiwayat
-            // $rules['religion'] = 'required|string|max:50';
-            // $rules['location'] = 'required|string|max:255';
+             $rules['religion'] = 'required|string|max:50';
+             $rules['location'] = 'required|string|max:255';
             // $rules['schedule'] = 'nullable|string|max:255';
-            // $rules['dateStart'] = 'required|date';
+             $rules['dateStart'] = 'required|date';
             // $rules['dateEnd'] = 'nullable|date';
             // $rules['participateBefore'] = 'boolean';
             // $rules['nameGuru'] = 'nullable|string|max:255';
@@ -100,28 +109,30 @@ class RegistrationController extends Controller
             // $rules['numberBaptis'] = 'nullable|string|max:50';
 
             // DataMenikah
-            // $rules['statusMarried'] = 'required|string|max:50';
+             $rules['statusMarried'] = 'required|string|max:50';
 
             // Aturan kompleks lainnya (misalnya, jika statusMarried = Menikah Katolik, maka namePasangan wajib)
             if ($request->statusMarried && $request->statusMarried !== 'Belum Menikah') {
-                // $rules['namePasangan'] = 'required|string|max:255';
-                // $rules['religionPasangan'] = 'required|string|max:50';
+                 $rules['namePasangan'] = 'required|string|max:255';
+                 $rules['religionPasangan'] = 'required|string|max:50';
                 // ... dan validasi lainnya sesuai kompleksitas form Menikah
             }
 
         } elseif ($request->kelompok === 'Sakramen Baptis Bayi') {
             // DataBaptis
-            // $rules['namePastoor'] = 'required|string|max:255';
-            // $rules['name'] = 'required|string|max:255';
-            // $rules['status'] = 'required|string|max:50'; // Status DataBaptis
+            // 'name' pada model Registration adalah Nama Bayi.
+            $rules['nameWali'] = 'required|string|max:255'; // **TAMBAHAN UNTUK nameWali**
+            $rules['namePastoor'] = 'required|string|max:255';
+            $rules['status'] = 'required|string|max:50'; // Status DataBaptis
         }
 
         $messages = [
-            // 'name.required' => 'Nama lengkap wajib diisi.',
-            // 'email.unique' => 'Email sudah terdaftar.',
-            // 'contact.unique' => 'Nomor telepon sudah terdaftar.',
-            // 'kelompok.required' => 'Silakan pilih kelompok katekese.',
-            // 'family_members.required' => 'Data anggota keluarga wajib diisi.',
+            'name.required' => 'Nama lengkap wajib diisi.',
+            'email.unique' => 'Email sudah terdaftar.',
+            'contact.unique' => 'Nomor telepon sudah terdaftar.',
+            'kelompok.required' => 'Silakan pilih kelompok katekese.',
+            'family_members.required' => 'Data anggota keluarga wajib diisi.',
+             'nameWali.required' => 'Nama Wali/Orang Tua wajib diisi untuk Sakramen Baptis Bayi.', // **Pesan nameWali**
             // ... Tambahkan pesan error kondisional lainnya
         ];
 
@@ -221,7 +232,7 @@ class RegistrationController extends Controller
                 // 5a. Data Baptis Bayi
                 DataBaptis::create([
                     'number' => $request->number,
-                    'name' => $request->name, // Asumsi ini adalah nama bayi
+                    'nameWali' => $request->nameWali, // **DIGANTI: Menggunakan nameWali**
                     'status' => $request->status, // Status di Model DataBaptis
                     'namePastoor' => $request->namePastoor,
                 ]);
@@ -289,7 +300,7 @@ class RegistrationController extends Controller
             'registration' => $data
         ]);
     }
-   /**
+    /**
      * Memperbarui (Update) data registrasi yang ada di database.
      *
      * @param \Illuminate\Http\Request $request
@@ -313,27 +324,30 @@ class RegistrationController extends Controller
             'email' => 'required|email|unique:registrations,email,' . $id . '|unique:members,email,' . $oldNumber . ',number', // Gunakan 'number' sebagai unique key di tabel Member
             'contact' => 'required|string|max:255|unique:registrations,contact,' . $id,
             'kelompok' => 'required|in:Katekumen,Sakramen Baptis Bayi',
-
-            // Validasi Data Keluarga (Array)
-            // 'family_members' => 'required|array|min:1',
-            // 'family_members.*.name' => 'required|string|max:255',
-            // // ... (tambahkan validasi family_members lainnya jika diperlukan)
+             // Validasi Data Keluarga (Array)
+            'family_members' => 'required|array|min:1',
+            'family_members.*.name' => 'required|string|max:255',
+            'family_members.*.religion' => 'required|string|max:50',
+            'family_members.*.relation' => 'required|string|max:50',
+            'family_members.*.address' => 'required|string',
+            'family_members.*.contact' => 'required|string|max:255',
         ];
 
         // 1b. Validasi Kondisional (Menggunakan aturan yang sama dengan store)
         if ($isCatechumen) {
             // DataKatekumen
-            // $rules['address'] = 'required|string';
-            // $rules['education'] = 'required|string|max:100';
-            // $rules['namePenjamin'] = 'required|string|max:255';
+             $rules['address'] = 'required|string';
+             $rules['education'] = 'required|string|max:100';
+             $rules['namePenjamin'] = 'required|string|max:255';
 
             // DataRiwayat
-            // $rules['religion'] = 'required|string|max:50';
+             $rules['religion'] = 'required|string|max:50';
             // // ... (tambahkan validasi DataRiwayat dan DataMenikah lainnya)
         } else {
             // DataBaptis
-            // $rules['namePastoor'] = 'required|string|max:255';
-            // $rules['status'] = 'required|string|max:50';
+            $rules['nameWali'] = 'required|string|max:255'; // **TAMBAHAN UNTUK nameWali**
+            $rules['namePastoor'] = 'required|string|max:255';
+            $rules['status'] = 'required|string|max:50';
         }
 
         $request->validate($rules);
@@ -421,7 +435,7 @@ class RegistrationController extends Controller
             } else {
                 // 5a. Data Baptis Bayi
                 DataBaptis::updateOrCreate(['number' => $oldNumber], [
-                    'name' => $request->name, // Nama Bayi
+                    'nameWali' => $request->nameWali, // **DIGANTI: Menggunakan nameWali**
                     'status' => $request->status,
                     'namePastoor' => $request->namePastoor,
                 ]);
@@ -501,7 +515,7 @@ public function sendEmail()
     return Redirect::back()->with('success', 'Email registrasi berhasil dikirim ulang.');
 }
 
- public static function generateSecurePassword(int $length = 8): string
+    public static function generateSecurePassword(int $length = 8): string
     {
         // Kumpulan karakter yang aman dan tidak ambigu.
         // Dihindari: 0, 1, I, L, O, i, l, o.
@@ -521,5 +535,17 @@ public function sendEmail()
 
         // Tidak ada pemeriksaan kompleksitas atau pengacakan ulang (sesuai permintaan "simpel")
         return $password;
+    }
+
+    public function export()
+    {
+       // Nama file yang akan diunduh
+        $fileName = 'data_pendaftaran_' . now()->format('Ymd_His') . '.xlsx';
+
+        // Panggil facade Excel untuk mendownload.
+        // Parameter 1: Instance dari Export Class
+        // Parameter 2: Nama file
+        // Parameter 3 (opsional): Jenis File (Excel::XLSX adalah default)
+        return Excel::download(new RegistrationsExport, $fileName);
     }
 }

@@ -6,6 +6,7 @@ use App\Models\Member;
 use App\Models\instansi;
 use Illuminate\Http\Request;
 use App\Exports\MemberExport;
+use App\Exports\MembersExport;
 use App\Models\ProfileDataMain;
 use Illuminate\Support\Facades\DB;
 use App\Models\ProfileDataPosition;
@@ -48,9 +49,6 @@ class DataMembersController extends Controller
 
     }
 
-
-    
-
     
     /**
      * Display the specified resource.
@@ -79,6 +77,18 @@ class DataMembersController extends Controller
         ]);
 
 
+    }
+
+      public function export()
+    {
+       // Nama file yang akan diunduh
+        $fileName = 'data_peserta_' . now()->format('Ymd_His') . '.xlsx';
+
+        // Panggil facade Excel untuk mendownload.
+        // Parameter 1: Instance dari Export Class
+        // Parameter 2: Nama file
+        // Parameter 3 (opsional): Jenis File (Excel::XLSX adalah default)
+        return Excel::download(new MembersExport, $fileName);
     }
 
  

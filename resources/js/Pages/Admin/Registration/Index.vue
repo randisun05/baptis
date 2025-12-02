@@ -8,9 +8,16 @@
         <h2 class="fs-3 fw-bold text-navy mb-0">Data Pendaftaran</h2>
         <p class="text-muted small mb-0">Kelola pendaftaran peserta baru.</p>
       </div>
-      <Link href="/admin/registration/create" class="btn btn-navy shadow-sm">
-        <i class="bi bi-person-plus-fill me-1"></i> Tambah Peserta
-      </Link>
+      <div class="d-flex align-items-center gap-2">
+        <Link href="/admin/registration/create" class="btn btn-navy shadow-sm">
+          <i class="bi bi-person-plus-fill me-1"></i> Tambah Peserta
+        </Link>
+        <a href="/admin/registration/export" 
+            class="btn btn-success shadow-sm" 
+            target="_blank">
+            <i class="bi bi-file-earmark-spreadsheet-fill me-1"></i> Download Data Excel
+        </a>
+      </div>
     </div>
 
     <div v-if="$page.props.session?.success || $page.props.session?.error || $page.props.session?.status"
@@ -34,7 +41,7 @@
             <thead>
               <tr>
                 <th class="px-4 py-3" style="width: 5%;">No</th>
-                 <th class="px-4 py-3" style="width: 20%;">Tahun/Nomor</th>
+                <th class="px-4 py-3" style="width: 20%;">Tahun/Nomor</th>
                 <th class="px-4 py-3" style="width: 20%;">Nama Lengkap</th>
                 <th class="px-4 py-3" style="width: 10%;">Jenis Kelamin</th>
                 <th class="px-4 py-3" style="width: 15%;">Email</th>
@@ -49,7 +56,7 @@
                 <td class="px-4 fw-bold text-secondary">
                     {{ (registers.current_page ? (registers.current_page - 1) * registers.per_page + index + 1 : index + 1) }}
                 </td>
-                 <td class="px-4">
+                <td class="px-4">
                     <div class="fw-bold text-navy">{{ register.number }}</div>
                 </td>
                 <td class="px-4">
@@ -129,8 +136,8 @@
       
       <div class="card-footer bg-white py-3 border-top border-light" v-if="registers.data.length > 0">
           <div class="small text-muted px-2">
-             Menampilkan {{ registers.data.length }} data 
-             <span v-if="registers.total">dari total {{ registers.total }}</span>
+              Menampilkan {{ registers.data.length }} data 
+              <span v-if="registers.total">dari total {{ registers.total }}</span>
           </div>
       </div>
     </div>
@@ -142,22 +149,21 @@
 import { Head, Link } from '@inertiajs/inertia-vue3'
 import { Inertia } from '@inertiajs/inertia'
 import Pagination from '../../../Components/Pagination.vue';
-// 1. Import SweetAlert2
 import Swal from 'sweetalert2';
 
 defineProps({
     registers: Object
 })
 
-// 2. Fungsi Destroy dengan SweetAlert
+// Fungsi Destroy dengan SweetAlert
 const destroy = (id) => {
     Swal.fire({
         title: 'Apakah Anda yakin?',
         text: "Data peserta yang dihapus tidak dapat dikembalikan!",
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#d33',      // Merah untuk Hapus
-        cancelButtonColor: '#003366',    // Navy Blue untuk Batal
+        confirmButtonColor: '#d33',       // Merah untuk Hapus
+        cancelButtonColor: '#003366',     // Navy Blue untuk Batal
         confirmButtonText: 'Ya, Hapus!',
         cancelButtonText: 'Batal'
     }).then((result) => {

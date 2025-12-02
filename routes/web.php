@@ -1,9 +1,10 @@
 <?php
 
-use App\Mail\SendEmailRegistration;
 use App\Mail\SendEmailReject;
+use App\Mail\SendEmailRegistration;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ManagementController;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,11 +45,8 @@ Route::prefix('admin')->group(function() {
         Route::get('/dashboard', App\Http\Controllers\Admin\DashboardController::class)->name('admin.dashboard');
 
         //route management
-        Route::resource('/management', App\Http\Controllers\Admin\ManagementController::class, ['as' => 'admin']);
-        Route::get('/managementfilter', [\App\Http\Controllers\Admin\ManagementController::class, 'filter'])->name('admin.menegemnet.filter')->middleware('role:administrator');
-        Route::post('/management/store', [\App\Http\Controllers\Admin\ManagementController::class, 'store'])->name('admin.menegemnet.store');
-        Route::post('/management/update', [\App\Http\Controllers\Admin\ManagementController::class, 'update'])->name('admin.menegemnet.update');
-        Route::post('/management/update/status', [\App\Http\Controllers\Admin\ManagementController::class, 'status'])->name('admin.menegemnet.status');
+        Route::get('/profile', [App\Http\Controllers\Admin\ManagementController::class, 'index'])->name('profile.index');
+        Route::put('/profile/password', [App\Http\Controllers\Admin\ManagementController::class, 'updatePassword'])->name('profile.password.update');
         Route::get('/registration/', [\App\Http\Controllers\Admin\RegistrationController::class, 'index'])->name('admin.registration.index')->middleware('role:administrator,peserta');
 
         //route registration
@@ -59,6 +57,7 @@ Route::prefix('admin')->group(function() {
         Route::get('/registration/{id}/approve', [\App\Http\Controllers\Admin\RegistrationController::class, 'approve'])->name('admin.registration.approve')->middleware('role:administrator,peserta');
         Route::get('/registration/{id}/confirm', [\App\Http\Controllers\Admin\RegistrationController::class, 'confirm'])->name('admin.registration.confirm')->middleware('role:administrator,peserta');
         Route::get('/registration/{id}/reject', [\App\Http\Controllers\Admin\RegistrationController::class, 'reject'])->name('admin.registration.reject')->middleware('role:administrator,peserta');
+        Route::get('/registration/export', [\App\Http\Controllers\Admin\RegistrationController::class, 'export'])->name('registrations.export')->middleware('role:administrator,peserta');
         // Route::get('/registration/{id}/email', [\App\Http\Controllers\Admin\RegistrationController::class, 'sendEmail'])->name('admin.registration.sendEmail')->middleware('role:administrator,peserta');
         Route::resource('/registration', \App\Http\Controllers\Admin\RegistrationController::class, ['as' => 'admin']);
 
@@ -93,6 +92,7 @@ Route::prefix('admin')->group(function() {
         Route::post('/users/{id}', [\App\Http\Controllers\Admin\DataMembersController::class, 'update'])->name('admin.users.update')->middleware('role:administrator,ketua_wakil_subseksi,peserta');
         Route::get('/members/report/export', [\App\Http\Controllers\Admin\DataMembersController::class, 'exportReport'])->name('admin.member.export')->middleware('role:administrator,ketua_wakil_subseksi,peserta');
         Route::get('/members/report', [\App\Http\Controllers\Admin\DataMembersController::class, 'indexReport'])->name('admin.member.report')->middleware('role:administrator,ketua_wakil_subseksi,peserta');
+         Route::get('/members/export', [\App\Http\Controllers\Admin\DataMembersController::class, 'export'])->name('members.export')->middleware('role:administrator,peserta');
         Route::resource('/members', \App\Http\Controllers\Admin\DataMembersController::class, ['as' => 'admin'])->middleware('role:administrator,ketua_wakil_subseksi,peserta');
 
     });
@@ -125,11 +125,12 @@ Route::prefix('user')->group(function() {
         Route::post('/dashboard/verify', [App\Http\Controllers\User\DashboardController::class, 'verifyData'])->name('user.dashboard.verifyData');
 
         //route profile
-        Route::get('/profile', [\App\Http\Controllers\User\DataProfileController::class, 'index'])->name('user.profile');
+        Route::get('/profile', [\App\Http\Controllers\User\DataProfileController::class, 'showProfileOnly'])->name('user.profile');
         Route::get('/profile/data-utama', [\App\Http\Controllers\User\DataProfileController::class, 'indexIndiv'])->name('user.profile.data-utama');
         Route::post('/profile/image', [\App\Http\Controllers\User\DataProfileController::class, 'updateImage'])->name('user.profile.data-utama.image');
         Route::get('/profile/edit', [\App\Http\Controllers\User\DataProfileController::class, 'edit'])->name('user.profile.edit');
         Route::post('/profile/edit', [\App\Http\Controllers\User\DataProfileController::class, 'update'])->name('user.profile.update');
+        Route::put('/data-profile/{id}/update-password', [\App\Http\Controllers\User\DataProfileController::class, 'updatePassword'])->name('data-profile.update-password');
 
         //route posts
         Route::get('/posts/list', [\App\Http\Controllers\User\PostsController::class, 'list'])->name('user.posts.list');

@@ -25,7 +25,6 @@
 
                 <form @submit.prevent="submit">
                     
-                    <!-- CARD 1: INFORMASI DATA DIRI (WAJIB) -->
                     <div class="card shadow-sm border-0 rounded-4 mb-4">
                         <div class="card-body p-4">
                             <h5 class="fw-bold text-navy mb-4 border-bottom pb-2">1. Informasi Data Diri Utama</h5>
@@ -117,14 +116,10 @@
                         </div>
                     </div>
                     
-                    <!-- ============================================== -->
-                    <!-- CARD 2: FORM KONDISIONAL - KATEKUMEN -->
-                    <!-- ============================================== -->
                     <div v-if="form.kelompok === 'Katekumen'" class="card shadow-sm border-0 rounded-4 mb-4 fade-in">
                         <div class="card-body p-4">
                             <h5 class="fw-bold text-navy mb-4 border-bottom pb-2">2. Data Tambahan Katekumen</h5>
 
-                            <!-- Data Katekumen (DataKatekumen Model) -->
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="address" class="form-label fw-bold text-navy">Alamat Lengkap</label>
@@ -165,7 +160,6 @@
                                 </div>
                             </div>
                             
-                            <!-- Data Riwayat (DataRiwayat Model) -->
                             <h6 class="fw-bold text-navy mt-4 mb-3 border-bottom pb-1">2b. Riwayat Agama & Kegiatan</h6>
                             <div class="row">
                                 <div class="col-md-4 mb-3">
@@ -200,8 +194,7 @@
                             </div>
 
 
-                             <!-- Data Menikah (DataMenikah Model) -->
-                            <h6 class="fw-bold text-navy mt-4 mb-3 border-bottom pb-1">2c. Status Pernikahan</h6>
+                             <h6 class="fw-bold text-navy mt-4 mb-3 border-bottom pb-1">2c. Status Pernikahan</h6>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="statusMarried" class="form-label fw-bold text-navy">Status Nikah</label>
@@ -221,7 +214,6 @@
                                 </div>
                             </div>
                             
-                            <!-- Form Pasangan (Conditional) -->
                             <div v-if="form.statusMarried && form.statusMarried !== 'Belum Menikah'" class="p-3 border rounded bg-white mt-3">
                                 <h6 class="fw-bold mb-3 text-secondary">Data Pasangan</h6>
                                 <div class="row">
@@ -237,7 +229,6 @@
                                     </div>
                                 </div>
                                 
-                                <!-- DETAIL KHUSUS: MENIKAH KATOLIK -->
                                 <div v-if="form.statusMarried === 'Menikah Katolik'" class="mt-3">
                                     <h6 class="fw-bold mt-3 mb-3 text-secondary border-bottom pb-2">Detail Pernikahan Katolik</h6>
                                     <div class="row">
@@ -267,31 +258,26 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!-- END DETAIL KHUSUS: MENIKAH KATOLIK -->
-
-                            </div>
+                                </div>
                         </div>
                     </div>
                     
-                    <!-- ============================================== -->
-                    <!-- CARD 2: FORM KONDISIONAL - SAKRAMEN BAPTIS BAYI -->
-                    <!-- ============================================== -->
                     <div v-else-if="form.kelompok === 'Sakramen Baptis Bayi'" class="card shadow-sm border-0 rounded-4 mb-4 fade-in">
                         <div class="card-body p-4">
                             <h5 class="fw-bold text-navy mb-4 border-bottom pb-2">2. Data Sakramen Baptis Bayi</h5>
 
-                            <!-- Data Baptis Bayi (DataBaptis Model) -->
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label for="name" class="form-label fw-bold text-navy">Nama</label>
+                                    <label for="nameWali" class="form-label fw-bold text-navy">Nama Wali Baptis</label>
                                     <input 
                                         type="text" 
                                         class="form-control input-tegas" 
-                                        :class="{ 'is-invalid': form.errors.name }" 
-                                        id="name" 
-                                        v-model="form.name"
+                                        :class="{ 'is-invalid': form.errors.nameWali }" 
+                                        id="nameWali" 
+                                        v-model="form.nameWali"
+                                        placeholder="Nama salah satu orang tua/wali"
                                     >
-                                    <div v-if="form.errors.name" class="invalid-feedback">{{ form.errors.name }}</div>
+                                    <div v-if="form.errors.nameWali" class="invalid-feedback">{{ form.errors.nameWali }}</div>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="status" class="form-label fw-bold text-navy">Status Data Baptis</label>
@@ -301,11 +287,11 @@
                                         :class="{ 'is-invalid': form.errors.status }" 
                                         id="status" 
                                         v-model="form.status"
-                                        placeholder="Status di Model DataBaptis"
+                                        placeholder="Contoh: Bapak/Ibu Baptis"
                                     >
                                     <div v-if="form.errors.status" class="invalid-feedback">{{ form.errors.status }}</div>
                                 </div>
-                                 <div class="col-md-6 mb-3">
+                                <div class="col-md-6 mb-3">
                                     <label for="namePastoor" class="form-label fw-bold text-navy">Nama Pastoor</label>
                                     <input 
                                         type="text" 
@@ -313,6 +299,7 @@
                                         :class="{ 'is-invalid': form.errors.namePastoor }" 
                                         id="namePastoor" 
                                         v-model="form.namePastoor"
+                                        placeholder="Nama pastoor yang bertugas"
                                     >
                                     <div v-if="form.errors.namePastoor" class="invalid-feedback">{{ form.errors.namePastoor }}</div>
                                 </div>
@@ -320,10 +307,6 @@
                         </div>
                     </div>
                     
-                    <!-- ============================================== -->
-                    <!-- CARD 3: DATA KELUARGA (DYNAMIC ARRAY) -->
-                    <!-- Muncul jika salah satu kelompok dipilih -->
-                    <!-- ============================================== -->
                     <div v-if="form.kelompok" class="card shadow-sm border-0 rounded-4 mb-4 fade-in">
                         <div class="card-body p-4">
                             <h5 class="fw-bold text-navy mb-4 border-bottom pb-2">3. Data Anggota Keluarga (Ayah, Ibu, dll.)</h5>
@@ -381,7 +364,6 @@
                         </div>
                     </div>
                     
-                    <!-- === Tombol Aksi === -->
                     <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top">
                         <button type="button" @click="form.reset()" class="btn btn-link text-danger text-decoration-none px-0">
                             <i class="bi bi-arrow-counterclockwise me-1"></i> Reset Form
@@ -391,9 +373,9 @@
                             <Link href="/admin/registration" class="btn btn-light border">Batal</Link>
                             <button type="submit" class="btn btn-navy px-4 shadow-sm" :disabled="form.processing">
                             <span v-if="form.processing">
-                                    <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
-                                    Menyimpan...
-                                </span>
+                                        <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                                        Menyimpan...
+                                    </span>
                                 <span v-else>
                                     <i class="bi bi-save me-1"></i> Simpan Data
                                 </span>
@@ -414,7 +396,7 @@ import Swal from 'sweetalert2'
 const form = useForm({
     // Basic Info (Registration & Member)
     number: '',
-    name: '',
+    name: '', // Nama Peserta (Katekumen) atau Nama Bayi (Baptis Bayi)
     gender: '',      
     email: '',
     contact: '',     
@@ -449,10 +431,10 @@ const form = useForm({
     cityMarried4: '', namePeneguh4: '', dateMarried4: '', numberMarried4: '', 
     nameMantan: '', cityMantan: '', statusMantan: '', yearMantan: '',
 
-    // Data Baptis Bayi (DataBaptis)
+    // Data Baptis Bayi (DataBaptis) - Disesuaikan
     namePastoor: '',
     status: '', // Status di DataBaptis
-    name: '',
+    nameWali: '', // **FIELD BARU: Nama Wali/Orang Tua**
 
     // Data Keluarga (Dynamic Array - Wajib di kedua kelompok)
     family_members: [
@@ -541,7 +523,7 @@ export default {
 }
 
 .input-tegas:focus {
-    border-color: #003366;     
+    border-color: #003366;    
     box-shadow: 0 0 0 4px rgba(0, 51, 102, 0.1); 
     background-color: #ffffff;
     outline: none;

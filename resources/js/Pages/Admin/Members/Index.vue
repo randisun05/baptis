@@ -4,6 +4,8 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     </Head>
 
+    
+
     <div class="container-fluid px-4 py-4">
 
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -20,13 +22,14 @@
                  'alert-danger bg-danger-subtle text-danger-emphasis': $page.props.session?.error
              }"
              role="alert">
-            
+
             <i class="bi me-2" :class="$page.props.session?.error ? 'bi-exclamation-triangle-fill' : 'bi-check-circle-fill'"></i>
             {{ $page.props.session?.success || $page.props.session?.error || $page.props.session?.status }}
-            
+
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
         
+
        <div class="row mb-4 align-items-center">
             <div class="col-md-6 col-12 mb-2">
                 <form @submit.prevent="handleSearch">
@@ -40,7 +43,14 @@
                 </form>
             </div>
         </div>
-
+        <div class="d-flex justify-content-between align-items-center mb-4">
+    
+       <a href="/admin/members/export" 
+           class="btn btn-success shadow-sm" 
+           target="_blank">
+            <i class="bi bi-file-earmark-spreadsheet-fill me-1"></i> Download Data Excel
+        </a>
+    </div>
         <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -50,7 +60,8 @@
                                 <th class="px-4 py-3" style="width: 5%;">No</th>
                                 <th class="px-4 py-3">Nama Peserta</th>
                                 <th class="px-4 py-3" style="width: 15%;">Email</th>
-                                <th class="px-4 py-3" style="width: 20%;">Kelompok Katekese</th> <th class="px-4 py-3" style="width: 15%;">Status</th>
+                                <th class="px-4 py-3" style="width: 20%;">Kelompok Katekese</th>
+                                <th class="px-4 py-3" style="width: 15%;">Status</th>
                                 <th class="px-4 py-3 text-center" style="width: 15%;">Aksi</th>
                             </tr>
                         </thead>
@@ -62,16 +73,16 @@
                                 <td class="px-4 fw-bold text-navy">{{ data.name }}</td>
                                 <td class="px-4">
                                     <div class="d-flex align-items-center text-muted">
-                                        <i class="bi bi-envelope me-2 text-secondary"></i> 
+                                        <i class="bi bi-envelope me-2 text-secondary"></i>
                                         <span class="text-truncate" style="max-width: 200px;" :title="data.email">{{ data.email }}</span>
                                     </div>
                                 </td>
-                                
+
                                 <td class="px-4">
-                                    <span v-if="getGroupName(data.group)" 
-                                        :class="getGroupBadgeClass(data.group)">
+                                    <span v-if="getGroupName(data.group)"
+                                          :class="getGroupBadgeClass(data.group)">
                                         <i class="me-1" :class="getGroupIconClass(data.group)"></i> {{ getGroupName(data.group) }}
-                                        </span>
+                                    </span>
                                     <span v-else class="text-muted small fst-italic">
                                         - Tidak ditentukan -
                                     </span>
@@ -82,12 +93,17 @@
                                         {{ formatStatus(data.status) }}
                                     </span>
                                 </td>
+
                                 <td class="px-4 text-center">
                                     <div class="btn-group" role="group">
                                         <Link :href="`/admin/members/${data.id}`" class="btn btn-sm btn-light text-info border hover-primary" title="Detail">
                                             <i class="bi bi-eye-fill"></i>
                                         </Link>
-                                        <button @click.prevent="destroy(data.id)" class="btn btn-sm btn-light text-danger border hover-danger ms-1" title="Hapus">
+                                        
+                                        <button v-if="$page.props.auth.user.role !== 'ketua_wakil_subseksi'" 
+                                                @click.prevent="destroy(data.id)" 
+                                                class="btn btn-sm btn-light text-danger border hover-danger ms-1" 
+                                                title="Hapus">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </div>
@@ -106,10 +122,10 @@
                     </table>
                 </div>
             </div>
-            
+
             <div class="card-footer bg-white py-3 border-top border-light d-flex justify-content-between align-items-center">
                 <div class="small text-muted px-2">
-                    Menampilkan {{ datas.data.length }} data 
+                    Menampilkan {{ datas.data.length }} data
                     <span v-if="datas.total">dari total {{ datas.total }}</span>
                 </div>
                 <Pagination :links="datas.links" align="end" />
@@ -157,7 +173,7 @@ export default {
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#d33',
-                cancelButtonColor: '#003366', 
+                cancelButtonColor: '#003366',
                 confirmButtonText: 'Ya, Hapus!',
                 cancelButtonText: 'Batal'
             }).then((result) => {
@@ -165,8 +181,8 @@ export default {
                     Inertia.delete(`/admin/members/${id}`, {
                         onSuccess: () => {
                             Swal.fire({
-                                title: 'Terhapus!', 
-                                text: 'Data peserta berhasil dihapus.', 
+                                title: 'Terhapus!',
+                                text: 'Data peserta berhasil dihapus.',
                                 icon: 'success',
                                 confirmButtonColor: '#003366'
                             });
@@ -178,7 +194,7 @@ export default {
                 }
             });
         }
-        
+
         // === FUNGSI KELOMPOK KATEKESE & IKON BARU ===
         const getGroupName = (groupValue) => {
              // Asumsi: nilai 'groupValue' bisa berupa boolean (dari Casting Laravel) atau string 'Katekumen'/'Sakramen Baptis Bayi'
@@ -196,7 +212,7 @@ export default {
                  return 'badge bg-info-subtle text-info-emphasis border border-info-subtle fw-normal px-3 py-2';
              } else if (groupValue === false || groupValue === 'Sakramen Baptis Bayi' || groupValue === 0) {
                  // Sakramen Baptis Bayi: Warna Hijau
-                return 'badge bg-success-subtle text-success-emphasis border border-success-subtle fw-normal px-3 py-2';
+                 return 'badge bg-success-subtle text-success-emphasis border border-success-subtle fw-normal px-3 py-2';
              }
              return 'badge bg-light text-muted border border-secondary-subtle fw-normal px-3 py-2';
         };
@@ -208,7 +224,7 @@ export default {
              } else if (groupValue === false || groupValue === 'Sakramen Baptis Bayi' || groupValue === 0) {
                  return 'fas fa-baby'; // Ikon Sakramen Baptis Bayi
              }
-             return ''; 
+             return '';
         };
         // === END FUNGSI IKON BARU ===
 
@@ -217,6 +233,7 @@ export default {
         const getStatusBadgeClass = (status) => {
             switch (status) {
                 case 'verified':
+                case 'confirmed':
                     return 'badge bg-success-subtle text-success-emphasis border border-success-subtle fw-normal px-3 py-2';
                 case 'confirm':
                     return 'badge bg-warning-subtle text-warning-emphasis border border-warning-subtle fw-normal px-3 py-2';
@@ -230,8 +247,8 @@ export default {
         // Fungsi helper untuk format status
         const formatStatus = (status) => {
             switch (status) {
-                case 'verified': // Menggunakan 'verified' dari kode sebelumnya
-                case 'confirmed': // Tambahkan 'confirmed' jika itu yang dimaksud di database
+                case 'verified':
+                case 'confirmed':
                     return 'Terverifikasi';
                 case 'confirm':
                     return 'Menunggu Verifikasi';
@@ -258,6 +275,7 @@ export default {
 </script>
 
 <style scoped>
+/* Bagian <style scoped> tidak perlu diubah */
 /* --- Theme Variables --- */
 :root {
     --navy-primary: #003366;
@@ -285,13 +303,13 @@ export default {
 
 /* --- Table Styles --- */
 .table-custom thead { background-color: #003366; color: white; }
-.table-custom thead th { 
-    background-color: #003366; 
-    color: white; 
-    font-weight: 500; 
-    border-bottom: none; 
-    letter-spacing: 0.5px; 
-    font-size: 0.9rem; 
+.table-custom thead th {
+    background-color: #003366;
+    color: white;
+    font-weight: 500;
+    border-bottom: none;
+    letter-spacing: 0.5px;
+    font-size: 0.9rem;
 }
 .table-custom tbody tr { transition: background-color 0.2s; }
 

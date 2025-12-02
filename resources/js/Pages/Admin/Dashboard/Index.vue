@@ -5,7 +5,14 @@
 
     <div class="container-fluid px-4 py-4">
 
-        <h2 class="fs-2 mb-4 fw-bold">Dashboard Admin</h2>
+       <h2 class="fs-2 mb-4 fw-bold">
+            <span v-if="$page.props.auth.user.role === 'ketua_wakil_subseksi'">
+                Dashboard
+            </span>
+            <span v-else>
+                Dashboard Admin
+            </span>
+        </h2>
 
         <div class="row g-4 mb-4">
             <div class="col-md-3 col-sm-6">

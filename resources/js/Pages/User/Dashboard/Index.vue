@@ -94,7 +94,7 @@
                             <h6 class="text-secondary small fw-bold mt-3">Detail Baptis</h6>
                             <table class="table table-borderless table-sm mb-3">
                                 <tbody>
-                                    <tr><td class="text-muted fw-bold" width="30%">Nama Calon Baptis</td><td>: {{ user.data_baptis?.name || 'Belum diisi' }}</td></tr>
+                                    <tr><td class="text-muted fw-bold" width="30%">Nama Wali Baptis</td><td>: {{ user.data_baptis?.nameWali || 'Belum diisi' }}</td></tr>
                                     <tr><td class="text-muted fw-bold">Nama Pastoor</td><td>: {{ user.data_baptis?.namePastoor || '-' }}</td></tr>
                                     <tr><td class="text-muted fw-bold">Status</td><td>: {{ user.data_baptis?.status || '-' }}</td></tr>
                                 </tbody>

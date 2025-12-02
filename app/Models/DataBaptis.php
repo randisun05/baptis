@@ -10,7 +10,7 @@ class DataBaptis extends Model
     use HasFactory;
     protected $fillable = [
         'number',
-        'name',
+        'nameWali',
         'status',
         'namePastoor',
     ];
