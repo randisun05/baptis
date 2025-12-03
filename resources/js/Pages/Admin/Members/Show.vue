@@ -17,18 +17,18 @@
                                 <i class="bi bi-arrow-left me-2"></i> Kembali ke Daftar Registrasi
                             </Link>
                             <Link :href="`/admin/registration/${form.id}/edit`" class="btn btn-sm btn-navy shadow-sm">
-                                <i class="bi bi-pencil-square me-2"></i> Edit Data Peserta
+                                <i class="bi bi-pencil-square me-2"></i> Edit Data
                             </Link>
                         </div>
                     </div>
 
                     <!-- CARD 1: Data Profil Utama -->
                     <div class="card shadow-lg border-0 mb-4">
-                        <div class="card-header bg-primary text-white py-3">
+                        <div class="card-header bg-navy text-white py-3">
                             <h4 class="mb-0"><i class="fa fa-user me-2"></i> Detail Profil Peserta</h4>
                         </div>
                         <div class="card-body p-4">
-                            <h5 class="fw-bold mb-3 text-primary">{{ form.name }}</h5>
+                            <h5 class="fw-bold mb-3 text-navy">{{ form.name }}</h5>
                             
                             <table class="table table-borderless table-detail">
                                 <tbody>
@@ -63,9 +63,9 @@
                                         <td class="fw-bold text-muted">Kelompok Katekese</td>
                                         <td>:</td>
                                         <td>
-                                            <span v-if="getGroupName(form.group)" 
-                                                :class="getGroupBadgeClass(form.group)">
-                                                <i class="bi bi-people-fill me-1"></i> {{ getGroupName(form.group) }}
+                                            <span v-if="getGroupName(form.kelompok)" 
+                                                :class="getGroupBadgeClass(form.kelompok)">
+                                                <i class="bi bi-people-fill me-1"></i> {{ getGroupName(form.kelompok) }}
                                             </span>
                                             <span v-else class="text-muted fst-italic">
                                                 Tidak Ditentukan
@@ -89,41 +89,41 @@
                     </div>
 
                     <!-- CARD 2: DATA KONDISIONAL BERDASARKAN KELOMPOK -->
-                    <div class="card shadow-lg border-0 mt-4 mb-4" v-if="getGroupName(form.group)">
-                        <div class="card-header" :class="getGroupHeaderClass(form.group)">
-                            <h5 class="mb-0"><i class="fa fa-book me-2"></i> Detail Kelompok: {{ getGroupName(form.group) }}</h5>
+                    <div class="card shadow-lg border-0 mt-4 mb-4" v-if="getGroupName(form.kelompok)">
+                        <div class="card-header" :class="getGroupHeaderClass(form.kelompok)">
+                            <h5 class="mb-0"><i class="fa fa-book me-2"></i> Detail Kelompok: {{ getGroupName(form.kelompok) }}</h5>
                         </div>
                         
                         <div class="card-body p-4">
                             
                             <!-- DATA KATEKUMEN (JIKA KATEKUMEN) -->
-                            <div v-if="getGroupName(form.group) === 'Katekumen' && form.katekumen.id">
+                            <div v-if="getGroupName(form.kelompok) === 'Katekumen' && form.data_katekumen_id">
                                 <h6 class="fw-bold text-navy mb-3 border-bottom pb-1">2a. Data Tambahan Katekumen</h6>
                                 <table class="table table-borderless table-detail">
-                                    <tr><td class="fw-bold text-muted" width="30%">Alamat Lengkap</td><td width="5%">:</td><td>{{ form.katekumen.address || '-' }}</td></tr>
-                                    <tr><td class="fw-bold text-muted">Pendidikan Terakhir</td><td>:</td><td>{{ form.katekumen.education || '-' }}</td></tr>
-                                    <tr><td class="fw-bold text-muted">Nama Penjamin</td><td>:</td><td>{{ form.katekumen.namePenjamin || '-' }}</td></tr>
+                                    <tr><td class="fw-bold text-muted" width="30%">Alamat Lengkap</td><td width="5%">:</td><td>{{ form.address || '-' }}</td></tr>
+                                    <tr><td class="fw-bold text-muted">Pendidikan Terakhir</td><td>:</td><td>{{ form.education || '-' }}</td></tr>
+                                    <tr><td class="fw-bold text-muted">Nama Penjamin</td><td>:</td><td>{{ form.namePenjamin || '-' }}</td></tr>
                                 </table>
 
                                 <!-- RIWAYAT AGAMA -->
-                                <div v-if="form.riwayat.id">
+                                <div v-if="form.data_riwayat_id">
                                     <h6 class="fw-bold text-navy mt-4 mb-3 border-bottom pb-1">2b. Riwayat Agama & Kegiatan</h6>
                                     
-                                    <h6 class="fw-bold text-secondary mt-3 mb-2 small">Riwayat {{ determineHistoryTypeLabel(form.riwayat) }}</h6>
+                                    <h6 class="fw-bold text-secondary mt-3 mb-2 small">Riwayat {{ determineHistoryTypeLabel(form) }}</h6>
                                     
                                     <table class="table table-borderless table-sm table-detail">
                                         <!-- Field Umum Riwayat -->
-                                        <tr><td class="fw-bold text-muted" width="30%">Agama Awal</td><td width="5%">:</td><td>{{ form.riwayat.religion || '-' }}</td></tr>
-                                        <template v-if="determineHistoryTypeLabel(form.riwayat) === 'Pelajaran Katolik'">
-                                            <tr><td class="fw-bold text-muted">Tempat / Hari</td><td>:</td><td>{{ form.riwayat.location || '-' }} / {{ form.riwayat.schedule || '-' }}</td></tr>
-                                            <tr><td class="fw-bold text-muted">Mulai / Selesai</td><td>:</td><td>{{ formatDate(form.riwayat.dateStart) || '-' }} / {{ formatDate(form.riwayat.dateEnd) || '-' }}</td></tr>
-                                            <tr><td class="fw-bold text-muted">Guru Pengajar</td><td>:</td><td>{{ form.riwayat.nameGuru || '-' }}</td></tr>
-                                            <tr><td class="fw-bold text-muted">Pernah Ikut di</td><td>:</td><td>{{ form.riwayat.participateBefore || '-' }}</td></tr>
+                                        <tr><td class="fw-bold text-muted" width="30%">Agama Awal</td><td width="5%">:</td><td>{{ form.religion || '-' }}</td></tr>
+                                        <template v-if="determineHistoryTypeLabel(form) === 'I. Pelajaran Katolik'">
+                                            <tr><td class="fw-bold text-muted">Tempat / Hari</td><td>:</td><td>{{ form.location || '-' }} / {{ form.schedule || '-' }}</td></tr>
+                                            <tr><td class="fw-bold text-muted">Mulai / Selesai</td><td>:</td><td>{{ formatDate(form.dateStart) || '-' }} / {{ formatDate(form.dateEnd) || '-' }}</td></tr>
+                                            <tr><td class="fw-bold text-muted">Guru Pengajar</td><td>:</td><td>{{ form.nameGuru || '-' }}</td></tr>
+                                            <tr><td class="fw-bold text-muted">Pernah Ikut di</td><td>:</td><td>{{ form.participateBefore || '-' }}</td></tr>
                                         </template>
-                                        <template v-else-if="determineHistoryTypeLabel(form.riwayat) === 'Baptis Kristen'">
-                                            <tr><td class="fw-bold text-muted">Gereja / Alamat</td><td>:</td><td>{{ form.riwayat.nameGereja || '-' }} / {{ form.riwayat.addressGereja || '-' }}</td></tr>
-                                            <tr><td class="fw-bold text-muted">Dibaptis Oleh / Tgl</td><td>:</td><td>{{ form.riwayat.namePriest || '-' }} / {{ formatDate(form.riwayat.dateBaptis) || '-' }}</td></tr>
-                                            <tr><td class="fw-bold text-muted">No. Surat Baptis</td><td>:</td><td>{{ form.riwayat.numberBaptis || '-' }}</td></tr>
+                                        <template v-else-if="determineHistoryTypeLabel(form) === 'II. Baptis Kristen'">
+                                            <tr><td class="fw-bold text-muted">Gereja / Alamat</td><td>:</td><td>{{ form.nameGereja || '-' }} / {{ form.addressGereja || '-' }}</td></tr>
+                                            <tr><td class="fw-bold text-muted">Dibaptis Oleh / Tgl</td><td>:</td><td>{{ form.namePriest || '-' }} / {{ formatDate(form.dateBaptis) || '-' }}</td></tr>
+                                            <tr><td class="fw-bold text-muted">No. Surat Baptis</td><td>:</td><td>{{ form.numberBaptis || '-' }}</td></tr>
                                         </template>
                                     </table>
                                 </div>
@@ -132,80 +132,81 @@
                                 <!-- STATUS PERNIKAHAN -->
                                 <h6 class="fw-bold text-navy mt-4 mb-3 border-bottom pb-1">2c. Status Pernikahan</h6>
                                 <table class="table table-borderless table-detail">
-                                    <tr><td class="fw-bold text-muted" width="30%">Status Pernikahan</td><td width="5%">:</td><td>{{ form.menikah.statusMarried || '-' }}</td></tr>
+                                    <tr><td class="fw-bold text-muted" width="30%">Status Pernikahan</td><td width="5%">:</td><td>{{ form.statusMarried || '-' }}</td></tr>
                                 </table>
 
                                 <!-- DETAIL PERNIKAHAN (KONDISIONAL) -->
-                                <div v-if="form.menikah.statusMarried && form.menikah.statusMarried !== 'Belum Menikah' && form.menikah.statusMarried !== 'Pernah Menikah'" class="p-3 border rounded bg-light-subtle mt-3">
+                                <div v-if="form.statusMarried && form.statusMarried !== 'Belum Menikah' && form.statusMarried !== 'Pernah Menikah'" class="p-3 border rounded bg-light-subtle mt-3">
                                     <h6 class="fw-bold mb-3 text-secondary border-bottom pb-2">Data Pasangan</h6>
                                     <table class="table table-borderless table-sm table-detail">
-                                        <tr><td class="fw-bold text-muted" width="30%">Nama Pasangan</td><td width="5%">:</td><td>{{ form.menikah.namePasangan || '-' }}</td></tr>
-                                        <tr v-if="form.menikah.statusMarried !== 'Menikah Sipil'"><td class="fw-bold text-muted">Agama Pasangan</td><td>:</td><td>{{ form.menikah.religionPasangan || '-' }}</td></tr>
+                                        <tr><td class="fw-bold text-muted" width="30%">Nama Pasangan</td><td width="5%">:</td><td>{{ form.namePasangan || '-' }}</td></tr>
+                                        <tr v-if="form.statusMarried !== 'Menikah Sipil'"><td class="fw-bold text-muted">Agama Pasangan</td><td>:</td><td>{{ form.religionPasangan || '-' }}</td></tr>
                                     </table>
 
                                     <!-- Detail Katolik (1) -->
-                                    <div v-if="form.menikah.statusMarried === 'Menikah Katolik' && form.menikah.placeMarried1">
+                                    <div v-if="form.statusMarried === 'Menikah Katolik' && (form.placeMarried1 || form.numberMarried1)">
                                         <h6 class="fw-bold text-secondary mt-3 mb-2 small border-top pt-2">Detail Pernikahan Katolik</h6>
                                         <table class="table table-borderless table-sm table-detail">
-                                            <tr><td class="fw-bold text-muted" width="30%">Gereja / Kota</td><td>:</td><td>{{ form.menikah.placeMarried1 || '-' }} / {{ form.menikah.cityMarried1 || '-' }}</td></tr>
-                                            <tr><td class="fw-bold text-muted">Tanggal Nikah</td><td>:</td><td>{{ formatDate(form.menikah.dateMarried1) || '-' }}</td></tr>
-                                            <tr><td class="fw-bold text-muted">Peneguh / No. Surat</td><td>:</td><td>{{ form.menikah.namePeneguh1 || '-' }} / {{ form.menikah.numberMarried1 || '-' }}</td></tr>
+                                            <tr><td class="fw-bold text-muted" width="30%">Gereja / Kota</td><td>:</td><td>{{ form.placeMarried1 || '-' }} / {{ form.cityMarried1 || '-' }}</td></tr>
+                                            <tr><td class="fw-bold text-muted">Tanggal Nikah</td><td>:</td><td>{{ formatDate(form.dateMarried1) || '-' }}</td></tr>
+                                            <tr><td class="fw-bold text-muted">Peneguh / No. Surat</td><td>:</td><td>{{ form.namePeneguh1 || '-' }} / {{ form.numberMarried1 || '-' }}</td></tr>
                                         </table>
                                     </div>
 
                                     <!-- Detail Kristen (2) -->
-                                    <div v-else-if="form.menikah.statusMarried === 'Menikah Kristen' && form.menikah.placeMarried2">
+                                    <div v-else-if="form.statusMarried === 'Menikah Kristen' && (form.placeMarried2 || form.numberMarried2)">
                                         <h6 class="fw-bold text-secondary mt-3 mb-2 small border-top pt-2">Detail Pernikahan Kristen</h6>
                                         <table class="table table-borderless table-sm table-detail">
-                                            <tr><td class="fw-bold text-muted" width="30%">Tempat / Kota</td><td>:</td><td>{{ form.menikah.placeMarried2 || '-' }} / {{ form.menikah.cityMarried2 || '-' }}</td></tr>
-                                            <tr><td class="fw-bold text-muted">Tanggal Nikah</td><td>:</td><td>{{ formatDate(form.menikah.dateMarried2) || '-' }}</td></tr>
-                                            <tr><td class="fw-bold text-muted">Pendeta / No. Surat</td><td>:</td><td>{{ form.menikah.namePeneguh2 || '-' }} / {{ form.menikah.numberMarried2 || '-' }}</td></tr>
+                                            <tr><td class="fw-bold text-muted" width="30%">Tempat / Kota</td><td>:</td><td>{{ form.placeMarried2 || '-' }} / {{ form.cityMarried2 || '-' }}</td></tr>
+                                            <tr><td class="fw-bold text-muted">Tanggal Nikah</td><td>:</td><td>{{ formatDate(form.dateMarried2) || '-' }}</td></tr>
+                                            <tr><td class="fw-bold text-muted">Pendeta / No. Surat</td><td>:</td><td>{{ form.namePeneguh2 || '-' }} / {{ form.numberMarried2 || '-' }}</td></tr>
                                         </table>
                                     </div>
 
                                     <!-- Detail Sipil (3) -->
-                                    <div v-else-if="form.menikah.statusMarried === 'Menikah Sipil' && form.menikah.cityMarried3">
+                                    <div v-else-if="form.statusMarried === 'Menikah Sipil' && (form.cityMarried3 || form.numberMarried3)">
                                         <h6 class="fw-bold text-secondary mt-3 mb-2 small border-top pt-2">Detail Pernikahan Sipil</h6>
                                         <table class="table table-borderless table-sm table-detail">
-                                            <tr><td class="fw-bold text-muted" width="30%">Kota</td><td>:</td><td>{{ form.menikah.cityMarried3 || '-' }}</td></tr>
-                                            <tr><td class="fw-bold text-muted">Tanggal Nikah</td><td>:</td><td>{{ formatDate(form.menikah.dateMarried3) || '-' }}</td></tr>
-                                            <tr><td class="fw-bold text-muted">No. Surat</td><td>:</td><td>{{ form.menikah.numberMarried3 || '-' }}</td></tr>
+                                            <tr><td class="fw-bold text-muted" width="30%">Kota</td><td>:</td><td>{{ form.cityMarried3 || '-' }}</td></tr>
+                                            <tr><td class="fw-bold text-muted">Tanggal Nikah</td><td>:</td><td>{{ formatDate(form.dateMarried3) || '-' }}</td></tr>
+                                            <tr><td class="fw-bold text-muted">No. Surat</td><td>:</td><td>{{ form.numberMarried3 || '-' }}</td></tr>
                                         </table>
                                     </div>
 
                                     <!-- Detail Lain (4) -->
-                                    <div v-else-if="form.menikah.statusMarried === 'Menikah Lain' && form.menikah.placeMarried4">
+                                    <div v-else-if="form.statusMarried === 'Menikah Lain' && (form.placeMarried4 || form.numberMarried4)">
                                         <h6 class="fw-bold text-secondary mt-3 mb-2 small border-top pt-2">Detail Pernikahan Lain</h6>
                                         <table class="table table-borderless table-sm table-detail">
-                                            <tr><td class="fw-bold text-muted" width="30%">Tempat / Kota</td><td>:</td><td>{{ form.menikah.placeMarried4 || '-' }} / {{ form.menikah.cityMarried4 || '-' }}</td></tr>
-                                            <tr><td class="fw-bold text-muted">Tanggal Nikah</td><td>:</td><td>{{ formatDate(form.menikah.dateMarried4) || '-' }}</td></tr>
-                                            <tr><td class="fw-bold text-muted">Peneguh / No. Surat</td><td>:</td><td>{{ form.menikah.namePeneguh4 || '-' }} / {{ form.menikah.numberMarried4 || '-' }}</td></tr>
+                                            <tr><td class="fw-bold text-muted" width="30%">Tempat / Kota</td><td>:</td><td>{{ form.placeMarried4 || '-' }} / {{ form.cityMarried4 || '-' }}</td></tr>
+                                            <tr><td class="fw-bold text-muted">Tanggal Nikah</td><td>:</td><td>{{ formatDate(form.dateMarried4) || '-' }}</td></tr>
+                                            <tr><td class="fw-bold text-muted">Peneguh / No. Surat</td><td>:</td><td>{{ form.namePeneguh4 || '-' }} / {{ form.numberMarried4 || '-' }}</td></tr>
                                         </table>
                                     </div>
+                                    <div v-else class="text-muted fst-italic small mt-3">Detail pernikahan belum diisi.</div>
                                 </div>
                                 
                                 <!-- DETAIL PERNAH MENIKAH -->
-                                <div v-else-if="form.menikah.statusMarried === 'Pernah Menikah' && form.menikah.nameMantan" class="p-3 border rounded bg-light-subtle mt-3">
+                                <div v-else-if="form.statusMarried === 'Pernah Menikah' && (form.nameMantan || form.yearMantan)" class="p-3 border rounded bg-light-subtle mt-3">
                                     <h6 class="fw-bold mb-3 text-secondary border-bottom pb-2">Detail Pernah Menikah (Janda/Duda)</h6>
                                     <table class="table table-borderless table-sm table-detail">
-                                        <tr><td class="fw-bold text-muted" width="30%">Pernah Menikah Dengan</td><td width="5%">:</td><td>{{ form.menikah.nameMantan || '-' }}</td></tr>
-                                        <tr><td class="fw-bold text-muted">Kota Pernikahan</td><td>:</td><td>{{ form.menikah.cityMantan || '-' }}</td></tr>
-                                        <tr><td class="fw-bold text-muted">Status Berakhir</td><td>:</td><td>{{ form.menikah.statusMantan || '-' }}</td></tr>
-                                        <tr><td class="fw-bold text-muted">Tahun Berakhir</td><td>:</td><td>{{ form.menikah.yearMantan || '-' }}</td></tr>
+                                        <tr><td class="fw-bold text-muted" width="30%">Pernah Menikah Dengan</td><td width="5%">:</td><td>{{ form.nameMantan || '-' }}</td></tr>
+                                        <tr><td class="fw-bold text-muted">Kota Pernikahan</td><td>:</td><td>{{ form.cityMantan || '-' }}</td></tr>
+                                        <tr><td class="fw-bold text-muted">Status Berakhir</td><td>:</td><td>{{ form.statusMantan || '-' }}</td></tr>
+                                        <tr><td class="fw-bold text-muted">Tahun Berakhir</td><td>:</td><td>{{ form.yearMantan || '-' }}</td></tr>
                                     </table>
                                 </div>
-                                <div v-else-if="form.menikah.statusMarried !== 'Belum Menikah'" class="text-muted fst-italic small mt-3">Detail pernikahan belum diisi.</div>
+                                <div v-else-if="form.statusMarried !== 'Belum Menikah'" class="text-muted fst-italic small mt-3">Detail pernikahan belum diisi.</div>
 
 
                             </div>
 
                             <!-- DATA BAPTIS BAYI (JIKA SAKRAMEN BAPTIS BAYI) -->
-                            <div v-else-if="getGroupName(form.group) === 'Sakramen Baptis Bayi' && form.baptis.id">
+                            <div v-else-if="getGroupName(form.kelompok) === 'Sakramen Baptis Bayi' && form.data_baptis_id">
                                 <h6 class="fw-bold text-navy mb-3 border-bottom pb-1">2. Data Sakramen Baptis Bayi</h6>
                                 <table class="table table-borderless table-detail">
-                                    <tr><td class="fw-bold text-muted" width="30%">Nama Wali Baptis</td><td width="5%">:</td><td>{{ form.baptis.nameWali || '-' }}</td></tr>
-                                    <tr><td class="fw-bold text-muted" width="30%">Status Wali Baptis</td><td width="5%">:</td><td>{{ form.baptis.status || '-' }}</td></tr>
-                                    <tr><td class="fw-bold text-muted">Nama Pastoor</td><td>:</td><td>{{ form.baptis.namePastoor || '-' }}</td></tr>
+                                    <tr><td class="fw-bold text-muted" width="30%">Nama Wali Baptis</td><td width="5%">:</td><td>{{ form.nameWali || '-' }}</td></tr>
+                                    <tr><td class="fw-bold text-muted" width="30%">Status Wali Baptis</td><td width="5%">:</td><td>{{ form.baptisStatus || '-' }}</td></tr>
+                                    <tr><td class="fw-bold text-muted">Nama Pastoor</td><td>:</td><td>{{ form.namePastoor || '-' }}</td></tr>
                                 </table>
                             </div>
                             
@@ -221,11 +222,11 @@
                             <h5 class="mb-0"><i class="fa fa-users me-2"></i> 3. Data Anggota Keluarga</h5>
                         </div>
                         <div class="card-body p-4">
-                            <div v-if="form.keluarga.length === 0" class="text-muted text-center">
+                            <div v-if="form.family_members.length === 0" class="text-muted text-center">
                                 <p>Tidak ada data anggota keluarga terkait.</p>
                             </div>
                             <div v-else>
-                                <div v-for="(member, index) in form.keluarga" :key="index" class="p-3 border rounded mb-3 bg-light">
+                                <div v-for="(member, index) in form.family_members" :key="index" class="p-3 border rounded mb-3 bg-light">
                                     <h6 class="fw-bold mb-2 text-dark">Anggota Keluarga #{{ index + 1 }} ({{ member.relation || 'Hubungan Tidak Diketahui' }})</h6>
                                     <table class="table table-sm table-borderless small">
                                         <tr><td class="fw-bold text-muted" width="30%">Nama</td><td>:</td><td>{{ member.name || '-' }}</td></tr>
@@ -270,49 +271,115 @@ export default {
             if (!dateString) return null;
             try {
                 // Mencoba mem-format ulang string tanggal jika diperlukan (misalnya dari timestamp penuh)
-                if (dateString.length > 10) {
+                if (dateString && dateString.length > 10 && !/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
                     return new Date(dateString).toISOString().slice(0, 10);
                 }
-                return dateString;
+                if (dateString) {
+                    return dateString.substring(0, 10); // Pastikan hanya ambil bagian tanggal
+                }
+                return null;
             } catch (e) {
                 return dateString; // Kembalikan string asli jika gagal
             }
         };
 
         // Fungsi untuk menentukan tipe riwayat (sesuai logika Edit.vue)
-        const determineHistoryTypeLabel = (dataRiwayat) => {
-            if (!dataRiwayat || !dataRiwayat.id) return 'Tidak Ada Riwayat';
+        // Menggunakan form data yang sudah diratakan (flattened)
+        const determineHistoryTypeLabel = (formData) => {
+            // Kita cek berdasarkan data yang paling mungkin diisi di form edit
             
-            // Asumsi: Jika field khusus pelajaran Katolik terisi
-            if (dataRiwayat.location || dataRiwayat.schedule || dataRiwayat.dateStart || dataRiwayat.nameGuru) {
-                return 'Pelajaran Katolik';
+            // Cek Riwayat Pelajaran Katolik (I)
+            if (formData.location || formData.schedule || formData.dateStart || formData.nameGuru || formData.participateBefore) {
+                return 'I. Pelajaran Katolik';
             }
-            // Asumsi: Jika field khusus baptis Kristen terisi
-            if (dataRiwayat.nameGereja || dataRiwayat.namePriest || dataRiwayat.dateBaptis || dataRiwayat.numberBaptis) {
-                return 'Baptis Kristen';
+            // Cek Riwayat Baptis Kristen (II)
+            if (formData.nameGereja || formData.namePriest || formData.dateBaptis || formData.numberBaptis) {
+                return 'II. Baptis Kristen';
             }
+            
             return 'Riwayat Lain';
         };
+        
+        // =================================================================
+        // === MAPPING DATA UTAMA UNTUK KONSISTENSI DENGAN EDIT.VUE ===
+        // Mengakses data relasi dengan nama yang benar (dataKatekumen, dll)
+        // =================================================================
+        
+        // 1. Mapping Jenis Kelamin (Gender)
+        // Logika di edit.vue: typeof boolean -> true=Laki-laki, false=Perempuan. Jika string, pakai stringnya.
+        const rawGender = props.data.gender;
+        let mappedGender;
+        if (typeof rawGender === 'boolean') {
+             mappedGender = rawGender ? 'Laki-laki' : 'Perempuan';
+        } else {
+             mappedGender = rawGender || '-';
+        }
 
-        // Define form state using data from props.data
+        // 2. Mapping Kelompok Katekese (Group)
+        // Logika di edit.vue: typeof boolean -> true=Katekumen, false=Sakramen Baptis Bayi. Jika string, pakai stringnya.
+        const rawGroup = props.data.group;
+        let mappedGroup;
+        if (typeof rawGroup === 'boolean') {
+             mappedGroup = props.data.group? 'Katekumen' : 'Sakramen Baptis Bayi';
+        } else {
+             mappedGroup = rawGroup || null;
+        }
+
+
+        // Define form state using data from props.data (FLATTENED structure, matching edit.vue)
         const form = reactive({
             // Data Utama (Member/Registration)
-            id: props.data.id || null, // Tambahkan ID untuk link edit
+            id: props.data.id || null, 
             name: props.data.name || '-',
             email: props.data.email || '-',
             contact: props.data.contact || '-',
-            gender: props.data.gender || '-',
+            gender: mappedGender, // MENGGUNAKAN NILAI YANG SUDAH DI-MAP
             number: props.data.number || '-',
-            status: props.data.status || 'pending',
-            group: props.data.group || null, // Kelompok Katekese (string)
+            status: props.data.status || 'pending', // Status Registrasi Utama
+            kelompok: mappedGroup, // MENGGUNAKAN NILAI YANG SUDAH DI-MAP (dulu 'group')
+
+            // Data Keluarga (Mapping dataKeluarga ke family_members)
+            family_members: props.data.data_keluarga || [], 
+
+            // Data Katekumen (FLATTENED from dataKatekumen)
+            address: props.data.data_katekumen?.address || '',
+            education: props.data.data_katekumen?.education || '',
+            namePenjamin: props.data.data_katekumen?.namePenjamin || '', 
+            data_katekumen_id: props.data.data_katekumen?.id || null, // Helper ID
+
+            // Data Riwayat (FLATTENED from dataRiwayat)
+            religion: props.data.data_riwayat?.religion || '',
+            location: props.data.data_riwayat?.location || '',
+            schedule: props.data.data_riwayat?.schedule || '',
+            dateStart: formatDate(props.data.data_riwayat?.dateStart),
+            dateEnd: formatDate(props.data.data_riwayat?.dateEnd),
+            participateBefore: props.data.data_riwayat?.participateBefore || '',
+            nameGuru: props.data.data_riwayat?.nameGuru || '',
+            nameGereja: props.data.data_riwayat?.nameGereja || '',
+            addressGereja: props.data.data_riwayat?.addressGereja || '',
+            namePriest: props.data.data_riwayat?.namePriest || '',
+            dateBaptis: formatDate(props.data.data_riwayat?.dateBaptis),
+            numberBaptis: props.data.data_riwayat?.numberBaptis || '',
+            data_riwayat_id: props.data.data_riwayat?.id || null, // Helper ID
             
-            // Nested Data (Menggunakan optional chaining dan null/empty object default)
-            katekumen: props.data.data_katekumen || {},
-            riwayat: props.data.data_riwayat || {},
-            menikah: props.data.data_menikah || {},
-            baptis: props.data.data_baptis || {},
-            keluarga: props.data.family_members || [], // Sesuaikan nama prop untuk konsistensi dengan Edit.vue
+            // Data Menikah (FLATTENED from dataMenikah)
+            statusMarried: props.data.data_menikah?.statusMarried || '',
+            namePasangan: props.data.data_menikah?.namePasangan || '', 
+            religionPasangan: props.data.data_menikah?.religionPasangan || '',
+            placeMarried1: props.data.data_menikah?.placeMarried1 || '', cityMarried1: props.data.data_menikah?.cityMarried1 || '', dateMarried1: formatDate(props.data.data_menikah?.dateMarried1), namePeneguh1: props.data.data_menikah?.namePeneguh1 || '', numberMarried1: props.data.data_menikah?.numberMarried1 || '', 
+            placeMarried2: props.data.data_menikah?.placeMarried2 || '', cityMarried2: props.data.data_menikah?.cityMarried2 || '', dateMarried2: formatDate(props.data.data_menikah?.dateMarried2), namePeneguh2: props.data.data_menikah?.namePeneguh2 || '', numberMarried2: props.data.data_menikah?.numberMarried2 || '', 
+            cityMarried3: props.data.data_menikah?.cityMarried3 || '', dateMarried3: formatDate(props.data.data_menikah?.dateMarried3), numberMarried3: props.data.data_menikah?.numberMarried3 || '', 
+            placeMarried4: props.data.data_menikah?.placeMarried4 || '', cityMarried4: props.data.data_menikah?.cityMarried4 || '', dateMarried4: formatDate(props.data.data_menikah?.dateMarried4), namePeneguh4: props.data.data_menikah?.namePeneguh4 || '', numberMarried4: props.data.data_menikah?.numberMarried4 || '', 
+            nameMantan: props.data.data_menikah?.nameMantan || '', cityMantan: props.data.data_menikah?.cityMantan || '', statusMantan: props.data.data_menikah?.statusMantan || '', yearMantan: props.data.data_menikah?.yearMantan || '',
+            data_menikah_id: props.data.data_menikah?.id || null, // Helper ID
+
+            // Data Baptis Bayi (FLATTENED from dataBaptis)
+            namePastoor: props.data.data_baptis?.namePastoor || '',
+            baptisStatus: props.data.data_baptis?.status || '', // RENAMED from 'status' to avoid conflict with main status
+            nameWali: props.data.data_baptis?.nameWali || '',
+            data_baptis_id: props.data.data_baptis?.id || null, // Helper ID
         });
+
 
         // =================================================================
         // === FUNGSI HELPER KELOMPOK KATEKESE (Disalin dari Edit/Create) ==
@@ -409,6 +476,7 @@ export default {
 .bg-warning { background-color: #ffc107 !important; }
 
 /* Custom Navy Style dari Edit.vue */
+.bg-navy { background-color: #003366 !important; }
 .btn-navy {
     background-color: #003366;
     color: white;
@@ -451,10 +519,9 @@ export default {
 /* Menambahkan gaya default untuk konsistensi */
 .fa { font-family: 'Font Awesome 5 Free'; font-weight: 900; }
 .bi-arrow-left::before { content: "\f060"; font-family: "bootstrap-icons"; font-weight: 900;} 
+.bi-pencil-square::before { content: "\f484"; font-family: "bootstrap-icons"; }
 .fa-user::before { content: "\f007"; }
 .fa-users::before { content: "\f0c0"; }
-.fa-history::before { content: "\f1da"; }
 .fa-book::before { content: "\f02d"; }
 .bi-people-fill::before { content: "\f475"; font-family: "bootstrap-icons"; }
-.bi-pencil-square::before { content: "\f484"; font-family: "bootstrap-icons"; }
 </style>

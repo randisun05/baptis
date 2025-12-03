@@ -7,8 +7,8 @@
 
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <div>
-                        <h2 class="fs-3 fw-bold text-navy mb-0">Edit Data Peserta: {{ registration.registration.name }}</h2>
-                        <p class="text-muted small mb-0">Perbarui informasi registrasi peserta. (No. Reg: {{ registration.registration.number }})</p>
+                        <h2 class="fs-3 fw-bold text-navy mb-0">Edit Data Peserta: {{ form.name }}</h2>
+                        <p class="text-muted small mb-0">Perbarui informasi registrasi peserta. (No. Reg: {{ form.number }})</p>
                     </div>
                     <Link href="/admin/registration" class="btn btn-outline-navy btn-sm shadow-sm">
                         <i class="bi bi-arrow-left me-1"></i> Kembali ke Daftar
@@ -25,7 +25,6 @@
 
                 <form @submit.prevent="submit">
                     
-                    <!-- CARD 1: INFORMASI DATA DIRI (WAJIB) -->
                     <div class="card shadow-sm border-0 rounded-4 mb-4">
                         <div class="card-body p-4">
                             <h5 class="fw-bold text-navy mb-4 border-bottom pb-2">1. Informasi Data Diri Utama</h5>
@@ -120,14 +119,10 @@
                         </div>
                     </div>
                     
-                    <!-- ============================================== -->
-                    <!-- CARD 2: FORM KONDISIONAL - KATEKUMEN -->
-                    <!-- ============================================== -->
                     <div v-if="form.kelompok === 'Katekumen'" class="card shadow-sm border-0 rounded-4 mb-4 fade-in">
                         <div class="card-body p-4">
                             <h5 class="fw-bold text-navy mb-4 border-bottom pb-2">2. Data Tambahan Katekumen</h5>
 
-                            <!-- Data Katekumen (DataKatekumen Model) -->
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="address" class="form-label fw-bold text-navy">Alamat Lengkap</label>
@@ -168,103 +163,88 @@
                                 </div>
                             </div>
                             
-                            <!-- Data Riwayat (DataRiwayat Model) -->
                             <h6 class="fw-bold text-navy mt-4 mb-3 border-bottom pb-1">2b. Riwayat Agama & Kegiatan</h6>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label for="historyType" class="form-label fw-bold text-navy">Jenis Riwayat Agama</label>
-                                    <select 
-                                        class="form-select input-tegas" 
-                                        :class="{ 'is-invalid': form.errors.historyType }" 
-                                        id="historyType" 
-                                        v-model="form.historyType"
+                                    <label for="religion" class="form-label fw-bold text-navy">Agama Awal Peserta</label>
+                                    <input
+                                        type="text"
+                                        class="form-control input-tegas"
+                                        :class="{ 'is-invalid': form.errors.religion }"
+                                        v-model="form.religion"
+                                        id="religion"
+                                        placeholder="Contoh: Islam, Hindu, Buddha, Protestan"
                                     >
-                                        <option value="" disabled>-- Pilih Riwayat Agama --</option>
-                                        <option value="KatolikLesson">Jika pernah mengikuti pelajaran Agama Katolik</option>
-                                        <option value="ChristianBaptized">Jika Sudah dibaptis di Gereja Kristen lain</option>
-                                    </select>
-                                    <div v-if="form.errors.historyType" class="invalid-feedback">{{ form.errors.historyType }}</div>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="religion" class="form-label fw-bold text-navy">Agama Awal (Otomatis)</label>
-                                    <input 
-                                        type="text" 
-                                        class="form-control input-tegas bg-light-subtle" 
-                                        v-model="form.religion" 
-                                        id="religion" 
-                                        readonly 
-                                        placeholder="Akan terisi otomatis"
-                                    >
+                                    <div v-if="form.errors.religion" class="invalid-feedback">{{ form.errors.religion }}</div>
                                 </div>
                             </div>
 
-                            <!-- DETAIL RIWAYAT: PELAJARAN AGAMA KATOLIK -->
-                            <div v-if="form.historyType === 'KatolikLesson'" class="p-3 border rounded bg-white mt-3 fade-in">
-                                <h6 class="fw-bold mb-3 text-secondary border-bottom pb-2">Detail Pelajaran Agama Katolik</h6>
+                            <div class="p-3 border rounded bg-white mt-3 fade-in">
+                                <h6 class="fw-bold mb-3 text-secondary border-bottom pb-2">Detail Riwayat (Isi yang Relevan)</h6>
+                                <p class="text-muted small mb-3">Silakan isi bagian yang relevan dengan riwayat agama peserta saat ini (misalnya jika pernah dibaptis Kristen, isi detail Gereja Kristen).</p>
+
+                                <h6 class="fw-bold mt-3 mb-2 text-primary small">I. Riwayat Pelajaran Agama Katolik:</h6>
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
-                                        <label for="location" class="form-label small fw-bold">Tempat</label>
+                                        <label for="location" class="form-label small fw-bold">Tempat Pelajaran (Opsional)</label>
                                         <input type="text" class="form-control input-tegas" v-model="form.location" id="location">
                                     </div>
                                     <div class="col-md-6 mb-3">
-                                        <label for="schedule" class="form-label small fw-bold">Hari</label>
-                                        <input type="text" class="form-control input-tegas" v-model="form.schedule" id="schedule">
+                                        <label for="schedule" class="form-label small fw-bold">Hari (Opsional)</label>
+                                        <input type="date" class="form-control input-tegas" v-model="form.schedule" id="schedule">
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
-                                        <label for="dateStart" class="form-label small fw-bold">Mulai ikut pelajaran Agama pada tanggal</label>
+                                        <label for="dateStart" class="form-label small fw-bold">Mulai ikut pelajaran Agama pada tanggal (Opsional)</label>
                                         <input type="date" class="form-control input-tegas" v-model="form.dateStart" id="dateStart">
                                     </div>
                                     <div class="col-md-6 mb-3">
-                                        <label for="dateEnd" class="form-label small fw-bold">Sampai dengan tanggal</label>
+                                        <label for="dateEnd" class="form-label small fw-bold">Sampai dengan tanggal (Opsional)</label>
                                         <input type="date" class="form-control input-tegas" v-model="form.dateEnd" id="dateEnd">
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
-                                        <label for="participateBefore" class="form-label small fw-bold">Jika sebelumnya pernah mengikuti pelajaran agama di</label>
+                                        <label for="participateBefore" class="form-label small fw-bold">Jika sebelumnya pernah mengikuti pelajaran agama di (Opsional)</label>
                                         <input type="text" class="form-control input-tegas" v-model="form.participateBefore" id="participateBefore">
                                     </div>
                                     <div class="col-md-6 mb-3">
-                                        <label for="nameGuru" class="form-label small fw-bold">Guru yang mengajar</label>
+                                        <label for="nameGuru" class="form-label small fw-bold">Guru yang mengajar (Opsional)</label>
                                         <input type="text" class="form-control input-tegas" v-model="form.nameGuru" id="nameGuru">
                                     </div>
                                 </div>
-                            </div>
 
-                            <!-- DETAIL RIWAYAT: BAPTIS KRISTEN -->
-                            <div v-else-if="form.historyType === 'ChristianBaptized'" class="p-3 border rounded bg-white mt-3 fade-in">
-                                <h6 class="fw-bold mb-3 text-secondary border-bottom pb-2">Detail Sakramen Baptis Kristen</h6>
+                                <h6 class="fw-bold mt-4 mb-2 text-primary small border-top pt-2">II. Riwayat Baptis Kristen:</h6>
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
-                                        <label for="nameGereja" class="form-label small fw-bold">Nama Gereja</label>
+                                        <label for="nameGereja" class="form-label small fw-bold">Nama Gereja (Opsional)</label>
                                         <input type="text" class="form-control input-tegas" v-model="form.nameGereja" id="nameGereja">
                                     </div>
                                     <div class="col-md-6 mb-3">
-                                        <label for="addressGereja" class="form-label small fw-bold">Di</label>
+                                        <label for="addressGereja" class="form-label small fw-bold">Alamat/Kota Gereja (Opsional)</label>
                                         <input type="text" class="form-control input-tegas" v-model="form.addressGereja" id="addressGereja">
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
-                                        <label for="namePriest" class="form-label small fw-bold">Dibaptis oleh</label>
+                                        <label for="namePriest" class="form-label small fw-bold">Pendeta/Pastor yang Membaptis (Opsional)</label>
                                         <input type="text" class="form-control input-tegas" v-model="form.namePriest" id="namePriest">
                                     </div>
                                     <div class="col-md-6 mb-3">
-                                        <label for="dateBaptis" class="form-label small fw-bold">Tanggal</label>
+                                        <label for="dateBaptis" class="form-label small fw-bold">Tanggal Baptis (Opsional)</label>
                                         <input type="date" class="form-control input-tegas" v-model="form.dateBaptis" id="dateBaptis">
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
-                                        <label for="numberBaptis" class="form-label small fw-bold">Nomor Surat Baptis</label>
+                                        <label for="numberBaptis" class="form-label small fw-bold">Nomor Surat Baptis (Opsional)</label>
                                         <input type="text" class="form-control input-tegas" v-model="form.numberBaptis" id="numberBaptis">
                                     </div>
                                 </div>
+
                             </div>
 
-                            <!-- Data Menikah (DataMenikah Model) -->
                             <h6 class="fw-bold text-navy mt-4 mb-3 border-bottom pb-1">2c. Status Pernikahan</h6>
                             <div class="row">
                                 <div class="col-md-12 mb-3">
@@ -287,7 +267,6 @@
                                 </div>
                             </div>
                             
-                            <!-- Form Pasangan (Conditional) -->
                             <div v-if="form.statusMarried && form.statusMarried !== 'Belum Menikah' && form.statusMarried !== 'Pernah Menikah'" 
                                 class="p-3 border rounded bg-white mt-3 fade-in">
                                 <h6 class="fw-bold mb-3 text-secondary">Data Pasangan</h6>
@@ -311,116 +290,118 @@
                                     </div>
                                 </div>
                                 
-                                <!-- DETAIL KHUSUS: MENIKAH KATOLIK (1) -->
                                 <div v-if="form.statusMarried === 'Menikah Katolik'" class="mt-3 fade-in">
                                     <h6 class="fw-bold mt-3 mb-3 text-secondary border-bottom pb-2">Detail Pernikahan Katolik</h6>
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
                                             <label for="placeMarried1" class="form-label small fw-bold">Secara Katolik di Gereja</label>
-                                            <input type="text" class="form-control input-tegas" v-model="form.placeMarried1" id="placeMarried1">
+                                            <input type="text" class="form-control input-tegas" v-model="form.placeMarried1" id="placeMarried1" :class="{ 'is-invalid': form.errors.placeMarried1 }">
+                                            <div v-if="form.errors.placeMarried1" class="invalid-feedback">{{ form.errors.placeMarried1 }}</div>
                                         </div>
                                         <div class="col-md-6 mb-3">
-                                            <label for="cityMarried1" class="form-label small fw-bold">Kota</label>
+                                            <label for="cityMarried1" class="form-label small fw-bold">Kota (Opsional)</label>
                                             <input type="text" class="form-control input-tegas" v-model="form.cityMarried1" id="cityMarried1">
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
-                                            <label for="dateMarried1" class="form-label small fw-bold">Tanggal</label>
+                                            <label for="dateMarried1" class="form-label small fw-bold">Tanggal (Opsional)</label>
                                             <input type="date" class="form-control input-tegas" v-model="form.dateMarried1" id="dateMarried1">
                                         </div>
                                         <div class="col-md-6 mb-3">
-                                            <label for="namePeneguh1" class="form-label small fw-bold">Peneguh Nikah</label>
+                                            <label for="namePeneguh1" class="form-label small fw-bold">Peneguh Nikah (Opsional)</label>
                                             <input type="text" class="form-control input-tegas" v-model="form.namePeneguh1" id="namePeneguh1">
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
-                                            <label for="numberMarried1" class="form-label small fw-bold">No. Surat Nikah</label>
+                                            <label for="numberMarried1" class="form-label small fw-bold">No. Surat Nikah (Opsional)</label>
                                             <input type="text" class="form-control input-tegas" v-model="form.numberMarried1" id="numberMarried1">
                                         </div>
                                     </div>
                                 </div>
 
-                                <!-- DETAIL KHUSUS: MENIKAH KRISTEN (2) -->
                                 <div v-else-if="form.statusMarried === 'Menikah Kristen'" class="mt-3 fade-in">
                                     <h6 class="fw-bold mt-3 mb-3 text-secondary border-bottom pb-2">Detail Pernikahan Kristen</h6>
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
                                             <label for="placeMarried2" class="form-label small fw-bold">Secara Kristen di Gereja/Tempat Lain</label>
-                                            <input type="text" class="form-control input-tegas" v-model="form.placeMarried2" id="placeMarried2">
+                                            <input type="text" class="form-control input-tegas" v-model="form.placeMarried2" id="placeMarried2" :class="{ 'is-invalid': form.errors.placeMarried2 }">
+                                            <div v-if="form.errors.placeMarried2" class="invalid-feedback">{{ form.errors.placeMarried2 }}</div>
                                         </div>
                                         <div class="col-md-6 mb-3">
-                                            <label for="cityMarried2" class="form-label small fw-bold">Kota</label>
+                                            <label for="cityMarried2" class="form-label small fw-bold">Kota (Opsional)</label>
                                             <input type="text" class="form-control input-tegas" v-model="form.cityMarried2" id="cityMarried2">
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
-                                            <label for="dateMarried2" class="form-label small fw-bold">Tanggal</label>
+                                            <label for="dateMarried2" class="form-label small fw-bold">Tanggal (Opsional)</label>
                                             <input type="date" class="form-control input-tegas" v-model="form.dateMarried2" id="dateMarried2">
                                         </div>
                                         <div class="col-md-6 mb-3">
-                                            <label for="namePeneguh2" class="form-label small fw-bold">Pendeta/Peneguh Nikah</label>
+                                            <label for="namePeneguh2" class="form-label small fw-bold">Pendeta/Peneguh Nikah (Opsional)</label>
                                             <input type="text" class="form-control input-tegas" v-model="form.namePeneguh2" id="namePeneguh2">
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
-                                            <label for="numberMarried2" class="form-label small fw-bold">No. Surat Nikah</label>
+                                            <label for="numberMarried2" class="form-label small fw-bold">No. Surat Nikah (Opsional)</label>
                                             <input type="text" class="form-control input-tegas" v-model="form.numberMarried2" id="numberMarried2">
                                         </div>
                                     </div>
                                 </div>
                                 
-                                <!-- DETAIL KHUSUS: MENIKAH SIPIL (3) -->
                                 <div v-else-if="form.statusMarried === 'Menikah Sipil'" class="mt-3 fade-in">
                                     <h6 class="fw-bold mt-3 mb-3 text-secondary border-bottom pb-2">Detail Pernikahan Sipil</h6>
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
                                             <label for="cityMarried3" class="form-label small fw-bold">Secara Sipil di Kota</label>
-                                            <input type="text" class="form-control input-tegas" v-model="form.cityMarried3" id="cityMarried3">
+                                            <input type="text" class="form-control input-tegas" v-model="form.cityMarried3" id="cityMarried3" :class="{ 'is-invalid': form.errors.cityMarried3 }">
+                                            <div v-if="form.errors.cityMarried3" class="invalid-feedback">{{ form.errors.cityMarried3 }}</div>
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <label for="dateMarried3" class="form-label small fw-bold">Tanggal</label>
-                                            <input type="date" class="form-control input-tegas" v-model="form.dateMarried3" id="dateMarried3">
+                                            <input type="date" class="form-control input-tegas" v-model="form.dateMarried3" id="dateMarried3" :class="{ 'is-invalid': form.errors.dateMarried3 }">
+                                            <div v-if="form.errors.dateMarried3" class="invalid-feedback">{{ form.errors.dateMarried3 }}</div>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
                                             <label for="numberMarried3" class="form-label small fw-bold">No. Surat Nikah</label>
-                                            <input type="text" class="form-control input-tegas" v-model="form.numberMarried3" id="numberMarried3">
+                                            <input type="text" class="form-control input-tegas" v-model="form.numberMarried3" id="numberMarried3" :class="{ 'is-invalid': form.errors.numberMarried3 }">
+                                            <div v-if="form.errors.numberMarried3" class="invalid-feedback">{{ form.errors.numberMarried3 }}</div>
                                         </div>
                                     </div>
                                 </div>
                                 
-                                <!-- DETAIL KHUSUS: MENIKAH LAIN (4) -->
                                 <div v-else-if="form.statusMarried === 'Menikah Lain'" class="mt-3 fade-in">
                                     <h6 class="fw-bold mt-3 mb-3 text-secondary border-bottom pb-2">Detail Pernikahan Lain (Adat, Hindu, Budha, dll.)</h6>
                                     <p class="small text-muted mb-3">Harap isi Agama Pasangan secara manual di atas.</p>
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
                                             <label for="placeMarried4" class="form-label small fw-bold">Tempat</label>
-                                            <input type="text" class="form-control input-tegas" v-model="form.placeMarried4" id="placeMarried4">
+                                            <input type="text" class="form-control input-tegas" v-model="form.placeMarried4" id="placeMarried4" :class="{ 'is-invalid': form.errors.placeMarried4 }">
+                                            <div v-if="form.errors.placeMarried4" class="invalid-feedback">{{ form.errors.placeMarried4 }}</div>
                                         </div>
                                         <div class="col-md-6 mb-3">
-                                            <label for="cityMarried4" class="form-label small fw-bold">Kota</label>
+                                            <label for="cityMarried4" class="form-label small fw-bold">Kota (Opsional)</label>
                                             <input type="text" class="form-control input-tegas" v-model="form.cityMarried4" id="cityMarried4">
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
-                                            <label for="dateMarried4" class="form-label small fw-bold">Tanggal</label>
+                                            <label for="dateMarried4" class="form-label small fw-bold">Tanggal (Opsional)</label>
                                             <input type="date" class="form-control input-tegas" v-model="form.dateMarried4" id="dateMarried4">
                                         </div>
                                         <div class="col-md-6 mb-3">
-                                            <label for="namePeneguh4" class="form-label small fw-bold">Peneguh Nikah</label>
+                                            <label for="namePeneguh4" class="form-label small fw-bold">Peneguh Nikah (Opsional)</label>
                                             <input type="text" class="form-control input-tegas" v-model="form.namePeneguh4" id="namePeneguh4">
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
-                                            <label for="numberMarried4" class="form-label small fw-bold">No. Surat Nikah</label>
+                                            <label for="numberMarried4" class="form-label small fw-bold">No. Surat Nikah (Opsional)</label>
                                             <input type="text" class="form-control input-tegas" v-model="form.numberMarried4" id="numberMarried4">
                                         </div>
                                     </div>
@@ -428,16 +409,16 @@
 
                             </div>
                             
-                            <!-- DETAIL KHUSUS: PERNAH MENIKAH -->
                             <div v-else-if="form.statusMarried === 'Pernah Menikah'" class="p-3 border rounded bg-white mt-3 fade-in">
                                 <h6 class="fw-bold mt-3 mb-3 text-secondary border-bottom pb-2">Detail Pernah Menikah (Janda/Duda)</h6>
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label for="nameMantan" class="form-label small fw-bold">Pernah Menikah Dengan</label>
-                                        <input type="text" class="form-control input-tegas" v-model="form.nameMantan" id="nameMantan">
+                                        <input type="text" class="form-control input-tegas" v-model="form.nameMantan" id="nameMantan" :class="{ 'is-invalid': form.errors.nameMantan }">
+                                        <div v-if="form.errors.nameMantan" class="invalid-feedback">{{ form.errors.nameMantan }}</div>
                                     </div>
                                     <div class="col-md-6 mb-3">
-                                        <label for="cityMantan" class="form-label small fw-bold">Kota Pernikahan</label>
+                                        <label for="cityMantan" class="form-label small fw-bold">Kota Pernikahan (Opsional)</label>
                                         <input type="text" class="form-control input-tegas" v-model="form.cityMantan" id="cityMantan">
                                     </div>
                                 </div>
@@ -448,15 +429,18 @@
                                             class="form-select input-tegas" 
                                             v-model="form.statusMantan"
                                             id="statusMantan" 
+                                            :class="{ 'is-invalid': form.errors.statusMantan }"
                                         >
                                             <option value="" disabled>-- Pilih Status --</option>
                                             <option value="Cerai">Cerai</option>
                                             <option value="Meninggal">Meninggal</option>
                                         </select>
+                                        <div v-if="form.errors.statusMantan" class="invalid-feedback">{{ form.errors.statusMantan }}</div>
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label for="yearMantan" class="form-label small fw-bold">Tahun Berakhir</label>
-                                        <input type="text" class="form-control input-tegas" v-model="form.yearMantan" id="yearMantan" placeholder="Contoh: 2020">
+                                        <input type="text" class="form-control input-tegas" v-model="form.yearMantan" id="yearMantan" placeholder="Contoh: 2020" :class="{ 'is-invalid': form.errors.yearMantan }">
+                                        <div v-if="form.errors.yearMantan" class="invalid-feedback">{{ form.errors.yearMantan }}</div>
                                     </div>
                                 </div>
                             </div>
@@ -464,14 +448,10 @@
                         </div>
                     </div>
                     
-                    <!-- ============================================== -->
-                    <!-- CARD 2: FORM KONDISIONAL - SAKRAMEN BAPTIS BAYI -->
-                    <!-- ============================================== -->
                     <div v-else-if="form.kelompok === 'Sakramen Baptis Bayi'" class="card shadow-sm border-0 rounded-4 mb-4 fade-in">
                         <div class="card-body p-4">
                             <h5 class="fw-bold text-navy mb-4 border-bottom pb-2">2. Data Sakramen Baptis Bayi</h5>
 
-                            <!-- Data Baptis Bayi (DataBaptis Model) -->
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="nameWali" class="form-label fw-bold text-navy">Nama Wali Baptis</label>
@@ -516,9 +496,6 @@
                         </div>
                     </div>
                     
-                    <!-- ============================================== -->
-                    <!-- CARD 3: DATA KELUARGA (DYNAMIC ARRAY) -->
-                    <!-- ============================================== -->
                     <div v-if="form.kelompok" class="card shadow-sm border-0 rounded-4 mb-4 fade-in">
                         <div class="card-body p-4">
                             <h5 class="fw-bold text-navy mb-4 border-bottom pb-2">3. Data Anggota Keluarga (Ayah, Ibu, dll.)</h5>
@@ -576,14 +553,13 @@
                         </div>
                     </div>
                     
-                    <!-- === Tombol Aksi === -->
                     <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top">
                         <button type="button" @click="resetForm()" class="btn btn-link text-danger text-decoration-none px-0">
                             <i class="bi bi-arrow-counterclockwise me-1"></i> Reset Perubahan
                         </button>
 
                         <div class="d-flex gap-2">
-                            <Link :href="'admin/registration'" class="btn btn-light border">Batal</Link>
+                            <Link :href="'/admin/registration'" class="btn btn-light border">Batal</Link>
                             <button type="submit" class="btn btn-navy px-4 shadow-sm" :disabled="form.processing">
                             <span v-if="form.processing">
                                 <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
@@ -620,9 +596,8 @@ const formatDate = (dateString) => {
         if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
             return dateString;
         }
-        // Pastikan input adalah tanggal yang valid sebelum mencoba format
         const date = new Date(dateString);
-        if (isNaN(date)) return ''; // Jika tidak valid, kembalikan string kosong
+        if (isNaN(date)) return '';
         return date.toISOString().slice(0, 10);
     } catch (e) {
         console.error("Failed to format date:", e);
@@ -630,40 +605,44 @@ const formatDate = (dateString) => {
     }
 };
 
-// Fungsi untuk menentukan historyType berdasarkan data riwayat yang terisi
-const determineHistoryType = (dataRiwayat) => {
-    if (!dataRiwayat) return '';
-    
-    // Asumsi: Jika field khusus pelajaran Katolik terisi, itu KatolikLesson
-    if (dataRiwayat.location || dataRiwayat.schedule || dataRiwayat.dateStart || dataRiwayat.nameGuru) {
-        return 'KatolikLesson';
-    }
-    // Asumsi: Jika field khusus baptis Kristen terisi, itu ChristianBaptized
-    if (dataRiwayat.nameGereja || dataRiwayat.namePriest || dataRiwayat.dateBaptis || dataRiwayat.numberBaptis) {
-        return 'ChristianBaptized';
-    }
-    return '';
-};
-
-
 // Fungsi untuk menyiapkan data awal form dari prop
 const prepareFormData = (data) => {
-    const isCatechumen = data.registration.group === 'Katekumen' || data.registration.group === 'KATEKUMEN'; // Sesuaikan dengan nilai di DB
     
+    // --- PENYESUAIAN KHUSUS UNTUK DATA INPUT ANDA: MAPPING GROUP & GENDER ---
+    // Logika ini mengasumsikan: 
+    // - Jika data.registration.gender adalah boolean, true=Laki-laki, false=Perempuan. Jika string, pakai stringnya.
+    // - Jika data.registration.group adalah boolean, false=Katekumen, true=Sakramen Baptis Bayi. Jika string, pakai stringnya.
+    
+    let mappedGender;
+    if (typeof data.registration?.gender === 'boolean') {
+        mappedGender = data.registration.gender ? 'Laki-laki' : 'Perempuan';
+    } else {
+        mappedGender = data.registration?.gender || '';
+    }
+
+    let mappedGroup;
+    if (typeof data.registration?.group === 'boolean') {
+        mappedGroup = data.registration.group ? 'Katekumen' : 'Sakramen Baptis Bayi';
+    } else {
+        mappedGroup = data.registration?.group || '';
+    }
+    
+    // --- END PENYESUAIAN ---
+
     // Data dasar
     let formData = {
-        id: data.registration.id, // ID Registrasi
-        number: data.registration.number,
-        name: data.registration.name,
-        gender: data.registration.gender, // Biarkan sesuai DB, harusnya sudah Laki-laki/Perempuan
-        email: data.registration.email,
-        contact: data.registration.contact,
-        kelompok: data.registration.group, // Pastikan ini Katekumen atau Sakramen Baptis Bayi
+        id: data.registration?.id || null, 
+        number: data.registration?.number || '',
+        name: data.registration?.name || '',
+        gender: mappedGender, 
+        email: data.registration?.email || '',
+        contact: data.registration?.contact || '',
+        kelompok: mappedGroup, 
         
         // Data Keluarga
         family_members: data.family_members && data.family_members.length > 0 ? 
             data.family_members.map(member => ({
-                id: member.id, // Penting untuk update
+                id: member.id || null, 
                 name: member.name || '',
                 relation: member.relation || '',
                 religion: member.religion || '',
@@ -677,8 +656,7 @@ const prepareFormData = (data) => {
         education: data.data_katekumen?.education || '',
         namePenjamin: data.data_katekumen?.namePenjamin || '', 
 
-        // Data Riwayat (Sesuai Create.vue)
-        historyType: determineHistoryType(data.data_riwayat), // Diisi berdasarkan data yang ada
+        // Data Riwayat 
         religion: data.data_riwayat?.religion || '',
         location: data.data_riwayat?.location || '',
         schedule: data.data_riwayat?.schedule || '',
@@ -692,84 +670,38 @@ const prepareFormData = (data) => {
         dateBaptis: formatDate(data.data_riwayat?.dateBaptis),
         numberBaptis: data.data_riwayat?.numberBaptis || '',
         
-        // Data Menikah (Sesuai Create.vue)
+        // Data Menikah 
         statusMarried: data.data_menikah?.statusMarried || '',
         namePasangan: data.data_menikah?.namePasangan || '', 
         religionPasangan: data.data_menikah?.religionPasangan || '',
 
-        // Detail Katolik (1)
-        placeMarried1: data.data_menikah?.placeMarried1 || '', 
-        cityMarried1: data.data_menikah?.cityMarried1 || '', 
-        dateMarried1: formatDate(data.data_menikah?.dateMarried1), 
-        namePeneguh1: data.data_menikah?.namePeneguh1 || '', 
-        numberMarried1: data.data_menikah?.numberMarried1 || '', 
-        
-        // Detail Kristen (2)
-        placeMarried2: data.data_menikah?.placeMarried2 || '', 
-        cityMarried2: data.data_menikah?.cityMarried2 || '', 
-        dateMarried2: formatDate(data.data_menikah?.dateMarried2), 
-        namePeneguh2: data.data_menikah?.namePeneguh2 || '', 
-        numberMarried2: data.data_menikah?.numberMarried2 || '', 
-        
-        // Detail Sipil (3)
-        cityMarried3: data.data_menikah?.cityMarried3 || '', 
-        dateMarried3: formatDate(data.data_menikah?.dateMarried3), 
-        numberMarried3: data.data_menikah?.numberMarried3 || '', 
-        
-        // Detail Lain (4)
-        placeMarried4: data.data_menikah?.placeMarried4 || '', 
-        cityMarried4: data.data_menikah?.cityMarried4 || '', 
-        dateMarried4: formatDate(data.data_menikah?.dateMarried4), 
-        namePeneguh4: data.data_menikah?.namePeneguh4 || '', 
-        numberMarried4: data.data_menikah?.numberMarried4 || '', 
-        
-        // Detail Pernah Menikah (Janda/Duda)
-        nameMantan: data.data_menikah?.nameMantan || '', 
-        cityMantan: data.data_menikah?.cityMantan || '', 
-        statusMantan: data.data_menikah?.statusMantan || '', 
-        yearMantan: data.data_menikah?.yearMantan || '',
+        // Detail Pernikahan (1, 2, 3, 4, Mantan)
+        placeMarried1: data.data_menikah?.placeMarried1 || '', cityMarried1: data.data_menikah?.cityMarried1 || '', dateMarried1: formatDate(data.data_menikah?.dateMarried1), namePeneguh1: data.data_menikah?.namePeneguh1 || '', numberMarried1: data.data_menikah?.numberMarried1 || '', 
+        placeMarried2: data.data_menikah?.placeMarried2 || '', cityMarried2: data.data_menikah?.cityMarried2 || '', dateMarried2: formatDate(data.data_menikah?.dateMarried2), namePeneguh2: data.data_menikah?.namePeneguh2 || '', numberMarried2: data.data_menikah?.numberMarried2 || '', 
+        cityMarried3: data.data_menikah?.cityMarried3 || '', dateMarried3: formatDate(data.data_menikah?.dateMarried3), numberMarried3: data.data_menikah?.numberMarried3 || '', 
+        placeMarried4: data.data_menikah?.placeMarried4 || '', cityMarried4: data.data_menikah?.cityMarried4 || '', dateMarried4: formatDate(data.data_menikah?.dateMarried4), namePeneguh4: data.data_menikah?.namePeneguh4 || '', numberMarried4: data.data_menikah?.numberMarried4 || '', 
+        nameMantan: data.data_menikah?.nameMantan || '', cityMantan: data.data_menikah?.cityMantan || '', statusMantan: data.data_menikah?.statusMantan || '', yearMantan: data.data_menikah?.yearMantan || '',
 
-        // Data Baptis Bayi (Sesuai Create.vue)
+        // Data Baptis Bayi 
         namePastoor: data.data_baptis?.namePastoor || '',
         status: data.data_baptis?.status || '',
         nameWali: data.data_baptis?.nameWali || '',
+
+        // IDs for Update (Backend Helper)
+        data_katekumen_id: data.data_katekumen?.id || null,
+        data_riwayat_id: data.data_riwayat?.id || null,
+        data_menikah_id: data.data_menikah?.id || null,
+        data_baptis_id: data.data_baptis?.id || null,
     };
 
     return formData;
 };
 
 // Inisialisasi form dengan data yang sudah di-load
-// Gunakan fungsi defaults untuk menyimpan state awal form
 const initialData = prepareFormData(props.registration);
 const form = useForm(initialData);
 
-// === WATCHER UNTUK RIWAYAT AGAMA (historyType) - DISINKRONKAN DARI CREATE.VUE ===
-watch(() => form.historyType, (newHistoryType) => {
-    // 1. Clear ALL Riwayat fields (kecuali historyType dan religion)
-    form.location = '';
-    form.schedule = '';
-    form.dateStart = '';
-    form.dateEnd = '';
-    form.participateBefore = '';
-    form.nameGuru = '';
-    form.nameGereja = '';
-    form.addressGereja = '';
-    form.namePriest = '';
-    form.dateBaptis = '';
-    form.numberBaptis = '';
-    
-    // 2. Set Agama Awal (religion) berdasarkan historyType
-    if (newHistoryType === 'KatolikLesson') {
-        form.religion = 'Katolik';
-    } else if (newHistoryType === 'ChristianBaptized') {
-        form.religion = 'Kristen';
-    } else {
-        form.religion = ''; // Kosongkan jika tidak memilih salah satu opsi
-    }
-});
-
-
-// === WATCHER UNTUK STATUS PERNIKAHAN - DISINKRONKAN DARI CREATE.VUE ===
+// === WATCHER UNTUK STATUS PERNIKAHAN (Disinkronkan dengan Create.vue) ===
 watch(() => form.statusMarried, (newStatus) => {
     // 1. Clear conditional fields on status change
     
@@ -816,7 +748,7 @@ watch(() => form.statusMarried, (newStatus) => {
     } else if (newStatus === 'Menikah Kristen') {
         form.religionPasangan = 'Kristen';
     } else if (newStatus === 'Menikah Sipil' || newStatus === 'Menikah Lain') { 
-        form.religionPasangan = ''; // Biarkan kosong, user harus input manual untuk Lain/Sipil
+        form.religionPasangan = '';
     } else if (newStatus !== 'Belum Menikah' && newStatus !== 'Pernah Menikah') {
         form.religionPasangan = '';
     }
@@ -825,7 +757,6 @@ watch(() => form.statusMarried, (newStatus) => {
 
 // Fungsi untuk menambahkan anggota keluarga baru
 const addFamilyMember = () => {
-    // Memberikan ID null untuk membedakan dengan data yang sudah ada (untuk proses simpan baru)
     form.family_members.push({ id: null, name: '', relation: '', religion: '', address: '', contact: '' });
 }
 
@@ -843,13 +774,7 @@ const removeFamilyMember = (index) => {
 // Fungsi untuk mereset form ke data awal yang dimuat dari prop
 const resetForm = () => {
     form.defaults(initialData).reset();
-    
-    // Menghapus semua error
-    Object.keys(form.errors).forEach(key => {
-        delete form.errors[key];
-    });
-
-    // Tampilkan notifikasi
+    Object.apply(form.errors, {});
     Swal.fire({
         toast: true,
         position: 'top-end',
@@ -862,9 +787,21 @@ const resetForm = () => {
 
 // Fungsi submit untuk melakukan update data
 const submit = () => {
-    // Gunakan ID dari registration utama untuk rute update
+    // Pastikan ID tersedia sebelum submit
+    if (!props.registration.registration.id) {
+        Swal.fire({
+            title: 'Error!',
+            text: 'ID Registrasi tidak ditemukan untuk update.',
+            icon: 'error',
+            confirmButtonColor: '#003366',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+    
     const updateUrl = `/admin/registration/${props.registration.registration.id}`;
     
+    // Gunakan form.put untuk operasi update RESTful
     form.put(updateUrl, {
         onSuccess: () => {
             Swal.fire({

@@ -62,13 +62,17 @@
                                                 <i class="fa fa-lock text-muted"></i>
                                             </span>
                                             <input 
-                                                type="password" 
+                                                :type="showPassword ? 'text' : 'password'" 
                                                 placeholder="Masukkan Password" 
-                                                class="form-control border-start-0 input-tegas" 
+                                                class="form-control border-start-0 input-tegas border-end-0" 
                                                 v-model="form.password"
                                                 id="password"
                                                 :class="{ 'is-invalid': errors.password }"
+                                                style="border-right: none !important;"
                                             >
+                                            <span class="input-group-text bg-white border-start-0 cursor-pointer" @click="togglePasswordVisibility" style="cursor: pointer;">
+                                                <i :class="['fa', showPassword ? 'fa-eye text-primary' : 'fa-eye-slash text-muted']"></i>
+                                            </span>
                                         </div>
                                         <div v-if="errors.password" class="text-danger small mt-1">{{ errors.password }}</div>
                                     </div>
@@ -169,6 +173,13 @@
             });
 
             const submitting = ref(false);
+            // State untuk toggle password
+            const showPassword = ref(false);
+
+            // Function untuk menampilkan/menyembunyikan password
+            const togglePasswordVisibility = () => {
+                showPassword.value = !showPassword.value;
+            };
 
             // Function Submit Login
             const submit = () => {
@@ -183,7 +194,9 @@
                 form,
                 submitting,
                 submit,
-                isScrolled // Return isScrolled untuk navbar
+                isScrolled, // Return isScrolled untuk navbar
+                showPassword, // Tambahkan state showPassword
+                togglePasswordVisibility // Tambahkan fungsi toggle
             };
 
         }
@@ -276,27 +289,44 @@
 }
 
 .login-input-group .input-group-text {
-    border-radius: 8px 0 0 8px;
+    /* Pastikan ikon di sisi kiri memiliki border radius yang benar */
+    border-radius: 8px 0 0 8px; 
     border-right: none;
     border-color: #dee2e6;
 }
 
+/* Kustomisasi untuk Input Mata di sisi kanan */
+.login-input-group .input-group-text:last-child {
+    border-radius: 0 8px 8px 0; /* Corner kanan atas dan kanan bawah */
+    border-left: none; /* Hilangkan border kiri agar menyatu dengan input */
+}
+/* Input tengah tidak memiliki border kiri dan kanan */
 .input-tegas {
-    border-radius: 0 8px 8px 0 !important;
+    border-radius: 0 !important; /* Hilangkan border radius bawaan di tengah */
     border-left: none;
+    border-right: none;
     padding: 0.75rem 1rem;
     font-size: 1rem;
     transition: all 0.3s ease;
 }
 
 .input-tegas:focus {
-    border-color: var(--navy-primary);       
+    /* Saat fokus, pastikan shadow dan border terlihat benar pada seluruh input group */
+    border-color: var(--navy-primary); 
     box-shadow: 0 0 0 4px rgba(0, 51, 102, 0.1); 
     outline: none;
+    /* Hilangkan bayangan/outline bawaan agar hanya shadow kustom yang muncul */
 }
+
+/* Saat input fokus, beri highlight pada border input group */
 .input-tegas:focus + .input-group-text {
     border-color: var(--navy-primary);
 }
+/* Juga beri highlight pada input group text di sisi kanan saat input fokus */
+.input-tegas:focus ~ .input-group-text:last-child {
+    border-color: var(--navy-primary);
+}
+
 
 .bg-danger-subtle { background-color: #f8d7da; }
 .text-danger-emphasis { color: #842029; }

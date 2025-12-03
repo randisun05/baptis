@@ -44,7 +44,6 @@ class RegistrationController extends Controller
                 'name' => $reg->name,
                 'email' => $reg->email,
                 'contact' => $reg->contact,
-                // Ubah boolean DB ke string untuk tampilan tabel
                 'gender' => $reg->gender ? 'Laki-laki' : 'Perempuan',
                 'kelompok' => $reg->group ? 'Katekumen' : 'Sakramen Baptis Bayi',
                 'status' => $reg->status,
@@ -283,7 +282,6 @@ class RegistrationController extends Controller
                 ]);
             }
 
-
             DB::commit(); // Commit (Simpan Permanen)
 
             // Mengirim email dengan password yang baru dibuat
@@ -347,7 +345,6 @@ class RegistrationController extends Controller
     {
         // Temukan data registrasi yang akan diubah
         $registration = Registration::findOrFail($id);
-
         $oldNumber = $registration->number;
         $isCatechumen = $registration->group; // Kelompok tidak bisa diubah
 
@@ -397,9 +394,25 @@ class RegistrationController extends Controller
 
             // Validasi detail pernikahan kondisional
             if ($request->statusMarried && $request->statusMarried !== 'Belum Menikah') {
-                $rules['namePasangan'] = 'required|string|max:255';
-                $rules['religionPasangan'] = 'required_if:statusMarried,Menikah Kristen,Menikah Lain|string|max:50';
-
+                
+                // *** PERBAIKAN VALIDASI PASANGAN UNTUK 'PERNAH MENIKAH' ***
+                if ($request->statusMarried === 'Pernah Menikah') {
+                    // Untuk status 'Pernah Menikah', Pasangan diizinkan null/kosong
+                    $rules['namePasangan'] = 'nullable|string|max:255';
+                    $rules['religionPasangan'] = 'nullable|string|max:50';
+                } else {
+                    // Untuk status pernikahan aktif lainnya
+                    $rules['namePasangan'] = 'required|string|max:255'; 
+                    $rules['religionPasangan'] = 'nullable|string|max:50'; // Default nullable
+                    
+                    if ($request->statusMarried === 'Menikah Kristen') {
+                        $rules['religionPasangan'] = 'required_if:namePasangan,!=,null|string|max:50';
+                    } elseif ($request->statusMarried === 'Menikah Lain') {
+                         $rules['religionPasangan'] = 'required|string|max:50';
+                    }
+                }
+                
+                // Validasi Detail Khusus Pernikahan Aktif
                 if ($request->statusMarried !== 'Pernah Menikah') {
                     if ($request->statusMarried === 'Menikah Katolik') {
                         $rules['placeMarried1'] = 'required|string|max:255';
@@ -516,7 +529,8 @@ class RegistrationController extends Controller
 
                     // Detail Pernah Menikah (Clear if not Pernah Menikah)
                     'nameMantan' => $request->statusMarried === 'Pernah Menikah' ? $request->nameMantan : null,
-                    'cityMantan' => $request->statusMarried === 'Pernikahan' ? $request->cityMantan : null, // Fixed cityMantan
+                    // *** KOREKSI DI BAWAH INI: Pastikan menggunakan 'Pernah Menikah' ***
+                    'cityMantan' => $request->statusMarried === 'Pernah Menikah' ? $request->cityMantan : null, 
                     'statusMantan' => $request->statusMarried === 'Pernah Menikah' ? $request->statusMantan : null,
                     'yearMantan' => $request->statusMarried === 'Pernah Menikah' ? $request->yearMantan : null,
                 ];

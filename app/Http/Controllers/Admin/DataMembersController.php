@@ -61,7 +61,6 @@ class DataMembersController extends Controller
       
         // 1. Ambil data Member berdasarkan ID
         $data = Member::findOrFail($id); 
-        
         // Menggunakan Lazy Eager Loading (load()) pada data yang sudah diambil
         // Relasi didefinisikan menggunakan kunci 'number' di Member Model.
         $data->load([
@@ -71,7 +70,6 @@ class DataMembersController extends Controller
             'dataBaptis',    // Data Baptis Bayi
             'dataKeluarga',  // Data Keluarga (list array)
         ]);
-
         return inertia('Admin/Members/Show', [
            'data' => $data
         ]);
