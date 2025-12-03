@@ -155,13 +155,13 @@ class RegistrationController extends Controller
             'nameWali.required' => 'Nama Wali/Orang Tua wajib diisi untuk Sakramen Baptis Bayi.',
             // Hapus pesan error historyType
             'religionPasangan.required_if' => 'Agama Pasangan wajib diisi.',
-            
+            // ... Tambahkan pesan error kondisional lainnya
         ];
 
         $request->validate($rules, $messages);
 
         // 2. Mapping Data Dasar
-        $isMale = $request->gender;
+        $isMale = $request->gender === 'Laki-laki';
         $isCatechumen = $request->kelompok === 'Katekumen';
         $password = self::generateSecurePassword(8);
         $passwordHashed = Hash::make($password);
@@ -282,9 +282,8 @@ class RegistrationController extends Controller
                 ]);
             }
 
-            
-
             DB::commit(); // Commit (Simpan Permanen)
+
             // Mengirim email dengan password yang baru dibuat
             Mail::to($request->email)->send(new \App\Mail\SendEmailRegistration($registration, $password));
 
