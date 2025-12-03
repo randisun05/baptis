@@ -9,7 +9,6 @@
             <div class="row d-flex justify-content-center">
                 
                 <div class="col-md-10 col-lg-10">
-                    <!-- CARD 1: Data Profil Utama -->
                     <div class="card shadow-lg border-0 mb-4">
                         <div class="card-header bg-navy text-white py-3">
                             <h4 class="mb-0"><i class="bi bi-person-fill fs-5"></i> Detail Profil Peserta</h4>
@@ -24,6 +23,13 @@
                                         <td width="5%">:</td>
                                         <td>{{ form.name }}</td>
                                     </tr>
+
+                                     <tr>
+                                        <td class="fw-bold text-muted">Jenis Kelamin</td>
+                                        <td>:</td>
+                                        <td>{{ formatGender(form.gender) }}</td>
+                                    </tr>
+
                                     <tr>
                                         <td class="fw-bold text-muted">Nomor Registrasi</td>
                                         <td>:</td>
@@ -40,7 +46,6 @@
                                         <td>{{ form.contact || '-' }}</td>
                                     </tr>
                                     
-                                    <!-- Kelompok Katekese -->
                                     <tr>
                                         <td class="fw-bold text-muted">Kelompok Katekese</td>
                                         <td>:</td>
@@ -55,7 +60,6 @@
                                         </td>
                                     </tr>
                                     
-                                    <!-- Status Akun -->
                                     <tr>
                                         <td class="fw-bold text-muted">Status Akun</td>
                                         <td>:</td>
@@ -70,7 +74,6 @@
                         </div>
                     </div>
 
-                    <!-- CARD 2: DATA KONDISIONAL BERDASARKAN KELOMPOK -->
                     <div class="card shadow-lg border-0 mt-4 mb-4" v-if="getGroupName(form.kelompok)">
                         <div class="card-header" :class="getGroupHeaderClass(form.kelompok)">
                             <h5 class="mb-0"><i class="bi bi-card-list fs-5"></i> Detail Kelompok: {{ getGroupName(form.kelompok) }}</h5>
@@ -78,7 +81,6 @@
                         
                         <div class="card-body p-4">
                             
-                            <!-- DATA KATEKUMEN (JIKA KATEKUMEN) -->
                             <div v-if="getGroupName(form.kelompok) === 'Katekumen' && form.data_katekumen_id">
                                 <h6 class="fw-bold text-navy mb-3 border-bottom pb-1">2a. Data Tambahan Katekumen</h6>
                                 <table class="table table-borderless table-detail">
@@ -87,14 +89,12 @@
                                     <tr><td class="fw-bold text-muted">Nama Penjamin</td><td>:</td><td>{{ form.namePenjamin || '-' }}</td></tr>
                                 </table>
 
-                                <!-- RIWAYAT AGAMA -->
                                 <div v-if="form.data_riwayat_id">
                                     <h6 class="fw-bold text-navy mt-4 mb-3 border-bottom pb-1">2b. Riwayat Agama & Kegiatan</h6>
                                     
                                     <h6 class="fw-bold text-secondary mt-3 mb-2 small">Riwayat {{ determineHistoryTypeLabel(form) }}</h6>
                                     
                                     <table class="table table-borderless table-sm table-detail">
-                                        <!-- Field Umum Riwayat -->
                                         <tr><td class="fw-bold text-muted" width="30%">Agama Awal</td><td width="5%">:</td><td>{{ form.religion || '-' }}</td></tr>
                                         <template v-if="determineHistoryTypeLabel(form) === 'I. Pelajaran Katolik'">
                                             <tr><td class="fw-bold text-muted">Tempat / Hari</td><td>:</td><td>{{ form.location || '-' }} / {{ form.schedule || '-' }}</td></tr>
@@ -111,13 +111,11 @@
                                 </div>
                                 <div v-else class="text-muted fst-italic small">Riwayat Agama belum diisi.</div>
 
-                                <!-- STATUS PERNIKAHAN -->
                                 <h6 class="fw-bold text-navy mt-4 mb-3 border-bottom pb-1">2c. Status Pernikahan</h6>
                                 <table class="table table-borderless table-detail">
                                     <tr><td class="fw-bold text-muted" width="30%">Status Pernikahan</td><td width="5%">:</td><td>{{ form.statusMarried || '-' }}</td></tr>
                                 </table>
 
-                                <!-- DETAIL PERNIKAHAN (KONDISIONAL) -->
                                 <div v-if="form.statusMarried && form.statusMarried !== 'Belum Menikah' && form.statusMarried !== 'Pernah Menikah'" class="p-3 border rounded bg-light-subtle mt-3">
                                     <h6 class="fw-bold mb-3 text-secondary border-bottom pb-2">Data Pasangan</h6>
                                     <table class="table table-borderless table-sm table-detail">
@@ -125,7 +123,6 @@
                                         <tr v-if="form.statusMarried !== 'Menikah Sipil'"><td class="fw-bold text-muted">Agama Pasangan</td><td>:</td><td>{{ form.religionPasangan || '-' }}</td></tr>
                                     </table>
 
-                                    <!-- Detail Katolik (1) -->
                                     <div v-if="form.statusMarried === 'Menikah Katolik' && (form.placeMarried1 || form.numberMarried1)">
                                         <h6 class="fw-bold text-secondary mt-3 mb-2 small border-top pt-2">Detail Pernikahan Katolik</h6>
                                         <table class="table table-borderless table-sm table-detail">
@@ -135,7 +132,6 @@
                                         </table>
                                     </div>
 
-                                    <!-- Detail Kristen (2) -->
                                     <div v-else-if="form.statusMarried === 'Menikah Kristen' && (form.placeMarried2 || form.numberMarried2)">
                                         <h6 class="fw-bold text-secondary mt-3 mb-2 small border-top pt-2">Detail Pernikahan Kristen</h6>
                                         <table class="table table-borderless table-sm table-detail">
@@ -145,7 +141,6 @@
                                         </table>
                                     </div>
 
-                                    <!-- Detail Sipil (3) -->
                                     <div v-else-if="form.statusMarried === 'Menikah Sipil' && (form.cityMarried3 || form.numberMarried3)">
                                         <h6 class="fw-bold text-secondary mt-3 mb-2 small border-top pt-2">Detail Pernikahan Sipil</h6>
                                         <table class="table table-borderless table-sm table-detail">
@@ -155,7 +150,6 @@
                                         </table>
                                     </div>
 
-                                    <!-- Detail Lain (4) -->
                                     <div v-else-if="form.statusMarried === 'Menikah Lain' && (form.placeMarried4 || form.numberMarried4)">
                                         <h6 class="fw-bold text-secondary mt-3 mb-2 small border-top pt-2">Detail Pernikahan Lain</h6>
                                         <table class="table table-borderless table-sm table-detail">
@@ -167,7 +161,6 @@
                                     <div v-else class="text-muted fst-italic small mt-3">Detail pernikahan belum diisi.</div>
                                 </div>
                                 
-                                <!-- DETAIL PERNAH MENIKAH -->
                                 <div v-else-if="form.statusMarried === 'Pernah Menikah' && (form.nameMantan || form.yearMantan)" class="p-3 border rounded bg-light-subtle mt-3">
                                     <h6 class="fw-bold mb-3 text-secondary border-bottom pb-2">Detail Pernah Menikah (Janda/Duda)</h6>
                                     <table class="table table-borderless table-sm table-detail">
@@ -182,7 +175,6 @@
 
                             </div>
 
-                            <!-- DATA BAPTIS BAYI (JIKA SAKRAMEN BAPTIS BAYI) -->
                             <div v-else-if="getGroupName(form.kelompok) === 'Sakramen Baptis Bayi' && form.data_baptis_id">
                                 <h6 class="fw-bold text-navy mb-3 border-bottom pb-1">2. Data Sakramen Baptis Bayi</h6>
                                 <table class="table table-borderless table-detail">
@@ -198,7 +190,6 @@
                         </div>
                     </div>
                     
-                    <!-- CARD 3: Data Keluarga -->
                     <div class="card shadow-lg border-0 mt-4 mb-4">
                         <div class="card-header bg-secondary text-white py-3">
                             <h5 class="mb-0"><i class="bi bi-people fs-5"></i> 3. Data Anggota Keluarga</h5>
@@ -281,7 +272,7 @@ export default {
             return 'Riwayat Lain';
         };
 
-        // --- Perubahan Utama: Pemetaan Nilai Kelompok/Group ke Numerik (0 dan 1) ---
+        // --- Pemetaan Nilai Kelompok/Group ke Numerik (0 dan 1) ---
         // 0 = Sakramen Baptis Bayi, 1 = Katekumen
         const rawGroupValue = props.data.group; 
         const mappedGroup = (() => {
@@ -293,7 +284,18 @@ export default {
             return null; // Tidak Ditentukan
         })();
         
-     
+        // --- Pemetaan Nilai Gender ke Numerik (0 dan 1) ---
+        // 0 = Perempuan, 1 = Laki-laki
+        const rawGenderValue = props.data.gender; 
+        const mappedGender = (() => {
+            if (rawGenderValue === 1) {
+                return 1; // Laki-laki
+            } else if (rawGenderValue === 0) {
+                return 0; // Perempuan
+            }
+            return null; // Tidak Ditentukan/Kosong
+        })();
+        
 
         // Define form state using data from props.data (FLATTENED structure, matching edit.vue)
         const form = reactive({
@@ -304,7 +306,8 @@ export default {
             contact: props.data.contact || '-',
             number: props.data.number || '-',
             status: props.data.status || 'pending', 
-            kelompok: mappedGroup, // MENGGUNAKAN NILAI NUMERIK HASIL PEMETAAN
+            kelompok: mappedGroup, // Menggunakan nilai numerik hasil pemetaan kelompok
+            gender: mappedGender, // Menggunakan nilai numerik hasil pemetaan gender
 
             // Data Keluarga (Mapping dataKeluarga ke family_members)
             family_members: props.data.data_keluarga || [], 
@@ -349,6 +352,19 @@ export default {
         });
 
 
+        // =================================================================
+        // === FUNGSI HELPER GENDER (BARU/DIMODIFIKASI) ===
+        // 0 = Perempuan, 1 = Laki-laki
+        // =================================================================
+        const formatGender = (genderValue) => {
+             if (genderValue === 1) {
+                 return 'Laki-laki';
+             } else if (genderValue === 0) {
+                 return 'Perempuan';
+             }
+             return '-'; // Jika null atau nilai lain
+        };
+        
         // =================================================================
         // === FUNGSI HELPER KELOMPOK KATEKESE (DIMODIFIKASI BERDASARKAN REQUEST BARU) ==
         // 0 = Sakramen Baptis Bayi, 1 = Katekumen
@@ -423,6 +439,8 @@ export default {
             getGroupHeaderClass,
             formatDate,
             determineHistoryTypeLabel,
+            // Tambahkan formatGender
+            formatGender,
         };
     },
 };

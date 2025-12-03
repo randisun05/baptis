@@ -29,6 +29,7 @@ class DatabaseSeeder extends Seeder
         Member::create([
             'number'      => '1234567890123456',
             'name'      => 'John Doe',
+            'gender' => 1,
             'email'     => 'johndoe@example.com',
             'password'  => bcrypt('password'),
             'contact'  => '081278162172312',
@@ -39,6 +40,7 @@ class DatabaseSeeder extends Seeder
         Member::create([
             'number'      => '6543210987654321',
             'name'      => 'Jane Smith',
+            'gender' => 0,
             'email'     => 'janesmith@example.com',
             'password'  => bcrypt('password'),
             'contact'  => '08127816217361',
@@ -49,6 +51,7 @@ class DatabaseSeeder extends Seeder
           Member::create([
             'number'      => '1122334455667788',
             'name'      => 'Alice Johnson',
+             'gender' => 0,
             'email'     => 'alicejohnson@example.com',
             'contact'  => '0812781621732131',
             'group'     => 1    ,
