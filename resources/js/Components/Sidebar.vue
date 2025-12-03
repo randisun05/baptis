@@ -49,7 +49,7 @@
             
             <li v-if="$page.props.auth.user.role === 'administrator'" class="nav-item mb-1">
                 <Link href="/admin/setting" class="nav-link d-flex align-items-center gap-3" :class="{ 'active-nav': $page.url.startsWith('/admin/setting') }" @click="closeSidebar">
-                    <i class="bi bi-person-gear fs-5"></i> <span>Akun Pengguna</span>
+                    <i class="bi bi-person fs-5"></i> <span>Akun Pengguna</span>
                 </Link>
             </li>
         </ul>

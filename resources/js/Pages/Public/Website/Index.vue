@@ -177,7 +177,7 @@
                                     </div>
 
                                     <div class="card-footer p-3 text-center">
-                                        <Link href="/kegiatan" class="btn btn-sm btn-outline-navy">Lihat Semua Kegiatan</Link>
+                                        <Link href="/kegiatan" class="btn btn-sm btn-outline-navy"><strong>Lihat Semua Kegiatan</strong></Link>
                                     </div>
 
                                 </div>
@@ -198,7 +198,7 @@
 
                         <div class="card bg-navy text-white p-4 border-0 rounded-3">
                             <h4><i class="fas fa-bullhorn me-2"></i> Keterangan</h4>
-                            <p class="mb-0 small opacity-75">Klik tombol "Lihat Post" di samping untuk membaca warta selengkapnya.</p>
+                            <p class="mb-0 small opacity-75">Klik tombol "Lihat Warta" di samping untuk membaca warta selengkapnya.</p>
                         </div>
                     </div>
 
@@ -236,7 +236,7 @@
                                     </div>
 
                                     <div class="card-footer p-3 text-center">
-                                        <Link href="/warta" class="btn btn-sm btn-outline-navy">Lihat Semua Warta</Link>
+                                        <Link href="/warta" class="btn btn-sm btn-outline-navy"><strong>Lihat Semua Warta</strong></Link>
                                     </div>
 
                                 </div>
@@ -298,7 +298,13 @@
                         <p class="small opacity-75">
                             Jl. Melania No.1-3, Cihaur Geulis, Kec. Cibeunying Kaler, Kota Bandung, Jawa Barat 40122<br>
                             Telp: (022) 20463790<br>
-                            Email: sekretariat@stmelania.org
+                           <a href="mailto:parokimelaniabdg@gmail.com" class="text-white opacity-75 text-decoration-none">
+                        Email: parokimelaniabdg@gmail.com
+                        </a>
+                            <br>
+                            <a href="https://wa.me/6281321272634" target="_blank" class="text-white opacity-75 text-decoration-none">
+                                <i class="fab fa-whatsapp me-1"></i> WhatsApp: +62 813-2127-2634
+                            </a>
                         </p>
                     </div>
                     <div class="col-lg-6">
@@ -523,5 +529,13 @@ export default {
 .navbar:not(.scrolled) .btn-primary {
     background-color: var(--navy-primary); 
     border-color: var(--navy-primary);
+}
+
+/* --- STYLE UNTUK HOVER WHATSAPP DI FOOTER --- */
+footer a.text-white:hover {
+    /* Meningkatkan opasitas dari 75% menjadi 100% */
+    opacity: 1 !important; 
+    /* Mengubah warna menjadi warna aksen orange-accent saat di-hover */
+    color: var(--orange-accent) !important;
 }
 </style>

@@ -1,4 +1,4 @@
-<!-- <template>
+<template>
     <Head>
         <title>Lupa Password - Paroki Santa Melania</title>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -24,8 +24,8 @@
                         <div class="card shadow-lg p-4 p-md-5 border-0 rounded-4">
                             <h3 class="fw-bold text-navy text-center mb-4">Reset Password Akun</h3>
 
-                            <div v-if="errors.message" class="alert alert-danger bg-danger-subtle text-danger-emphasis alert-dismissible fade show border-0 rounded-3 small">
-                                <i class="fas fa-exclamation-triangle me-2"></i> {{ errors.message }}
+                            <div v-if="form.errors.message" class="alert alert-danger bg-danger-subtle text-danger-emphasis alert-dismissible fade show border-0 rounded-3 small">
+                                <i class="fas fa-exclamation-triangle me-2"></i> {{ form.errors.message }}
                             </div>
                             <div v-if="$page.props.session?.error" class="alert alert-danger bg-danger-subtle text-danger-emphasis alert-dismissible fade show border-0 rounded-3 small">
                                 <i class="fas fa-exclamation-triangle me-2"></i> {{ $page.props.session.error }}
@@ -48,15 +48,15 @@
                                                 v-model="form.email" 
                                                 id="email"
                                                 placeholder="contoh@email.com"
-                                                :class="{ 'is-invalid': errors.email }"
+                                                :class="{ 'is-invalid': form.errors.email }"
                                             >
                                         </div>
-                                        <div v-if="errors.email" class="text-danger small mt-1">{{ errors.email }}</div>
+                                        <div v-if="form.errors.email" class="text-danger small mt-1">{{ form.errors.email }}</div>
                                     </div>
                                     
                                     <div class="col-sm-12">
-                                        <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold shadow-sm" :disabled="submitting">
-                                            <span v-if="submitting">
+                                        <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold shadow-sm" :disabled="form.processing">
+                                            <span v-if="form.processing">
                                                 <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                                                 Memproses...
                                             </span>
@@ -81,28 +81,24 @@
     </div>
 </template>
 
+
 <script>
     //import layout
     import LayoutWebsite from '../../../Layouts/Website.vue';
 
-    //import Head and Link from Inertia
+    //import Head, Link, dan useForm dari Inertia
     import {
         Head,
-        Link
+        Link,
+        useForm
     } from '@inertiajs/inertia-vue3';
 
-    //import reactive
+    //import reactive, ref, onMounted, onUnmounted
     import {
-        reactive,
         ref,
         onMounted, 
         onUnmounted
     } from 'vue';
-
-    //import inertia adapter
-    import {
-        Inertia
-    } from '@inertiajs/inertia';
 
     export default {
 
@@ -112,19 +108,19 @@
         //register component
         components: {
             Head,
-            Link // Tambahkan Link
+            Link
         },
 
-        //props
+        //props (Inertia otomatis menyediakan errors)
         props: {
-            errors: Object,
+            errors: Object, 
             session: Object
         },
 
         //define composition API
         setup() {
 
-            // --- Logika Navbar (Dipertahankan untuk konsistensi) ---
+            // --- Logika Navbar (Dipertahankan) ---
             const isScrolled = ref(false);
 
             const handleScroll = () => {
@@ -140,39 +136,33 @@
             });
             // ----------------------------------------------------
 
-            //define form state
-            const form = reactive({
-                //nip: '', // Dihilangkan untuk standarisasi, fokus hanya email untuk reset password
+            // Inisialisasi form state menggunakan useForm
+            const form = useForm({
                 email: '',
             });
 
-            const submitting = ref(false); // Tambahkan state submitting
-
             // Function Submit Reset Password
-            const submit = () => {
-                // Endpoint disesuaikan dengan yang ada di kode lama, menggunakan Inertia.get
-                Inertia.get('/forget-password/email', form, {
-                    onStart: () => (submitting.value = true),
-                    onFinish: () => (submitting.value = false),
-                    preserveScroll: true,
-                });
-            }
+            const submit = () => {
+                // Menggunakan URL biasa (hardcoded)
+                form.post('/forget-password/email', { // PERUBAHAN DI SINI
+                  preserveScroll: true,
+                });
+            }
 
-            //return form state and submit method
-            return {
-                form,
-                submitting,
-                submit,
-                isScrolled
-            };
+            //return form state and submit method
+            return {
+                form,
+                submit,
+                isScrolled
+            };
 
-        }
-
+        }
     }
 </script>
 
+
 <style scoped>
-/* --- Custom Colors & Variables (Diambil dari Landing.vue) --- */
+/* --- Custom Colors & Variables --- */
 :root {
     --navy-primary: #003366;
     --orange-accent: #ff9900;
@@ -184,22 +174,20 @@
 .btn-primary {
     background-color: #002244;
     border-color: #002244;
-    transition: all 0.3s ease; /* Tambahkan transisi */
+    transition: all 0.3s ease;
 }
 
 .btn-primary:hover {
-    /* Sedikit lebih gelap/terang untuk umpan balik */
-    background-color: #001a33; /* Contoh: sedikit lebih gelap */
+    background-color: #001a33;
     border-color: #001a33;
-    transform: translateY(-2px); /* Gerakan yang lebih terasa */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Tambahkan bayangan */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .btn-primary:active {
-    /* Saat diklik */
     background-color: #001326;
     border-color: #001326;
-    transform: translateY(0); /* Kembali ke posisi semula */
+    transform: translateY(0);
     box-shadow: none;
 }
 
@@ -213,13 +201,13 @@
     font-family: 'Poppins', sans-serif;
 }
 
-/* --- Hero Section (Diambil dari Landing.vue) --- */
+/* --- Hero Section --- */
 .hero {
-    height: auto; /* Disesuaikan untuk Login */
+    height: auto; 
     min-height: 350px;
     
     position: relative;
-    margin-top: 0; /* Tidak perlu margin negatif jika tidak menggunakan layout */
+    margin-top: 0;
     padding-top: 120px;
     padding-bottom: 80px;
 }
@@ -229,7 +217,7 @@
     background: linear-gradient(to bottom, rgba(0,51,102,0.8), rgba(0,0,0,0.6));
 }
 
-/* --- Form Styling (Adopsi gaya tegas/rapi) --- */
+/* --- Form Styling --- */
 .card {
     border-radius: 16px;
 }
@@ -249,7 +237,7 @@
 }
 
 .input-tegas:focus {
-    border-color: var(--navy-primary); 		
+    border-color: var(--navy-primary);      
     box-shadow: 0 0 0 4px rgba(0, 51, 102, 0.1); 
     outline: none;
 }
@@ -262,7 +250,7 @@
 .bg-success-subtle { background-color: #d1e7dd; }
 .text-success-emphasis { color: #0a3622; }
 
-/* Styling Tombol Outline Sekunder (Kembali ke Login) */
+
 .btn-outline-secondary {
     border-color: #adb5bd;
     color: #6c757d;
@@ -274,4 +262,4 @@
     border-color: var(--navy-primary);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
 }
-</style> -->
+</style>

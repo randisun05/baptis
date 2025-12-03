@@ -32,7 +32,6 @@ return new class extends Migration
             $table->string('cityMarried3')->nullable();
             $table->date('dateMarried3')->nullable();
             $table->string('numberMarried3')->nullable();
-            $table->string('religionMarried')->nullable();
             $table->string('placeMarried4')->nullable();
             $table->string('cityMarried4')->nullable();
             $table->string('namePeneguh4')->nullable();

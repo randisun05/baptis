@@ -265,7 +265,6 @@ export default {
             destroy,
             getStatusBadgeClass,
             formatStatus,
-            // Export fungsi group dan ikon baru
             getGroupName,
             getGroupBadgeClass,
             getGroupIconClass,

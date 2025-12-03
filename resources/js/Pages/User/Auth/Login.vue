@@ -201,18 +201,28 @@
 .bg-navy { background-color: var(--navy-primary); }
 .text-warning { color: var(--orange-accent) !important; }
 
-/* Menyesuaikan warna tombol Login */
 .btn-primary {
-    background-color: var(--navy-primary);
-    border-color: var(--navy-primary);
-    border-radius: 8px; /* Lebih rounded */
-    transition: all 0.3s ease;
-}
-.btn-primary:hover {
     background-color: #002244;
     border-color: #002244;
-    transform: translateY(-1px);
+    transition: all 0.3s ease; /* Tambahkan transisi */
 }
+
+.btn-primary:hover {
+    /* Sedikit lebih gelap/terang untuk umpan balik */
+    background-color: #001a33; /* Contoh: sedikit lebih gelap */
+    border-color: #001a33;
+    transform: translateY(-2px); /* Gerakan yang lebih terasa */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Tambahkan bayangan */
+}
+
+.btn-primary:active {
+    /* Saat diklik */
+    background-color: #001326;
+    border-color: #001326;
+    transform: translateY(0); /* Kembali ke posisi semula */
+    box-shadow: none;
+}
+
 .text-primary-hover:hover {
     color: var(--navy-primary);
 }
@@ -293,7 +303,7 @@
 .bg-success-subtle { background-color: #d1e7dd; }
 .text-success-emphasis { color: #0a3622; }
 
-/* Styling tambahan untuk tombol Kembali ke Beranda */
+
 .btn-outline-secondary {
     border-color: #adb5bd;
     color: #6c757d;
@@ -302,6 +312,7 @@
 .btn-outline-secondary:hover {
     background-color: #f8f9fa;
     color: var(--navy-primary);
-    border-color: var(--navy-primary);
+    border-color: var(--navy-primary); 
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
 }
 </style>

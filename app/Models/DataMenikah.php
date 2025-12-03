@@ -26,7 +26,6 @@ class DataMenikah extends Model
         'cityMarried3',
         'dateMarried3',
         'numberMarried3',
-        'religionMarried',
         'placeMarried4',
         'cityMarried4',
         'namePeneguh4',

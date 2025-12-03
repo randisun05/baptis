@@ -1,201 +1,381 @@
 <template>
+
     <Head>
-        <title>Berbagi Cerita</title>
+        <title>Warta - Paroki Santa Melania</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap"
+            rel="stylesheet">
     </Head>
-    <div class="container-fluid padding px-5">
-        <div class="row">
-            <div class="col-md-12">
+
+    <div class="landing-wrapper">
+        
+        <div class="container pt-4">
+            <Link href="/user/dashboard" class="btn btn-outline-secondary border-0 shadow-sm mb-4">
+                <i class="fas fa-arrow-left me-1"></i> Kembali ke Dashboard
+            </Link>
+        </div>
+        
+        <section class="py-5 bg-light" id="warta">
+            <div class="container py-4">
                 <div class="row">
-                    <div class="col-md-1 col-12 mb-2">
-                        <Link href="/user/posts/create" class="btn btn-md btn-primary border-0 shadow w-100" type="button"><i
-                            class="fa fa-plus-circle"></i>
-                        Tambah</Link>
-                    </div>
+                    <div class="col-lg-12">
+                        <h2 class="fw-bold text-navy mb-4">Daftar Warta Paroki</h2>
+                        <div class="card shadow-sm border-0">
+                            <div class="card-body p-0">
+                                <div class="list-group list-group-flush">
 
-                    <div class="col-md-6 col-12 mb-2">
-                        <form @submit.prevent="handleSearch">
-                            <div class="input-group">
-                                <input type="text" class="form-control border-0 shadow" v-model="search" placeholder="masukkan kata kunci dan enter...">
-                                <span class="input-group-text border-0 shadow">
-                                    <i class="fa fa-search"></i>
-                                </span>
+                                    <div class="list-group-item p-4 d-flex flex-column"
+                                        v-for="(post, index) in posts.data" :key="index">
+
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="d-flex align-items-center">
+
+                                                <div class="date-box bg-primary-subtle text-primary rounded p-2 text-center me-3"
+                                                    style="min-width: 60px;">
+                                                    <span class="d-block fw-bold h5 mb-0">{{ formatDate(post.created_at, 'day') }}</span>
+                                                    <span class="d-block small fw-bold">{{ formatDate(post.created_at, 'month') }}</span>
+                                                </div>
+
+                                                <div>
+                                                    <h5 class="fw-bold mb-1 text-navy">{{ post.title }}</h5>
+                                                    <p class="mb-0 text-muted small">
+                                                        <i class="far fa-calendar-alt me-1"></i>
+                                                        Diterbitkan: {{ formatDate(post.created_at, 'full') }}
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            <Link :href="`/user/posts/list/${post.slug}`"
+                                                class="btn btn-sm btn-outline-primary shadow ms-4 flex-shrink-0" type="button">
+                                                <i class="fas fa-eye me-1"></i> Lihat Post
+                                            </Link>
+                                        </div>
+
+                                        <div class="w-100 mt-2 pt-3 border-top">
+                                            <p class="small text-muted mb-0">
+                                                {{ post.excerpt || 'Klik Lihat Post untuk membaca selengkapnya.' }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div v-if="posts.data && posts.data.length === 0" class="list-group-item text-center text-muted p-4">
+                                        Belum ada warta paroki terbaru yang diterbitkan.
+                                    </div>
+
+                                </div>
                             </div>
-                        </form>
-                    </div>
 
-                </div>
-            </div>
-        </div>
-        <div class="row mt-1">
-            <div class="col-md-12">
-                <div class="card border-0 shadow">
-                    <div class="card-body">
-
-                        <div class="table-responsive">
-                            <table class="table table-bordered table-centered table-nowrap mb-0 rounded">
-                                <thead class="thead-dark">
-                                    <tr class="border-0 text-center">
-                                        <th class="border-0 rounded-start" style="width:5%">No.</th>
-                                        <th class="border-0">Judul</th>
-                                        <th class="border-0">Kategori</th>
-                                        <th class="border-0">Status</th>
-                                        <th class="border-0 rounded-end" style="width:12%">Aksi</th>
-                                    </tr>
-                                </thead>
-                                <div class="mt-2"></div>
-                                <tbody>
-                                    <tr v-for="(post, index) in posts.data" :key="index">
-                                        <td class="fw-bold text-center">{{ ++index + (posts.current_page - 1) * posts.per_page }}</td>
-                                        <td>{{ post.title }}</td>
-                                        <td>{{ post.category.title }}</td>
-                                        <td><span v-if="post.status === 'approved'" class="badge bg-success" title="disetujui untuk di publish">{{ post.status }}</span>
-                                            <span v-else-if="post.status === 'private'" class="badge bg-warning" title="hanya untuk konsumsi pribadi">{{ post.status }}</span>
-                                            <span v-else-if="post.status === 'perlu ada perbaikan'" class="badge bg-warning" title="silakan dicek kembali">{{ post.status }}</span>
-                                            <span v-else-if="post.status === 'rejected'" class="badge bg-danger" title="ditolak untuk publish">{{ post.status }}</span>
-                                            <span v-else-if="post.status === 'submission'" class="badge bg-secondary" title="sedang diajukan, fitur edit nonaktif">{{ post.status }}</span>
-                                            <span v-else-if="post.status === 'return'" class="badge bg-danger" title="ditolak untuk publish">{{ post.status }}</span>
-                                            <span v-else-if="post.status === 'limited'" class="badge bg-danger" title="ditolak untuk publish">{{ post.status }}</span></td>
-                                        <td class="text-center">
-                                            <Link v-if="post.status !== 'submission' && post.status !== 'rejected' && post.status !== 'approved'&& post.status !== 'limited'" :href="`/user/posts/${encodeURIComponent(post.slug)}/edit`" class="btn btn-sm btn-warning border-0 shadow me-2" type="button" title="edit"><i class="fa fa-pencil"></i></Link>
-                                            <Link :href="`/user/posts/${encodeURIComponent(post.slug)}`" class="btn btn-sm btn-info border-0 shadow me-2" type="button"><i class="fa fa-eye" title="lihat detail"></i></Link>
-                                            <Link  v-if="post.status !== 'submission' && post.status !== 'rejected' && post.status !== 'approved' && post.status !== 'limited'" @click.prevent="handleSubmission(post.id)" class="btn btn-sm btn-success border-0 shadow me-2" type="button" title="pengajuan publish"><i class="fa fa-envelope"></i></Link>
-                                            <button v-if="post.status !== 'submission' && post.status !== 'rejected' && post.status !== 'approved' && post.status !== 'limited'" @click.prevent="destroy(post.id)" class="btn btn-sm btn-danger border-0 me-2"><i class="fa fa-trash" title="hapus"></i></button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
                         </div>
-                        <Pagination :links="posts.links" align="end" />
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
+
+        
     </div>
 </template>
 
 <script>
-    //import layout
-    import LayoutUser from '../../../Layouts/User.vue';
+import { Head, Link } from '@inertiajs/inertia-vue3';
+import { ref, onMounted, onUnmounted } from 'vue';
+import LayoutWebsite from '../../../Layouts/User.vue'; // Pastikan path ini benar
 
-    //import component pagination
-    import Pagination from '../../../Components/Pagination.vue';
-
-    //import Heade and Link from Inertia
-    import {
+export default {
+    // 1. OPSI LAYOUT DARI INERTIA
+    layout: LayoutWebsite, 
+    
+    // 2. OPSI COMPONENTS
+    components: {
         Head,
-        Link
-    } from '@inertiajs/inertia-vue3';
+        Link,
+    },
 
-    //import ref from vue
-    import {
-        ref
-    } from 'vue';
+    // 3. OPSI PROPS
+    props: {
+        title: String,
+        posts: Object, // Menggunakan Object untuk pagination data
+    },
 
-    //import inertia adapter
-    import { Inertia } from '@inertiajs/inertia';
+    // 4. OPSI COMPOSITION API (setup)
+    setup() {
+        // --- Fungsi Pembantu untuk Format Tanggal ---
+        const formatDate = (dateString, formatType) => {
+            if (!dateString) return '';
+            const date = new Date(dateString);
 
-    //import sweet alert2
-    import Swal from 'sweetalert2';
-
-    export default {
-        //layout
-        layout: LayoutUser,
-
-        //register component
-        components: {
-            Head,
-            Link,
-            Pagination
-        },
-
-        //props
-        props: {
-            posts :Object,
-
-        },
-
-        //inisialisasi composition API
-        setup() {
-
-            //define state search
-            const search = ref('' || (new URL(document.location)).searchParams.get('q'));
-
-            //define method search
-            const handleSearch = () => {
-                Inertia.get('/user/posts', {
-
-                    //send params "q" with value from state "search"
-                    q: search.value,
+            if (formatType === 'day') {
+                return date.getDate().toString().padStart(2, '0');
+            }
+            if (formatType === 'month') {
+                return date.toLocaleDateString('id-ID', { month: 'short' }).toUpperCase();
+            }
+            if (formatType === 'full') {
+                return date.toLocaleDateString('id-ID', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
                 });
             }
+            return dateString;
+        };
 
-            //define method destroy
-            const destroy = (id) => {
-                Swal.fire({
-                        title: 'Apakah Anda yakin?',
-                        text: "Anda tidak akan dapat mengembalikan ini!",
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#3085d6',
-                        cancelButtonColor: '#d33',
-                        confirmButtonText: 'Yes, delete it!'
-                    })
-                    .then((result) => {
-                        if (result.isConfirmed) {
+        // Logika untuk Navbar berubah warna saat discroll
+        const isScrolled = ref(false);
 
-                            Inertia.delete(`/user/posts/${id}`);
-
-                            Swal.fire({
-                                title: 'Deleted!',
-                                text: 'Peserta Berhasil Dihapus!.',
-                                icon: 'success',
-                                timer: 2000,
-                                showConfirmButton: false,
-                            });
-                        }
-                    })
+        const handleScroll = () => {
+            if (window.scrollY > 50) {
+                isScrolled.value = true;
+            } else {
+                isScrolled.value = false;
             }
+        };
 
-            const handleSubmission = (id) => {
-            Swal.fire({
-                    title: 'Apakah Anda yakin?',
-                    text: "Post akan diajukan untuk publish!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, Submit it!'
-                })
-                .then((result) => {
-                    if (result.isConfirmed) {
-                        Inertia.get(`/user/posts/${id}/submission`);
-                        Swal.fire({
-                            title: 'Success!',
-                            text: 'Status Returned!.',
-                            icon: 'success',
-                            timer: 2000,
-                            showConfirmButton: false,
-                        });
-                    }
-                })
-            }
+        onMounted(() => {
+            window.addEventListener('scroll', handleScroll);
+        });
 
+        onUnmounted(() => {
+            window.removeEventListener('scroll', handleScroll);
+        });
 
-
-
-            //return
-            return {
-                search,
-                handleSearch,
-                destroy,
-                handleSubmission
-
+        return {
+            isScrolled,
+            formatDate,
+        }
+    },
+    
+    methods: {
+        route(name) {
+            return window.route(name);
         }
     }
 }
-
 </script>
 
-<style>
+<style scoped>
+/* --- Custom Colors & Variables --- */
+:root {
+    --navy-primary: #003366;
+    --orange-accent: #ff9900;
+}
 
+.text-navy {
+    color: #003366;
+}
+
+.bg-navy {
+    background-color: #003366;
+}
+
+.text-warning {
+    color: #ff9900 !important;
+}
+
+.text-primary {
+    color: #003366 !important;
+}
+
+/* Menambahkan primary color */
+
+.btn-primary {
+    background-color: #003366;
+    border-color: #003366;
+}
+
+.btn-primary:hover {
+    background-color: #002244;
+    border-color: #002244;
+}
+
+/* --- Typography --- */
+.landing-wrapper {
+    font-family: 'Poppins', sans-serif;
+}
+
+/* --- Navbar --- */
+.navbar {
+    transition: all 0.3s ease-in-out;
+    padding: 1rem 0;
+    background: transparent;
+    /* Transparan di awal */
+}
+
+.navbar.scrolled {
+    background: var(--navy-primary);
+    /* Navy saat discroll */
+    padding: 0.5rem 0;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Penyesuaian Navbar Brand */
+.navbar-brand .fa-church {
+    font-size: 1.5rem;
+}
+
+.navbar-brand {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.lh-sm {
+    line-height: 1.25;
+}
+
+/* Bootstrap class */
+
+/* Navbar Links Styling (TIDAK DIGUNAKAN, tapi kelas style tetap ada) */
+.nav-link {
+    color: rgba(255, 255, 255, 0.8) !important;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.nav-link:hover,
+.nav-link:focus {
+    color: white !important;
+}
+
+/* --- Hero Section --- */
+.hero {
+    height: 100vh;
+    /* Full Screen */
+    min-height: 600px;
+    background: url('/gambar/hero5.jpg') no-repeat center center/cover;
+    /* Pastikan path gambar benar */
+    position: relative;
+    margin-top: -76px;
+    /* Menarik ke atas agar di belakang navbar (adjust if necessary) */
+}
+
+.sub-hero {
+    height: 20vh;
+    /* Full Screen */
+    min-height: 300px;
+    background: url('/gambar/hero5.jpg') no-repeat center center/cover;
+    /* Pastikan path gambar benar */
+    position: relative;
+}
+
+.sub-hero .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom, rgba(0, 51, 102, 0.8), rgba(0, 0, 0, 0.6));
+}
+
+.hero .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom, rgba(0, 51, 102, 0.8), rgba(0, 0, 0, 0.6));
+}
+
+/* --- Cards & Hover Effects --- */
+.hover-up {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-up:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+.icon-box {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.divider {
+    width: 60px;
+    height: 3px;
+    background-color: #ff9900;
+    margin-top: 1rem;
+}
+
+/* --- Process Flow --- */
+.step-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+    z-index: 2;
+    position: relative;
+}
+
+/* Garis horizontal penghubung step */
+.process-line {
+    position: absolute;
+    top: 25px;
+    /* Setengah dari tinggi step-icon */
+    left: 15%;
+    right: 15%;
+    height: 2px;
+    background-color: #e9ecef;
+    z-index: 1;
+}
+
+/* --- Utilities --- */
+.ls-1 {
+    letter-spacing: 1px;
+}
+
+/* Tambahan Warna Subtle untuk Section Layanan */
+.bg-primary-subtle {
+    background-color: #cfe2ff !important;
+}
+
+.text-primary {
+    color: #0a58ca !important;
+}
+
+.bg-success-subtle {
+    background-color: #d1e7dd !important;
+}
+
+.text-success {
+    color: #198754 !important;
+}
+
+.bg-warning-subtle {
+    background-color: #fff3cd !important;
+}
+
+.text-warning {
+    color: #ffc107 !important;
+}
+
+/* Mengubah ini agar lebih cerah */
+.bg-secondary-subtle {
+    background-color: #e2e3e5 !important;
+}
+
+.text-secondary {
+    color: #6c757d !important;
+}
+
+.bg-info-subtle { background-color: #cff4fc !important; }
+.text-info-emphasis { color: #055160 !important; }
+
+/* Menghapus background button kontak saat tidak discroll, karena sudah pakai btn-outline-light */
+.btn-outline-light:hover {
+    background-color: white;
+    color: var(--navy-primary);
+}
+
+.navbar:not(.scrolled) .btn-primary {
+    background-color: var(--navy-primary);
+    /* Pastikan tombol Masuk tetap navy */
+    border-color: var(--navy-primary);
+}
 </style>

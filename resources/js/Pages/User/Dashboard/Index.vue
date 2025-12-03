@@ -121,7 +121,7 @@
                                 </span>
                             </button>
 
-                             <button class="btn btn-danger btn-lg shadow fw-bold" :disabled="processing" disabled>
+                            <button class="btn btn-danger btn-lg shadow fw-bold mb-3" :disabled="processing" disabled>
                                 <span v-if="processing">
                                     <i class="fa fa-spinner fa-spin me-2"></i> Memproses...
                                 </span>
@@ -129,7 +129,11 @@
                                     <i class="fa fa-check-double me-2"></i> Jika Ada Perbaikan Data Hubungi Gereja
                                 </span>
                             </button>
-                        </div>
+                            
+                            <Link :href="'/logout'" method="post" as="button" class="btn btn-outline-secondary btn-lg shadow fw-bold">
+                                <i class="fa fa-sign-out-alt me-2"></i> Logout
+                            </Link>
+                            </div>
                     </div>
                 </div>
             </div>
@@ -155,7 +159,7 @@
                                     <p class="small mb-0 text-secondary" v-html="truncateText(detail.event.body, 150)"></p>
                                 </div>
                                 
-                               
+                                
                             </div>
                         </div>
                     </div>
@@ -175,14 +179,13 @@
 import { ref } from 'vue';
 import { Head, Link } from '@inertiajs/inertia-vue3';
 import { Inertia } from '@inertiajs/inertia';
-import LayoutWebsite from '../../../Layouts/User.vue';
+// import LayoutWebsite from '../../../Layouts/User.vue'; // BARIS INI DIHAPUS UNTUK MENGHINDARI KONFLIK IMPORT
 import Swal from 'sweetalert2';
 
-// PROPS YANG DIREVISI
 const props = defineProps({
-    registrationData: Object, // Data Registrasi (nama baru dari 'data')
+    registrationData: Object,
     events: Array,
-    user: Object // Data User/Member utama dengan relasi (dataKatekumen, dataKeluarga, dll.)
+    user: Object
 });
 
 const processing = ref(false);
@@ -193,7 +196,7 @@ const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('id-ID', options);
 };
 
-// Helper BARU: Memotong teks dan menghapus tag HTML
+// Helper: Memotong teks dan menghapus tag HTML
 const truncateText = (text, maxLength) => {
     if (!text) return '';
     // 1. Hapus tag HTML
@@ -206,7 +209,7 @@ const truncateText = (text, maxLength) => {
     return cleanText;
 };
 
-// Fungsi Verifikasi Data (Tidak ada perubahan)
+// Fungsi Verifikasi Data
 const verifyData = () => {
     Swal.fire({
         title: 'Konfirmasi Data?',
@@ -223,6 +226,8 @@ const verifyData = () => {
                 onStart: () => processing.value = true,
                 onFinish: () => processing.value = false,
                 onSuccess: () => {
+                    // Setelah sukses, Inertia akan melakukan full reload, 
+                    // dan prop 'user.status' akan diperbarui, memicu fungsi layout di bawah.
                     Swal.fire('Berhasil', 'Data terverifikasi. Menampilkan jadwal...', 'success');
                 }
             });
@@ -232,7 +237,22 @@ const verifyData = () => {
 </script>
 
 <script>
-export default { layout: LayoutWebsite }
+// Kunci Perubahan: Import Layout dan h di sini
+import LayoutWebsite from '../../../Layouts/User.vue';
+import { h } from 'vue'; 
+
+// Kunci Perubahan: Gunakan fungsi layout untuk mengirim prop ke Layout
+export default { 
+    layout: (h, page) => {
+        // Cek status user dari props yang dikirim server
+        const isConfirmed = page.props.user.status === 'confirmed';
+        
+        // Kirim properti showNavbar ke Layout berdasarkan status user
+        return h(LayoutWebsite, { 
+            showNavbar: isConfirmed 
+        }, [page]);
+    }
+}
 </script>
 
 <style scoped>

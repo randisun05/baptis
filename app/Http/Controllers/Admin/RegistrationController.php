@@ -31,7 +31,7 @@ class RegistrationController extends Controller
         $registers = Registration::query()
             ->when(request()->q, function($query) {
                 $query->where('name', 'like', '%'. request()->q . '%')
-                      ->orWhere('email', 'like', '%'. request()->q . '%');
+                    ->orWhere('email', 'like', '%'. request()->q . '%');
             })
             ->orderBy('created_at', 'desc')
             ->paginate(10);
@@ -65,7 +65,9 @@ class RegistrationController extends Controller
         return inertia('Admin/Registration/Create');
     }
 
-
+    /**
+     * Menyimpan data peserta baru.
+     */
     public function store(Request $request)
     {
 
@@ -77,53 +79,72 @@ class RegistrationController extends Controller
             'email' => 'required|email|unique:registrations,email|unique:members,email',
             'contact' => 'required|unique:registrations,contact',
             'kelompok' => 'required|in:Katekumen,Sakramen Baptis Bayi',
-            // Tambahkan validasi untuk anggota keluarga wajib diisi
             'family_members' => 'required|array|min:1',
             'family_members.*.name' => 'required|string|max:255',
             'family_members.*.religion' => 'required|string|max:50',
             'family_members.*.relation' => 'required|string|max:50',
             'family_members.*.address' => 'required|string',
             'family_members.*.contact' => 'required|string|max:255',
-
         ];
 
         // 1b. Validasi Kondisional berdasarkan Kelompok
         if ($request->kelompok === 'Katekumen') {
             // DataKatekumen
-             $rules['address'] = 'required|string';
-             $rules['education'] = 'required|string|max:100';
-             $rules['namePenjamin'] = 'required|string|max:255';
+            $rules['address'] = 'required|string';
+            $rules['education'] = 'required|string|max:100';
+            $rules['namePenjamin'] = 'required|string|max:255';
 
-            // DataRiwayat
-             $rules['religion'] = 'required|string|max:50';
-             $rules['location'] = 'required|string|max:255';
-            // $rules['schedule'] = 'nullable|string|max:255';
-             $rules['dateStart'] = 'required|date';
-            // $rules['dateEnd'] = 'nullable|date';
-            // $rules['participateBefore'] = 'boolean';
-            // $rules['nameGuru'] = 'nullable|string|max:255';
-            // $rules['nameGereja'] = 'nullable|string|max:255';
-            // $rules['addressGereja'] = 'nullable|string';
-            // $rules['namePriest'] = 'nullable|string|max:255';
-            // $rules['dateBaptis'] = 'nullable|date';
-            // $rules['numberBaptis'] = 'nullable|string|max:50';
-
+            // DataRiwayat (Disederhanakan: religion wajib, sisanya nullable)
+            $rules['religion'] = 'required|string|max:50'; 
+            
+            // Semua field Riwayat dijadikan nullable karena tidak ada historyType yang mengaturnya
+            $rules['location'] = 'nullable|string|max:255';
+            $rules['dateStart'] = 'nullable|date';
+            $rules['schedule'] = 'nullable|string|max:255';
+            $rules['dateEnd'] = 'nullable|date';
+            $rules['participateBefore'] = 'nullable|string|max:255'; 
+            $rules['nameGuru'] = 'nullable|string|max:255';
+            $rules['nameGereja'] = 'nullable|string|max:255';
+            $rules['addressGereja'] = 'nullable|string';
+            $rules['namePriest'] = 'nullable|string|max:255';
+            $rules['dateBaptis'] = 'nullable|date';
+            $rules['numberBaptis'] = 'nullable|string|max:50';
+            
             // DataMenikah
-             $rules['statusMarried'] = 'required|string|max:50';
+            $rules['statusMarried'] = 'required|string|max:50';
 
-            // Aturan kompleks lainnya (misalnya, jika statusMarried = Menikah Katolik, maka namePasangan wajib)
+            // Validasi detail pernikahan kondisional
             if ($request->statusMarried && $request->statusMarried !== 'Belum Menikah') {
-                 $rules['namePasangan'] = 'required|string|max:255';
-                 $rules['religionPasangan'] = 'required|string|max:50';
-                // ... dan validasi lainnya sesuai kompleksitas form Menikah
+                $rules['namePasangan'] = 'required|string|max:255';
+                $rules['religionPasangan'] = 'required_if:statusMarried,Menikah Kristen,Menikah Lain|string|max:50';
+
+                // Hanya wajibkan input dasar jika statusMarried bukan 'Belum Menikah' atau 'Pernah Menikah'
+                if ($request->statusMarried !== 'Pernah Menikah') {
+                    if ($request->statusMarried === 'Menikah Katolik') {
+                        $rules['placeMarried1'] = 'required|string|max:255';
+                    } elseif ($request->statusMarried === 'Menikah Kristen') {
+                         $rules['placeMarried2'] = 'required|string|max:255';
+                    } elseif ($request->statusMarried === 'Menikah Sipil') {
+                         $rules['cityMarried3'] = 'required|string|max:255';
+                         $rules['dateMarried3'] = 'required|date';
+                         $rules['numberMarried3'] = 'required|string|max:50';
+                    } elseif ($request->statusMarried === 'Menikah Lain') {
+                         $rules['placeMarried4'] = 'required|string|max:255';
+                    }
+                }
             }
+            if ($request->statusMarried === 'Pernah Menikah') {
+                $rules['nameMantan'] = 'required|string|max:255';
+                $rules['statusMantan'] = 'required|in:Cerai,Meninggal';
+                $rules['yearMantan'] = 'required|string|max:4';
+            }
+
 
         } elseif ($request->kelompok === 'Sakramen Baptis Bayi') {
             // DataBaptis
-            // 'name' pada model Registration adalah Nama Bayi.
-            $rules['nameWali'] = 'required|string|max:255'; // **TAMBAHAN UNTUK nameWali**
+            $rules['nameWali'] = 'required|string|max:255';
             $rules['namePastoor'] = 'required|string|max:255';
-            $rules['status'] = 'required|string|max:50'; // Status DataBaptis
+            $rules['status'] = 'required|string|max:50'; // Status DataBaptis (Bapak Baptis/Ibu Baptis)
         }
 
         $messages = [
@@ -132,7 +153,9 @@ class RegistrationController extends Controller
             'contact.unique' => 'Nomor telepon sudah terdaftar.',
             'kelompok.required' => 'Silakan pilih kelompok katekese.',
             'family_members.required' => 'Data anggota keluarga wajib diisi.',
-             'nameWali.required' => 'Nama Wali/Orang Tua wajib diisi untuk Sakramen Baptis Bayi.', // **Pesan nameWali**
+            'nameWali.required' => 'Nama Wali/Orang Tua wajib diisi untuk Sakramen Baptis Bayi.',
+            // Hapus pesan error historyType
+            'religionPasangan.required_if' => 'Agama Pasangan wajib diisi.',
             // ... Tambahkan pesan error kondisional lainnya
         ];
 
@@ -180,15 +203,16 @@ class RegistrationController extends Controller
                     'namePenjamin' => $request->namePenjamin,
                 ]);
 
-                // 5b. Data Riwayat (LENGKAP)
+                // 5b. Data Riwayat (Sederhana tanpa historyType)
                 DataRiwayat::create([
                     'number' => $request->number,
                     'religion' => $request->religion,
-                    'location' => $request->location,
+                    // Semua field diambil langsung dari request, akan null jika tidak dikirim
+                    'location' => $request->location ?? null,
                     'schedule' => $request->schedule ?? null,
-                    'dateStart' => $request->dateStart,
+                    'dateStart' => $request->dateStart ?? null,
                     'dateEnd' => $request->dateEnd ?? null,
-                    'participateBefore' => $request->participateBefore ?? false,
+                    'participateBefore' => $request->participateBefore ?? null,
                     'nameGuru' => $request->nameGuru ?? null,
                     'nameGereja' => $request->nameGereja ?? null,
                     'addressGereja' => $request->addressGereja ?? null,
@@ -203,36 +227,45 @@ class RegistrationController extends Controller
                     'statusMarried' => $request->statusMarried,
                     'namePasangan' => $request->namePasangan ?? null,
                     'religionPasangan' => $request->religionPasangan ?? null,
-                    'placeMarried1' => $request->placeMarried1 ?? null,
-                    'cityMarried1' => $request->cityMarried1 ?? null,
-                    'dateMarried1' => $request->dateMarried1 ?? null,
-                    'namePeneguh1' => $request->namePeneguh1 ?? null,
-                    'numberMarried1' => $request->numberMarried1 ?? null,
-                    'placeMarried2' => $request->placeMarried2 ?? null,
-                    'cityMarried2' => $request->cityMarried2 ?? null,
-                    'dateMarried2' => $request->dateMarried2 ?? null,
-                    'namePeneguh2' => $request->namePeneguh2 ?? null,
-                    'numberMarried2' => $request->numberMarried2 ?? null,
-                    'cityMarried3' => $request->cityMarried3 ?? null,
-                    'dateMarried3' => $request->dateMarried3 ?? null,
-                    'numberMarried3' => $request->numberMarried3 ?? null,
-                    'religionMarried' => $request->religionMarried ?? null,
-                    'placeMarried4' => $request->placeMarried4 ?? null,
-                    'cityMarried4' => $request->cityMarried4 ?? null,
-                    'namePeneguh4' => $request->namePeneguh4 ?? null,
-                    'dateMarried4' => $request->dateMarried4 ?? null,
-                    'numberMarried4' => $request->numberMarried4 ?? null,
-                    'nameMantan' => $request->nameMantan ?? null,
-                    'cityMantan' => $request->cityMantan ?? null,
-                    'statusMantan' => $request->statusMantan ?? null,
-                    'yearMantan' => $request->yearMantan ?? null,
+                    
+                    // Detail Katolik
+                    'placeMarried1' => $request->statusMarried === 'Menikah Katolik' ? $request->placeMarried1 : null,
+                    'cityMarried1' => $request->statusMarried === 'Menikah Katolik' ? $request->cityMarried1 : null,
+                    'dateMarried1' => $request->statusMarried === 'Menikah Katolik' ? $request->dateMarried1 : null,
+                    'namePeneguh1' => $request->statusMarried === 'Menikah Katolik' ? $request->namePeneguh1 : null,
+                    'numberMarried1' => $request->statusMarried === 'Menikah Katolik' ? $request->numberMarried1 : null,
+                    
+                    // Detail Kristen
+                    'placeMarried2' => $request->statusMarried === 'Menikah Kristen' ? $request->placeMarried2 : null,
+                    'cityMarried2' => $request->statusMarried === 'Menikah Kristen' ? $request->cityMarried2 : null,
+                    'dateMarried2' => $request->statusMarried === 'Menikah Kristen' ? $request->dateMarried2 : null,
+                    'namePeneguh2' => $request->statusMarried === 'Menikah Kristen' ? $request->namePeneguh2 : null,
+                    'numberMarried2' => $request->statusMarried === 'Menikah Kristen' ? $request->numberMarried2 : null,
+                    
+                    // Detail Sipil
+                    'cityMarried3' => $request->statusMarried === 'Menikah Sipil' ? $request->cityMarried3 : null,
+                    'dateMarried3' => $request->statusMarried === 'Menikah Sipil' ? $request->dateMarried3 : null,
+                    'numberMarried3' => $request->statusMarried === 'Menikah Sipil' ? $request->numberMarried3 : null,
+                    
+                    // Detail Lain (Hanya mencantumkan yang tidak Sipil/Katolik/Kristen)
+                    'placeMarried4' => $request->statusMarried === 'Menikah Lain' ? $request->placeMarried4 : null,
+                    'cityMarried4' => $request->statusMarried === 'Menikah Lain' ? $request->cityMarried4 : null,
+                    'dateMarried4' => $request->statusMarried === 'Menikah Lain' ? $request->dateMarried4 : null,
+                    'namePeneguh4' => $request->statusMarried === 'Menikah Lain' ? $request->namePeneguh4 : null,
+                    'numberMarried4' => $request->statusMarried === 'Menikah Lain' ? $request->numberMarried4 : null,
+                    
+                    // Detail Pernah Menikah
+                    'nameMantan' => $request->statusMarried === 'Pernah Menikah' ? $request->nameMantan : null,
+                    'cityMantan' => $request->statusMarried === 'Pernah Menikah' ? $request->cityMantan : null,
+                    'statusMantan' => $request->statusMarried === 'Pernah Menikah' ? $request->statusMantan : null,
+                    'yearMantan' => $request->statusMarried === 'Pernah Menikah' ? $request->yearMantan : null,
                 ]);
 
             } elseif ($request->kelompok === 'Sakramen Baptis Bayi') {
                 // 5a. Data Baptis Bayi
                 DataBaptis::create([
                     'number' => $request->number,
-                    'nameWali' => $request->nameWali, // **DIGANTI: Menggunakan nameWali**
+                    'nameWali' => $request->nameWali,
                     'status' => $request->status, // Status di Model DataBaptis
                     'namePastoor' => $request->namePastoor,
                 ]);
@@ -250,10 +283,12 @@ class RegistrationController extends Controller
                 ]);
             }
 
+            
             DB::commit(); // Commit (Simpan Permanen)
 
+            // Mengirim email dengan password yang baru dibuat
             Mail::to($request->email)->send(new \App\Mail\SendEmailRegistration($registration, $password));
-
+    
             // 7. Respon ke Vue/Inertia
             return Redirect::route('admin.registration.index')->with('success', 'Pendaftaran baru berhasil diproses dan disimpan.');
 
@@ -300,6 +335,7 @@ class RegistrationController extends Controller
             'registration' => $data
         ]);
     }
+
     /**
      * Memperbarui (Update) data registrasi yang ada di database.
      *
@@ -336,16 +372,58 @@ class RegistrationController extends Controller
         // 1b. Validasi Kondisional (Menggunakan aturan yang sama dengan store)
         if ($isCatechumen) {
             // DataKatekumen
-             $rules['address'] = 'required|string';
-             $rules['education'] = 'required|string|max:100';
-             $rules['namePenjamin'] = 'required|string|max:255';
+            $rules['address'] = 'required|string';
+            $rules['education'] = 'required|string|max:100';
+            $rules['namePenjamin'] = 'required|string|max:255';
 
-            // DataRiwayat
-             $rules['religion'] = 'required|string|max:50';
-            // // ... (tambahkan validasi DataRiwayat dan DataMenikah lainnya)
+            // DataRiwayat (Disederhanakan: religion wajib, sisanya nullable)
+            $rules['religion'] = 'required|string|max:50'; 
+            
+            // Semua field Riwayat dijadikan nullable
+            $rules['location'] = 'nullable|string|max:255';
+            $rules['dateStart'] = 'nullable|date';
+            $rules['schedule'] = 'nullable|string|max:255';
+            $rules['dateEnd'] = 'nullable|date';
+            $rules['participateBefore'] = 'nullable|string|max:255'; 
+            $rules['nameGuru'] = 'nullable|string|max:255';
+            $rules['nameGereja'] = 'nullable|string|max:255';
+            $rules['addressGereja'] = 'nullable|string';
+            $rules['namePriest'] = 'nullable|string|max:255';
+            $rules['dateBaptis'] = 'nullable|date';
+            $rules['numberBaptis'] = 'nullable|string|max:50';
+
+            // DataMenikah
+            $rules['statusMarried'] = 'required|string|max:50';
+
+            // Validasi detail pernikahan kondisional
+            if ($request->statusMarried && $request->statusMarried !== 'Belum Menikah') {
+                $rules['namePasangan'] = 'required|string|max:255';
+                $rules['religionPasangan'] = 'required_if:statusMarried,Menikah Kristen,Menikah Lain|string|max:50';
+
+                if ($request->statusMarried !== 'Pernah Menikah') {
+                    if ($request->statusMarried === 'Menikah Katolik') {
+                        $rules['placeMarried1'] = 'required|string|max:255';
+                    } elseif ($request->statusMarried === 'Menikah Kristen') {
+                         $rules['placeMarried2'] = 'required|string|max:255';
+                    } elseif ($request->statusMarried === 'Menikah Sipil') {
+                         $rules['cityMarried3'] = 'required|string|max:255';
+                         $rules['dateMarried3'] = 'required|date';
+                         $rules['numberMarried3'] = 'required|string|max:50';
+                    } elseif ($request->statusMarried === 'Menikah Lain') {
+                         $rules['placeMarried4'] = 'required|string|max:255';
+                    }
+                }
+            }
+             if ($request->statusMarried === 'Pernah Menikah') {
+                $rules['nameMantan'] = 'required|string|max:255';
+                $rules['statusMantan'] = 'required|in:Cerai,Meninggal';
+                $rules['yearMantan'] = 'required|string|max:4';
+            }
+
+
         } else {
             // DataBaptis
-            $rules['nameWali'] = 'required|string|max:255'; // **TAMBAHAN UNTUK nameWali**
+            $rules['nameWali'] = 'required|string|max:255';
             $rules['namePastoor'] = 'required|string|max:255';
             $rules['status'] = 'required|string|max:50';
         }
@@ -385,57 +463,70 @@ class RegistrationController extends Controller
                     'namePenjamin' => $request->namePenjamin,
                 ]);
 
-                // 5b. Data Riwayat
-                DataRiwayat::updateOrCreate(['number' => $oldNumber], [
+                // 5b. Data Riwayat (Sederhana tanpa historyType)
+                // Semua field diambil langsung dari request, akan null jika tidak dikirim
+                $riwayatData = [
                     'religion' => $request->religion,
-                    'location' => $request->location,
-                    'schedule' => $request->schedule,
-                    'dateStart' => $request->dateStart,
-                    'dateEnd' => $request->dateEnd,
-                    'participateBefore' => $request->participateBefore,
-                    'nameGuru' => $request->nameGuru,
-                    'nameGereja' => $request->nameGereja,
-                    'addressGereja' => $request->addressGereja,
-                    'namePriest' => $request->namePriest,
-                    'dateBaptis' => $request->dateBaptis,
-                    'numberBaptis' => $request->numberBaptis,
-                ]);
+                    'location' => $request->location ?? null,
+                    'schedule' => $request->schedule ?? null,
+                    'dateStart' => $request->dateStart ?? null,
+                    'dateEnd' => $request->dateEnd ?? null,
+                    'participateBefore' => $request->participateBefore ?? null,
+                    'nameGuru' => $request->nameGuru ?? null,
+                    'nameGereja' => $request->nameGereja ?? null,
+                    'addressGereja' => $request->addressGereja ?? null,
+                    'namePriest' => $request->namePriest ?? null,
+                    'dateBaptis' => $request->dateBaptis ?? null,
+                    'numberBaptis' => $request->numberBaptis ?? null,
+                ];
+
+                DataRiwayat::updateOrCreate(['number' => $oldNumber], $riwayatData);
 
                 // 5c. Data Menikah
-                DataMenikah::updateOrCreate(['number' => $oldNumber], [
+                $menikahData = [
                     'statusMarried' => $request->statusMarried,
-                    'namePasangan' => $request->namePasangan,
-                    'religionPasangan' => $request->religionPasangan,
-                    // ... (lanjutkan update semua field DataMenikah)
-                    'placeMarried1' => $request->placeMarried1,
-                    'cityMarried1' => $request->cityMarried1,
-                    'dateMarried1' => $request->dateMarried1,
-                    'namePeneguh1' => $request->namePeneguh1,
-                    'numberMarried1' => $request->numberMarried1,
-                    'placeMarried2' => $request->placeMarried2,
-                    'cityMarried2' => $request->cityMarried2,
-                    'dateMarried2' => $request->dateMarried2,
-                    'namePeneguh2' => $request->namePeneguh2,
-                    'numberMarried2' => $request->numberMarried2,
-                    'cityMarried3' => $request->cityMarried3,
-                    'dateMarried3' => $request->dateMarried3,
-                    'numberMarried3' => $request->numberMarried3,
-                    'religionMarried' => $request->religionMarried,
-                    'placeMarried4' => $request->placeMarried4,
-                    'cityMarried4' => $request->cityMarried4,
-                    'namePeneguh4' => $request->namePeneguh4,
-                    'dateMarried4' => $request->dateMarried4,
-                    'numberMarried4' => $request->numberMarried4,
-                    'nameMantan' => $request->nameMantan,
-                    'cityMantan' => $request->cityMantan,
-                    'statusMantan' => $request->statusMantan,
-                    'yearMantan' => $request->yearMantan,
-                ]);
+                    'namePasangan' => $request->namePasangan ?? null,
+                    'religionPasangan' => $request->religionPasangan ?? null,
+                    
+                    // Detail Katolik (Clear if not Catholic)
+                    'placeMarried1' => $request->statusMarried === 'Menikah Katolik' ? $request->placeMarried1 : null,
+                    'cityMarried1' => $request->statusMarried === 'Menikah Katolik' ? $request->cityMarried1 : null,
+                    'dateMarried1' => $request->statusMarried === 'Menikah Katolik' ? $request->dateMarried1 : null,
+                    'namePeneguh1' => $request->statusMarried === 'Menikah Katolik' ? $request->namePeneguh1 : null,
+                    'numberMarried1' => $request->statusMarried === 'Menikah Katolik' ? $request->numberMarried1 : null,
+                    
+                    // Detail Kristen (Clear if not Kristen)
+                    'placeMarried2' => $request->statusMarried === 'Menikah Kristen' ? $request->placeMarried2 : null,
+                    'cityMarried2' => $request->statusMarried === 'Menikah Kristen' ? $request->cityMarried2 : null,
+                    'dateMarried2' => $request->statusMarried === 'Menikah Kristen' ? $request->dateMarried2 : null,
+                    'namePeneguh2' => $request->statusMarried === 'Menikah Kristen' ? $request->namePeneguh2 : null,
+                    'numberMarried2' => $request->statusMarried === 'Menikah Kristen' ? $request->numberMarried2 : null,
+                    
+                    // Detail Sipil (Clear if not Sipil)
+                    'cityMarried3' => $request->statusMarried === 'Menikah Sipil' ? $request->cityMarried3 : null,
+                    'dateMarried3' => $request->statusMarried === 'Menikah Sipil' ? $request->dateMarried3 : null,
+                    'numberMarried3' => $request->statusMarried === 'Menikah Sipil' ? $request->numberMarried3 : null,
+
+                    // Detail Lain (Clear if not Lain)
+                    'placeMarried4' => $request->statusMarried === 'Menikah Lain' ? $request->placeMarried4 : null,
+                    'cityMarried4' => $request->statusMarried === 'Menikah Lain' ? $request->cityMarried4 : null,
+                    'dateMarried4' => $request->statusMarried === 'Menikah Lain' ? $request->dateMarried4 : null,
+                    'namePeneguh4' => $request->statusMarried === 'Menikah Lain' ? $request->namePeneguh4 : null,
+                    'numberMarried4' => $request->statusMarried === 'Menikah Lain' ? $request->numberMarried4 : null,
+                    
+                    // Detail Pernah Menikah (Clear if not Pernah Menikah)
+                    'nameMantan' => $request->statusMarried === 'Pernah Menikah' ? $request->nameMantan : null,
+                    'cityMantan' => $request->statusMarried === 'Pernikahan' ? $request->cityMantan : null, // Fixed cityMantan
+                    'statusMantan' => $request->statusMarried === 'Pernah Menikah' ? $request->statusMantan : null,
+                    'yearMantan' => $request->statusMarried === 'Pernah Menikah' ? $request->yearMantan : null,
+                ];
+
+                DataMenikah::updateOrCreate(['number' => $oldNumber], $menikahData);
 
             } else {
                 // 5a. Data Baptis Bayi
                 DataBaptis::updateOrCreate(['number' => $oldNumber], [
-                    'nameWali' => $request->nameWali, // **DIGANTI: Menggunakan nameWali**
+                    'nameWali' => $request->nameWali,
                     'status' => $request->status,
                     'namePastoor' => $request->namePastoor,
                 ]);
@@ -472,57 +563,53 @@ class RegistrationController extends Controller
             return redirect()->back()->with('error', 'Gagal memperbarui pendaftaran karena masalah sistem. Silakan coba lagi.')->withInput();
         }
     }
+
     /**
      * Hapus data peserta.
      */
-    // Pastikan Anda telah mengimpor Model yang diperlukan di bagian atas file:
-// use App\Models\Registration;
-// use App\Models\Member;
-// use Illuminate\Support\Facades\Redirect;
+    public function destroy($id)
+    {
+        // 1. Cari data Registration berdasarkan ID
+        $register = Registration::findOrFail($id);
 
-public function destroy($id)
-{
-    // 1. Cari data Registration berdasarkan ID
-    $register = Registration::findOrFail($id);
+        // Simpan email sebelum data dihapus
+        $email = $register->email;
 
-    // Simpan email sebelum data dihapus
-    $email = $register->email;
+        // 2. Hapus data Member terkait
+        // Cari member yang memiliki email yang sama dengan registrasi yang akan dihapus
+        $member = Member::where('email', $email)->first();
 
-    // 2. Hapus data Member terkait
-    // Cari member yang memiliki email yang sama dengan registrasi yang akan dihapus
-    $member = Member::where('email', $email)->first();
+        if ($member) {
+            $member->delete();
+        }
 
-    if ($member) {
-        $member->delete();
+        // 3. Hapus data Registration
+        $register->delete();
+
+        // 4. Redirect dengan pesan sukses
+        return Redirect::route('admin.registration.index')->with('success', 'Data peserta dan akun member terkait berhasil dihapus.');
     }
 
-    // 3. Hapus data Registration
-    $register->delete();
 
-    // 4. Redirect dengan pesan sukses
-    return Redirect::route('admin.registration.index')->with('success', 'Data peserta dan akun member terkait berhasil dihapus.');
-}
-
-
-public function sendEmail()
-{
-    $registration = Registration::first();
-    $password = 'password'; // Ganti dengan logika pengambilan password yang sesuai
+    public function sendEmail()
+    {
+        $registration = Registration::first();
+        $password = 'password'; // Ganti dengan logika pengambilan password yang sesuai
 
 
-    Mail::to($registration->email)->send(new \App\Mail\SendEmailRegistration($registration, $password));
+        Mail::to($registration->email)->send(new \App\Mail\SendEmailRegistration($registration, $password));
 
-    return Redirect::back()->with('success', 'Email registrasi berhasil dikirim ulang.');
-}
+        return Redirect::back()->with('success', 'Email registrasi berhasil dikirim ulang.');
+    }
 
     public static function generateSecurePassword(int $length = 8): string
     {
         // Kumpulan karakter yang aman dan tidak ambigu.
         // Dihindari: 0, 1, I, L, O, i, l, o.
         $characters = '23456789'
-                    . 'ABCDEFGHJKMNPQRSTUVWXYZ'
-                    . 'abcdefghkmnpqrstuvwxyz'
-                    . '@#$%&'; // Tambahkan simbol untuk keamanan tambahan
+                     . 'ABCDEFGHJKMNPQRSTUVWXYZ'
+                     . 'abcdefghkmnpqrstuvwxyz'
+                     . '@#$%&'; // Tambahkan simbol untuk keamanan tambahan
 
         $password = '';
         $max = strlen($characters) - 1;

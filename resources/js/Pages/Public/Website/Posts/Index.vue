@@ -141,7 +141,7 @@
 <script>
 import { Head, Link } from '@inertiajs/inertia-vue3';
 import { ref, onMounted, onUnmounted } from 'vue';
-import Pagination from '../../../../Components/Pagination.vue'; // Sesuaikan path
+import Pagination from '../../../../Components/Pagination.vue'; 
 
 export default {
     components: {

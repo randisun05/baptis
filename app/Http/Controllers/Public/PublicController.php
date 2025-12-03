@@ -2,37 +2,18 @@
 
 namespace App\Http\Controllers\Public;
 
-use Log;
-use App\Models\Post;
-use App\Models\Event;
-use App\Models\Member;
-use App\Models\Category;
-use App\Models\Management;
-use App\Models\Achievement;
-use App\Models\Certificate;
-use App\Models\DetailEvent;
-use App\Models\ReactDetail;
-use App\Models\Registration;
+use App\Models\Member; 
 use Illuminate\Http\Request;
-use App\Models\DocumentDigital;
-use App\Models\RegistrationGroup;
-use Illuminate\Support\Facades\DB;
-use App\Models\ProfileDataPosition;
-use App\Models\TemplateCertificate;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\SendEmailForgetPassword;
-use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Illuminate\Support\Str;
+use App\Mail\SendEmailForgetPassword; 
+use App\Models\Post;
+use App\Models\Event;
 
 class PublicController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-
 
     public function index()
     {
@@ -53,137 +34,8 @@ class PublicController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
-
-    public function maintenance()
-    {
-        return inertia('Public/Website/Maintenance/Index', [
-            'title' => "Maintenance",
-
-        ]);
-    }
-
-
-    public function about()
-    {
-       $data = Management::where('item', 'siapakita')->first();
-        return inertia('Public/Website/About/About', [
-            'title' => "Siapa Kita?",
-           'data' => $data
-        ]);
-    }
-
-    public function visiMisi()
-    {
-        $data = Management::where('item', 'visimisi')->first();
-        return inertia('Public/Website/About/VisiMisi', [
-            'title' => "Visi Misi",
-            'data' => $data
-        ]);
-    }
-
-    public function strukturOrganisasi()
-    {
-        $data = Management::where('item', 'strukturorganisasi')->get();
-        return inertia('Public/Website/About/StrukturOrganisasi', [
-            'title' => "Struktur Organisasi",
-            'data' => $data
-        ]);
-    }
-
-    public function sejarah()
-    {
-        $data = Management::where('item', 'sejarah')->first();
-        return inertia('Public/Website/About/Sejarah', [
-            'title' => "Sejarah Terbentuknya Aspro SDMA",
-            'data' => $data
-        ]);
-    }
-
-    public function peraturanOrganisasi()
-    {
-       $datas = Management::when(request()->q, function($query) {
-           $query->where('body', 'like', '%' . request()->q . '%');
-       })
-       ->where('item', 'peraturan')
-       ->where('status', '1')
-       ->latest()
-       ->paginate(6);
-
-       $datas->appends(['q' => request()->q]);
-
-        return inertia('Public/Website/About/PeraturanOrganisasi', [
-            'title' => "Peraturan Organisasi",
-            'datas' => $datas
-        ]);
-    }
-
-
-    public function beritaView(Post $post)
+    
+public function beritaView(Post $post)
     {
 
          // Get the related category of the post
@@ -198,106 +50,126 @@ class PublicController extends Controller
     }
 
 
-    public function kontak()
-    {
-        $data = Management::where('item', 'kontak')->first();
-        return inertia('Public/Website/About/Kontak-kami', [
-            'title' => "Kontak Kami",
-              'data' => $data
-        ]);
-    }
 
-
-
-    public function faq()
-    {
-       $datas = Management::when(request()->q, function($query) {
-           $query->where('body', 'like', '%' . request()->q . '%');
-       })
-       ->where('item', 'faq')
-       ->latest()
-       ->paginate(6);
-        $datas->appends(['q' => request()->q]);
-        return inertia('Public/Website/FAQ/faq', [
-            'title' => "FAQ",
-           'datas' => $datas
-        ]);
-    }
-
+    /**
+     * Menampilkan halaman "Lupa Password" (Forget.vue).
+     * Route name: forget.password
+     *
+     * @return \Inertia\Response
+     */
     public function forgetPassword()
     {
-        return inertia('User/Auth/Forget', [
-
-        ]);
+        return inertia('Public/Registration/Forget');
     }
 
-    public function emailforgetPassword(Request $request)
+    /**
+     * Memproses permintaan reset password (mengirim email).
+     * Route name: forget.password.email
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+   public function emailforgetPassword(Request $request)
     {
-
+        // 1. Validasi Input (Menggunakan 'exists' untuk validasi di sisi server)
         $request->validate([
-            'nip' => 'required',
-            'email' => 'required|email', // Tambahkan validasi email
+            'email' => 'required|email|exists:members,email',
         ], [
-            'nip.required' => 'Nip harus diisi',
-            'email.required' => 'Email terdaftar harus diisi',
-            'email.email' => 'Format email tidak valid', // Pesan untuk validasi email
+            'email.required' => 'Alamat email harus diisi.',
+            'email.email' => 'Format email tidak valid.',
+            // Pesan ini akan muncul di bawah input email jika gagal
+            'email.exists' => 'Alamat email tidak terdaftar.', 
         ]);
+        
+        // Catatan: Jika validasi 'exists' gagal, Inertia akan otomatis mengirim error 'email.exists'
+        // ke `form.errors.email` di Vue. 
 
-        $data = Member::where('nip', $request->nip)->first();
+        // 2. Cari Anggota
+        $member = Member::where('email', $request->email)->first();
 
-        // Periksa apakah data ditemukan dan email sesuai dengan yang dimasukkan pengguna
-        if ($data && $data->email === $request->email) {
-             // Generate a UUID for the password code
-             $passwordCode = \Illuminate\Support\Str::uuid()->toString();
-             $data->update([
-                 'code-password' => $passwordCode,
-             ]);
-
-            Mail::to($data->email)->send(new SendEmailForgetPassword($data));
-            return back()->with('success', 'Email telah dikirimkan untuk reset password.');
+        // 3. (Opsional) Cek Keberadaan Anggota secara eksplisit 
+        // Walaupun 'exists' sudah menangani, ini adalah fallback jika Anda menghilangkan 'exists'
+        if (!$member) {
+             // Jika email tidak ditemukan, kirim pesan error ke session
+             // Pesan ini akan ditangkap oleh $page.props.session?.error
+             return redirect()->back()->with('error', 'Alamat email tidak terdaftar.');
         }
 
-        // Jika data tidak ditemukan atau email tidak sesuai
-        return redirect()->back()->with('error','Data tidak sesuai.');
+        // 4. Generate Code dan Update
+        try {
+            $passwordCode = Str::uuid()->toString(); 
+
+            $member->update([
+                'code-password' => $passwordCode,
+            ]);
+
+            // 5. Kirim Email
+            Mail::to($member->email)->send(new SendEmailForgetPassword($member));
+
+            return redirect()->back()->with('success', 'Tautan reset password telah dikirim ke email Anda. Silakan cek kotak masuk/spam Anda.');
+
+        } catch (\Exception $e) {
+            \Log::error('Email reset password failed: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal mengirim email reset password. Silakan coba lagi.');
+        }
     }
+
+
 
     public function IndexforgetPassword(Member $member, $id)
     {
-        $member = $member->where('code-password', $id)->first();
-        if(!$member || $member->{'code-password'} === null)
-        // Jika status registrasi bukan 'confirm', arahkan pengguna kembali atau tampilkan pesan kesalahan
-        return redirect()->route('user.login')->with('error', 'Link telah ditutup.');
+        $member = Member::where('code-password', $id)->first();
 
-        return inertia('User/Auth/Index', [
-            'member' => $member
+        if (!$member || empty($member->{'code-password'})) {
+             // Redirect ke halaman login jika tautan tidak valid atau kedaluwarsa
+             return redirect()->route('user.login')->with('error', 'Tautan reset password tidak valid atau sudah kedaluwarsa.');
+        }
+
+        // Tampilkan Reset.vue
+        return inertia('Public/Registration/Reset', [
+             'member' => [
+                 'email' => $member->email,
+                 'code_password' => $member->{'code-password'}, // Kirim kode sebagai ID untuk proses reset POST
+             ]
         ]);
     }
 
+    /**
+     * Memproses pengiriman password baru.
+     * Route name: user.reset.post
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string  $id (code-password)
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function ResetPassword(Request $request, $id)
     {
+        // 1. Validasi Input Password
         $request->validate([
             'password' => [
                 'required',
                 'min:8',
-                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[A-Za-z\d\W_]+$/',
                 'confirmed',
-                // At least one lowercase, one uppercase, one number, and one special character
             ],
         ],[
-            'password.regex' => 'Password terdiri dari kombinasi huruf kapaital, huruf kecil, angka dan karakter spesial, contoh:A5proSDM@',
             'password.required' => 'Password baru harus diisi',
             'password.confirmed' => 'Konfirmasi password tidak sama',
-            'oldpassword.min:8' => 'Password baru minimal 8 karakter'
+            'password.min' => 'Password baru minimal 8 karakter'
         ]);
 
-        $member = Member::Where('code-password', $id)->first();
+        // 2. Cari Anggota berdasarkan code-password
+        $member = Member::where('code-password', $id)->first();
 
+        if (!$member || empty($member->{'code-password'})) {
+            return redirect()->route('user.login')->with('error', 'Akses tidak sah atau tautan sudah digunakan.');
+        }
+
+        // 3. Update Password dan hapus code-password
         $member->update([
             'password' => Hash::make($request->password),
-            'code-password' => null,
+            'code-password' => null, // Hapus kode setelah berhasil direset
         ]);
 
-        return redirect()->route('user.login')->with('success', 'Password berhasil direset.');
+        return redirect()->route('user.login')->with('success', 'Password berhasil direset. Silakan login dengan password baru Anda.');
     }
-
 }

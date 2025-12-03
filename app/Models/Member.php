@@ -19,6 +19,7 @@ class Member extends Authenticatable
         'contact',
         'status',
         'password',
+        'code-password',
         'group',
     ];
 

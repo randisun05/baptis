@@ -1,10 +1,12 @@
 <?php
 
+use Inertia\Inertia;
 use App\Mail\SendEmailReject;
 use App\Mail\SendEmailRegistration;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ManagementController;
+use App\Http\Controllers\Public\PublicController;
 
 /*
 |--------------------------------------------------------------------------
@@ -115,7 +117,7 @@ Route::get('/user/login', function () {
 Route::post('/user/login', \App\Http\Controllers\User\LoginController::class)->name('user.login');
 
 
-//prefix "admin"
+
 Route::prefix('user')->group(function() {
 
     //middleware "auth"
@@ -133,10 +135,8 @@ Route::prefix('user')->group(function() {
         Route::put('/data-profile/{id}/update-password', [\App\Http\Controllers\User\DataProfileController::class, 'updatePassword'])->name('data-profile.update-password');
 
         //route posts
-        Route::get('/posts/list', [\App\Http\Controllers\User\PostsController::class, 'list'])->name('user.posts.list');
-        Route::get('/posts/list/{post:slug}', [\App\Http\Controllers\User\PostsController::class, 'showlist'])->name('user.posts.showlist');
-        Route::post('/posts/{id}', [\App\Http\Controllers\User\PostsController::class, 'update'])->name('user.posts.update');
-        Route::resource('/posts', \App\Http\Controllers\User\PostsController::class, ['as' => 'user']);
+        Route::get('/posts/list', [\App\Http\Controllers\User\PostsController::class, 'index'])->name('user.posts.index');
+        Route::get('/posts/list/{post:slug}', [\App\Http\Controllers\User\PostsController::class, 'show'])->name('user.posts.show');
 
         //route events
         Route::resource('/events', \App\Http\Controllers\User\EventController::class, ['as' => 'user']);
@@ -145,20 +145,9 @@ Route::prefix('user')->group(function() {
         //route setting
         Route::get('/setting', [App\Http\Controllers\User\LoginController::class, 'setting'])->name('user.setting');
         Route::put('/setting/update', [App\Http\Controllers\User\LoginController::class, 'resetPassword'])->name('user.setting.update');
-
     });
 });
 
-
-//public
-//route registration
-Route::get('/registration', [\App\Http\Controllers\Public\RegistrationController::class, 'create'])->name('registration');
-Route::get('/registration/berhasil', [\App\Http\Controllers\Public\RegistrationController::class, 'berhasil'])->name('registration.berhasil');
-Route::post('/registration/store', [\App\Http\Controllers\Public\RegistrationController::class, 'store'])->name('registration.store');
-Route::get('/registration/success', [\App\Http\Controllers\Public\RegistrationController::class, 'index'])->name('registration.success');
-Route::get('/registration/confirm/{id}/edit', [\App\Http\Controllers\Public\RegistrationController::class, 'edit'])->name('registration.confirm.edit');
-Route::post('/registration/confirm/{id}', [\App\Http\Controllers\Public\RegistrationController::class, 'update'])->name('registration.confirm.update');
-Route::get('/registration/success', [\App\Http\Controllers\Public\RegistrationController::class, 'index'])->name('registration.success');
 
 //other public routes
 Route::get('/warta', [\App\Http\Controllers\Public\PostsController::class, 'index'])->name('posts.index');
@@ -167,22 +156,15 @@ Route::get('/warta/{post:slug}', [\App\Http\Controllers\Public\PostsController::
 Route::get('/kegiatan', [\App\Http\Controllers\Public\EventsController::class, 'index'])->name('events.index');
 Route::get('/kegiatan/{id}', [\App\Http\Controllers\Public\EventsController::class, 'show'])->name('events.show');
 
-// Route::get('/about', [\App\Http\Controllers\Public\PublicController::class, 'about'])->name('about');
-// Route::get('/ketua-umum', [\App\Http\Controllers\Public\PublicController::class, 'ketuaUmum'])->name('ketuaUmum');
-// Route::get('/peraturan-organisasi', [\App\Http\Controllers\Public\PublicController::class, 'peraturanOrganisasi'])->name('peraturanOrganisasi');
-// Route::get('/sejarah', [\App\Http\Controllers\Public\PublicController::class, 'sejarah'])->name('sejarah');
-// Route::get('/struktur-organisasi', [\App\Http\Controllers\Public\PublicController::class, 'strukturOrganisasi'])->name('strukturOrganisasi');
-// Route::get('/visi-misi', [\App\Http\Controllers\Public\PublicController::class, 'visiMisi'])->name('visiMisi');
-Route::get('/kontak-kami', [\App\Http\Controllers\Public\PublicController::class, 'kontak'])->name('kontak');
-
-Route::get('/faq', [\App\Http\Controllers\Public\PublicController::class, 'faq'])->name('faq');
 
 Route::get('/forget-password', [\App\Http\Controllers\Public\PublicController::class, 'forgetPassword'])->name('forget.password');
-Route::get('/forget-password/email', [\App\Http\Controllers\Public\PublicController::class, 'emailforgetPassword'])->name('forget.password.email');
-Route::get('/user/forget-password/{id}', [\App\Http\Controllers\Public\PublicController::class, 'IndexforgetPassword'])->name('forget.password.index');
-Route::put('/user/forget-password/{id}/reset', [\App\Http\Controllers\Public\PublicController::class, 'ResetPassword'])->name('forget.password.reset');
+Route::post('/forget-password/email', [\App\Http\Controllers\Public\PublicController::class, 'emailforgetPassword'])->name('forget.password.email'); 
+
+Route::get('/user/reset-password/{id}', [PublicController::class, 'IndexforgetPassword'])->name('forget.reset.index'); 
+Route::put('/user/reset-password/{id}/reset', [PublicController::class, 'ResetPassword'])->name('forget.reset.post');
 
 
 
-//maintenance route
-Route::get('/maintenance', [\App\Http\Controllers\Public\PublicController::class, 'maintenance'])->name('maintenance');
+
+
+
