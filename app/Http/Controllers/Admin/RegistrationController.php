@@ -99,7 +99,7 @@ class RegistrationController extends Controller
             // Semua field Riwayat dijadikan nullable karena tidak ada historyType yang mengaturnya
             $rules['location'] = 'nullable|string|max:255';
             $rules['dateStart'] = 'nullable|date';
-            $rules['schedule'] = 'nullable|date|max:255';
+            $rules['schedule'] = 'nullable|string|max:255';
             $rules['dateEnd'] = 'nullable|date';
             $rules['participateBefore'] = 'nullable|string|max:255';
             $rules['nameGuru'] = 'nullable|string|max:255';

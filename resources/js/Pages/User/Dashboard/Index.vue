@@ -16,11 +16,8 @@
                         </p>
                     </div>
                     <div class="status-badge">
-                        <span v-if="user.status !== 'confirmed'" class="badge bg-warning text-dark">
-                            <i class="fa fa-exclamation-circle me-1"></i> Menunggu Konfirmasi Data
-                        </span>
-                        <span v-else class="badge bg-success">
-                            <i class="fa fa-check-circle me-1"></i> Akun Terverifikasi
+                        <span :class="getStatusBadgeClass(user.status)">
+                            {{ formatStatus(user.status) }}
                         </span>
                     </div>
                 </div>
@@ -31,15 +28,14 @@
             <div class="col-md-10">
                 <div class="card border-0 shadow card-verification">
                     <div class="card-header bg-danger text-white fw-bold">
-                        <i class="fa fa-user-check me-2"></i> Konfirmasi Data Diri
+                        Konfirmasi Data Diri
                     </div>
                     <div class="card-body p-4">
                         <div class="alert alert-info mb-4">
-                            <i class="fa fa-info-circle me-2"></i>
                             Mohon periksa data di bawah ini. Pastikan semua data lengkap sesuai dengan grup pendaftaran Anda.
                         </div>
 
-                        <h6 class="fw-bold text-primary mb-3"><i class="fa fa-user me-2"></i> Data Akun Utama</h6>
+                        <h6 class="fw-bold text-primary mb-3">Data Akun Utama</h6>
                         <table class="table table-borderless table-sm mb-4">
                             <tbody>
                                 <tr>
@@ -58,7 +54,7 @@
                         </table>
                         
                         <div v-if="user.group == 1">
-                            <h6 class="fw-bold text-primary mt-4 mb-3"><i class="fa fa-book me-2"></i> Data Katekumen, Riwayat & Menikah</h6>
+                            <h6 class="fw-bold text-primary mt-4 mb-3">Data Katekumen, Riwayat & Menikah</h6>
                             
                             <h6 class="text-secondary small fw-bold mt-3">Detail Katekumen</h6>
                             <table class="table table-borderless table-sm mb-3">
@@ -72,40 +68,73 @@
                             <h6 class="text-secondary small fw-bold mt-3">Detail Riwayat</h6>
                             <table class="table table-borderless table-sm mb-3">
                                 <tbody>
-                                    <tr><td class="text-muted fw-bold" width="30%">Nama Guru</td><td>: {{ user.data_riwayat?.nameGuru || 'Belum diisi' }}</td></tr>
-                                    <tr><td class="text-muted fw-bold">Tanggal Mulai</td><td>: {{ user.data_riwayat?.dateStart ? formatDate(user.data_riwayat.dateStart) : '-' }}</td></tr>
-                                    <tr><td class="text-muted fw-bold">Tanggal Selesai</td><td>: {{ user.data_riwayat?.dateEnd ? formatDate(user.data_riwayat.dateEnd) : '-' }}</td></tr>
-                                
+                                    <tr><td class="text-muted fw-bold" width="30%">Agama Awal</td><td>: {{ user.data_riwayat?.religion || '-' }}</td></tr>
+                                    <template v-if="determineHistoryTypeLabel(user.data_riwayat) === 'I. Pelajaran Katolik'">
+                                        <tr><td class="text-muted fw-bold">Tempat / Hari</td><td>: {{ user.data_riwayat?.location || '-' }} / {{ user.data_riwayat?.schedule || '-' }}</td></tr>
+                                        <tr><td class="text-muted fw-bold">Mulai / Selesai</td><td>: {{ formatDateOnly(user.data_riwayat?.dateStart) }} / {{ formatDateOnly(user.data_riwayat?.dateEnd) }}</td></tr>
+                                        <tr><td class="text-muted fw-bold">Guru Pengajar</td><td>: {{ user.data_riwayat?.nameGuru || '-' }}</td></tr>
+                                        <tr><td class="text-muted fw-bold">Pernah Ikut di</td><td>: {{ user.data_riwayat?.participateBefore || '-' }}</td></tr>
+                                    </template>
+                                    <template v-else-if="determineHistoryTypeLabel(user.data_riwayat) === 'II. Baptis Kristen'">
+                                        <tr><td class="text-muted fw-bold">Gereja / Alamat</td><td>: {{ user.data_riwayat?.nameGereja || '-' }} / {{ user.data_riwayat?.addressGereja || '-' }}</td></tr>
+                                        <tr><td class="text-muted fw-bold">Dibaptis Oleh / Tgl</td><td>: {{ user.data_riwayat?.namePriest || '-' }} / {{ formatDateOnly(user.data_riwayat?.dateBaptis) }}</td></tr>
+                                        <tr><td class="text-muted fw-bold">No. Surat Baptis</td><td>: {{ user.data_riwayat?.numberBaptis || '-' }}</td></tr>
+                                    </template>
+                                    <tr v-else><td colspan="2" class="text-muted fst-italic">Riwayat lainnya belum diisi.</td></tr>
                                 </tbody>
                             </table>
 
                             <h6 class="text-secondary small fw-bold mt-3">Detail Menikah</h6>
                             <table class="table table-borderless table-sm mb-3">
                                 <tbody>
-                                    <tr><td class="text-muted fw-bold" width="30%">Status Menikah</td><td>: {{ user.data_menikah?.statusMarried || '-' }}</td></tr>
-                                    <tr><td class="text-muted fw-bold">Nama Pasangan</td><td>: {{ user.data_menikah?.namePasangan || '-' }}</td></tr>
+                                    <tr><td class="text-muted fw-bold" width="30%">Status Menikah</td><td>: {{ user.data_menikah?.statusMarried || 'Belum diisi' }}</td></tr>
+                                    <tr v-if="user.data_menikah?.statusMarried && user.data_menikah.statusMarried !== 'Belum Menikah' && user.data_menikah.statusMarried !== 'Pernah Menikah'">
+                                        <td class="text-muted fw-bold">Nama Pasangan</td><td>: {{ user.data_menikah?.namePasangan || '-' }}</td>
+                                    </tr>
+                                    <tr v-if="user.data_menikah?.statusMarried && user.data_menikah.statusMarried !== 'Menikah Sipil' && user.data_menikah.statusMarried !== 'Belum Menikah' && user.data_menikah.statusMarried !== 'Pernah Menikah'">
+                                        <td class="text-muted fw-bold">Agama Pasangan</td><td>: {{ user.data_menikah?.religionPasangan || '-' }}</td>
+                                    </tr>
+                                    
+                                    <tr v-if="user.data_menikah?.statusMarried === 'Menikah Katolik'">
+                                        <td class="text-muted fw-bold">Gereja / Tanggal</td><td>: {{ user.data_menikah?.placeMarried1 || '-' }} ({{ formatDateOnly(user.data_menikah?.dateMarried1) }})</td>
+                                    </tr>
+                                    <tr v-if="user.data_menikah?.statusMarried === 'Menikah Kristen'">
+                                        <td class="text-muted fw-bold">Tempat / Tanggal</td><td>: {{ user.data_menikah?.placeMarried2 || '-' }} ({{ formatDateOnly(user.data_menikah?.dateMarried2) }})</td>
+                                    </tr>
+                                    <tr v-if="user.data_menikah?.statusMarried === 'Menikah Sipil'">
+                                        <td class="text-muted fw-bold">Kota / Tanggal</td><td>: {{ user.data_menikah?.cityMarried3 || '-' }} ({{ formatDateOnly(user.data_menikah?.dateMarried3) }})</td>
+                                    </tr>
+                                     <tr v-if="user.data_menikah?.statusMarried === 'Menikah Lain'">
+                                        <td class="text-muted fw-bold">Tempat / Tanggal</td><td>: {{ user.data_menikah?.placeMarried4 || '-' }} ({{ formatDateOnly(user.data_menikah?.dateMarried4) }})</td>
+                                    </tr>
+                                    <tr v-if="user.data_menikah?.statusMarried === 'Pernah Menikah'">
+                                        <td class="text-muted fw-bold">Mantan Pasangan</td><td>: {{ user.data_menikah?.nameMantan || '-' }}</td>
+                                    </tr>
+                                    <tr v-if="user.data_menikah?.statusMarried === 'Pernikahan Sipil' || user.data_menikah?.statusMarried === 'Pernah Menikah'">
+                                        <td class="text-muted fw-bold">Status Berakhir</td><td>: {{ user.data_menikah?.statusMantan || '-' }} (Tahun: {{ user.data_menikah?.yearMantan || '-' }})</td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
 
                         <div v-else-if="user.group == 0">
-                            <h6 class="fw-bold text-primary mt-4 mb-3"><i class="fa fa-hands-holding-child me-2"></i> Data Sakramen Baptis Bayi</h6>
+                            <h6 class="fw-bold text-primary mt-4 mb-3">Data Sakramen Baptis Bayi</h6>
                             
                             <h6 class="text-secondary small fw-bold mt-3">Detail Baptis</h6>
                             <table class="table table-borderless table-sm mb-3">
                                 <tbody>
                                     <tr><td class="text-muted fw-bold" width="30%">Nama Wali Baptis</td><td>: {{ user.data_baptis?.nameWali || 'Belum diisi' }}</td></tr>
                                     <tr><td class="text-muted fw-bold">Nama Pastoor</td><td>: {{ user.data_baptis?.namePastoor || '-' }}</td></tr>
-                                    <tr><td class="text-muted fw-bold">Status</td><td>: {{ user.data_baptis?.status || '-' }}</td></tr>
+                                    <tr><td class="text-muted fw-bold">Status Wali Baptis</td><td>: {{ user.data_baptis?.status || '-' }}</td></tr>
                                 </tbody>
                             </table>
                         </div>
 
-                        <h6 class="fw-bold text-primary mt-4 mb-3"><i class="fa fa-users me-2"></i> Data Anggota Keluarga</h6>
+                        <h6 class="fw-bold text-primary mt-4 mb-3">Data Anggota Keluarga</h6>
                         <div v-if="user.data_keluarga && user.data_keluarga.length > 0">
                             <div v-for="(family, fIndex) in user.data_keluarga" :key="fIndex" class="card card-body bg-light mb-2 p-3">
                                 <span class="fw-bold text-dark">{{ family.name }} ({{ family.relation }})</span>
-                                <small class="text-muted">{{ family.address }} | Kontak: {{ family.contact }}</small>
+                                <small class="text-muted">{{ family.address || 'Alamat tidak diisi' }} | Kontak: {{ family.contact || '-' }} | Agama: {{ family.religion || '-' }}</small>
                             </div>
                         </div>
                         <div v-else class="alert alert-warning small">Data keluarga belum diisi.</div>
@@ -114,26 +143,29 @@
                         <div class="d-grid gap-2 mt-4">
                             <button @click="verifyData" class="btn btn-primary btn-lg shadow fw-bold" :disabled="processing">
                                 <span v-if="processing">
-                                    <i class="fa fa-spinner fa-spin me-2"></i> Memproses...
+                                    Memproses...
                                 </span>
                                 <span v-else>
-                                    <i class="fa fa-check-double me-2"></i> Data Sudah Benar, Lanjutkan
+                                    Data Sudah Benar, Lanjutkan
                                 </span>
                             </button>
 
-                            <button class="btn btn-danger btn-lg shadow fw-bold mb-3" :disabled="processing" disabled>
+                            <div 
+                                class="btn btn-danger btn-lg shadow fw-bold mb-3 btn-danger-static" 
+                                :class="{ 'opacity-50': processing }"
+                            >
                                 <span v-if="processing">
-                                    <i class="fa fa-spinner fa-spin me-2"></i> Memproses...
+                                    Memproses...
                                 </span>
                                 <span v-else>
-                                    <i class="fa fa-check-double me-2"></i> Jika Ada Perbaikan Data Hubungi Gereja
+                                    Jika Ada Perbaikan Data Hubungi Gereja
                                 </span>
-                            </button>
+                            </div>
                             
                             <Link :href="'/logout'" method="post" as="button" class="btn btn-outline-secondary btn-lg shadow fw-bold">
-                                <i class="fa fa-sign-out-alt me-2"></i> Logout
+                                Logout
                             </Link>
-                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -152,21 +184,18 @@
                                     <small class="text-muted">Status: {{ detail.status }}</small>
                                 </div>
                                 <h5 class="fw-bold text-dark">{{ detail.event.title }}</h5>
-                                <p class="text-muted small mb-2"><i class="fa fa-map-marker-alt me-1"></i> {{ detail.event.place }}</p>
+                                <p class="text-muted small mb-2">{{ detail.event.place }}</p>
 
                                 <div v-if="detail.event.body" class="mb-3 p-3 border-start border-3 bg-light">
                                     <p class="small text-dark fw-bold mb-1">Deskripsi Kegiatan:</p>
                                     <p class="small mb-0 text-secondary" v-html="truncateText(detail.event.body, 150)"></p>
                                 </div>
-                                
-                                
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <div v-else class="text-center py-5 text-muted">
-                    <img src="https://cdn-icons-png.flaticon.com/512/7486/7486744.png" alt="Empty" width="100" class="mb-3 opacity-50">
                     <p>Anda belum terdaftar di kegiatan manapun.</p>
                 </div>
             </div>
@@ -179,7 +208,6 @@
 import { ref } from 'vue';
 import { Head, Link } from '@inertiajs/inertia-vue3';
 import { Inertia } from '@inertiajs/inertia';
-// import LayoutWebsite from '../../../Layouts/User.vue'; // BARIS INI DIHAPUS UNTUK MENGHINDARI KONFLIK IMPORT
 import Swal from 'sweetalert2';
 
 const props = defineProps({
@@ -190,7 +218,72 @@ const props = defineProps({
 
 const processing = ref(false);
 
-// Helper: Format Tanggal
+// --- START: Helper Functions dari Kode Admin View ---
+
+// Fungsi untuk menentukan tipe riwayat (sesuai logika Edit.vue di kode Admin)
+const determineHistoryTypeLabel = (dataRiwayat) => {
+    if (!dataRiwayat) return 'Riwayat Lain';
+    // Cek Riwayat Pelajaran Katolik (I)
+    if (dataRiwayat.location || dataRiwayat.schedule || dataRiwayat.dateStart || dataRiwayat.nameGuru || dataRiwayat.participateBefore) {
+        return 'I. Pelajaran Katolik';
+    }
+    // Cek Riwayat Baptis Kristen (II)
+    if (dataRiwayat.nameGereja || dataRiwayat.namePriest || dataRiwayat.dateBaptis || dataRiwayat.numberBaptis) {
+        return 'II. Baptis Kristen';
+    }
+    return 'Riwayat Lain';
+};
+
+// Fungsi helper untuk badge status (Disalin dari kode Admin)
+const getStatusBadgeClass = (status) => {
+    switch (status) {
+        case 'verified':
+        case 'lunas': 
+        case 'confirmed': 
+            return 'badge bg-success';
+        case 'confirm':
+        case 'perlu_verifikasi':
+            return 'badge bg-warning text-dark';
+        case 'pending':
+            return 'badge bg-secondary';
+        default:
+            return 'badge bg-light text-muted';
+    }
+};
+
+// Fungsi helper untuk format status (Disalin dari kode Admin)
+const formatStatus = (status) => {
+    switch (status) {
+        case 'verified':
+        case 'confirmed': 
+            return 'Terverifikasi';
+        case 'confirm':
+            return 'Menunggu Konfirmasi';
+        case 'pending':
+            return 'Tertunda';
+        case 'lunas':
+            return 'Lunas';
+        default:
+            return status;
+    }
+};
+
+// Helper: Format Tanggal Pendek (untuk Data Riwayat/Menikah) - Disesuaikan agar outputnya DD-MM-YYYY
+const formatDateOnly = (dateString) => {
+    if (!dateString) return '-';
+    try {
+        // Ambil hanya bagian tanggal YYYY-MM-DD
+        const datePart = dateString.substring(0, 10);
+        // Ubah menjadi format DD-MM-YYYY
+        const [year, month, day] = datePart.split('-');
+        return `${day}-${month}-${year}`;
+    } catch (e) {
+        return '-';
+    }
+};
+// --- END: Helper Functions dari Kode Admin View ---
+
+// Helper: Format Tanggal Lengkap (untuk Jadwal Kegiatan)
 const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     return new Date(dateString).toLocaleDateString('id-ID', options);
@@ -226,8 +319,6 @@ const verifyData = () => {
                 onStart: () => processing.value = true,
                 onFinish: () => processing.value = false,
                 onSuccess: () => {
-                    // Setelah sukses, Inertia akan melakukan full reload, 
-                    // dan prop 'user.status' akan diperbarui, memicu fungsi layout di bawah.
                     Swal.fire('Berhasil', 'Data terverifikasi. Menampilkan jadwal...', 'success');
                 }
             });
@@ -237,17 +328,14 @@ const verifyData = () => {
 </script>
 
 <script>
-// Kunci Perubahan: Import Layout dan h di sini
 import LayoutWebsite from '../../../Layouts/User.vue';
 import { h } from 'vue'; 
 
-// Kunci Perubahan: Gunakan fungsi layout untuk mengirim prop ke Layout
 export default { 
     layout: (h, page) => {
-        // Cek status user dari props yang dikirim server
+        // Pastikan pengecekan status di sini menggunakan user.status
         const isConfirmed = page.props.user.status === 'confirmed';
         
-        // Kirim properti showNavbar ke Layout berdasarkan status user
         return h(LayoutWebsite, { 
             showNavbar: isConfirmed 
         }, [page]);
@@ -256,7 +344,7 @@ export default {
 </script>
 
 <style scoped>
-/* CSS dipertahankan */
+/* (CSS ASLI DIPERTAHANKAN) */
 .fade-in { animation: fadeIn 0.8s ease-in-out; }
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(20px); }
@@ -272,11 +360,41 @@ export default {
     position: absolute; left: -28px; top: 15px; width: 16px; height: 16px; border-radius: 50%;
     background: #fff; border: 4px solid #0d6efd; z-index: 1; box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.2);
 }
-.timeline-content { border-radius: 10px; transition: transform 0.3s ease, box-shadow 0.3s ease; }
-.timeline-content:hover { transform: translateY(-3px); box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important; }
+.timeline-content { border-radius: 10px; transition: none; }
+
 @media (max-width: 768px) {
     .timeline-container { padding-left: 20px; }
     .timeline-container::before { left: 2px; }
     .timeline-marker { left: -23px; }
 }
+
+/* Tambahkan gaya badge yang digunakan di kode Admin jika belum ada */
+.bg-success { background-color: #198754 !important; }
+.bg-warning { background-color: #ffc107 !important; }
+.text-dark { color: #212529 !important; }
+.bg-secondary { background-color: #6c757d !important; }
+.bg-light { background-color: #f8f9fa !important; }
+
+/* Tambahan untuk menonaktifkan hover pada tombol info/perbaikan */
+.btn-danger-static {
+    /* Mencegah kursor klik */
+    cursor: default !important; 
+    /* Menghilangkan efek hover/active dari Bootstrap */
+    background-color: #dc3545 !important; /* Warna dasar danger */
+    border-color: #dc3545 !important;
+    box-shadow: 0 .125rem .25rem rgba(0,0,0,.075) !important; /* Mempertahankan shadow */
+}
+
+/* Mengunci warna background dan shadow untuk state hover, focus, dan active */
+.btn-danger-static:hover,
+.btn-danger-static:focus,
+.btn-danger-static:active {
+    background-color: #dc3545 !important;
+    border-color: #dc3545 !important;
+    box-shadow: 0 .125rem .25rem rgba(0,0,0,.075) !important;
+    /* Tambahkan !important untuk memastikan override gaya Bootstrap */
+}
+
+/* Menambahkan kembali kelas Bootstrap opacity-50 untuk kondisi processing (disabled look) */
+.opacity-50 { opacity: 0.65; }
 </style>

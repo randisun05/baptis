@@ -193,7 +193,7 @@
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label for="schedule" class="form-label small fw-bold">Hari (Opsional)</label>
-                                        <input type="date" class="form-control input-tegas" v-model="form.schedule" id="schedule">
+                                        <input type="string" class="form-control input-tegas" v-model="form.schedule" id="schedule">
                                     </div>
                                 </div>
                                 <div class="row">

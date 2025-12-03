@@ -10,32 +10,35 @@
                         <h2 class="fs-3 fw-bold text-navy mb-0">Detail Data Profil: {{ user.name }}</h2>
                         <p class="text-muted small mb-0">
                             Grup Katekese: 
-                            <span class="badge bg-info text-dark ms-1 fw-bold">{{ user.group == 1 ? 'Katekumen' : (user.group == 0 ? 'Sakramen Baptis Bayi' : 'Lainnya') }}</span>
+                            <span class="badge bg-info text-dark ms-1 fw-bold">{{ getGroupName(user.group) }}</span>
                         </p>
                     </div>
                     <div>
                         <p class="text-muted mb-0 small text-end">
                             Status Akun: 
-                            <span :class="{'text-success': user.status === 'confirmed', 'text-warning': user.status !== 'confirmed'}" class="fw-bold">
-                                {{ user.status === 'confirmed' ? 'Terverifikasi' : 'Menunggu Konfirmasi' }}
+                            <span :class="getStatusBadgeClass(user.status)" class="fw-bold">
+                                {{ formatStatus(user.status) }}
                             </span>
                         </p>
                     </div>
                 </div>
 
-                <!-- 1. INFORMASI DATA DIRI UTAMA -->
                 <div class="card shadow-sm border-0 rounded-4 mb-4">
                     <div class="card-body p-4">
                         <h5 class="fw-bold text-navy mb-4 border-bottom pb-2"><i class="fa fa-user me-2"></i> 1. Informasi Data Diri Utama</h5>
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label class="form-label fw-bold text-navy">Nama Lengkapp</label>
+                                <label class="form-label fw-bold text-navy">Nama Lengkap</label>
                                 <p class="form-control-static detail-value">{{ user.name }}</p>
                             </div>
                             <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold text-navy">Nomor Registrasi</label>
+                                <p class="form-control-static detail-value">{{ user.number || '-' }}</p>
+                            </div>
+                            <div class="col-md-6 mb-3">
                                 <label class="form-label fw-bold text-navy">Email</label>
-                                <p class="form-control-static detail-value">{{ user.email }}</p>
+                                <p class="form-control-static detail-value">{{ user.email || '-' }}</p>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label fw-bold text-navy">No. Telepon</label>
@@ -45,7 +48,6 @@
                     </div>
                 </div>
 
-                <!-- BAGIAN TAMBAHAN: GANTI PASSWORD -->
                 <div class="card shadow-sm border-0 rounded-4 mb-4 fade-in">
                     <div class="card-body p-4">
                         <h5 class="fw-bold text-navy mb-4 border-bottom pb-2"><i class="fa fa-lock me-2"></i> Ganti Password Akun</h5>
@@ -56,13 +58,11 @@
                             </p>
 
                             <div class="row">
-                                <!-- Password Baru -->
                                 <div class="col-md-6 mb-3">
                                     <label for="password" class="form-label fw-bold text-navy">Password Baru</label>
                                     <div class="input-group shadow-sm rounded-pill overflow-hidden">
                                         <input :type="passwordFieldType.password" class="form-control border-0" id="password" v-model="form.password" placeholder="Minimal 8 karakter">
                                         <button type="button" class="btn btn-outline-secondary border-0" @click="togglePassword('password')">
-                                            <!-- Ikon diperbaiki ke Font Awesome (fa) -->
                                             <i class="fa" :class="passwordFieldType.password === 'password' ? 'bi-eye' : 'bi-eye-slash'"></i>
                                         </button>
                                     </div>
@@ -71,13 +71,11 @@
                                     </div>
                                 </div>
 
-                                <!-- Konfirmasi Password -->
                                 <div class="col-md-6 mb-4">
                                     <label for="password_confirmation" class="form-label fw-bold text-navy">Ketik Ulang Password</label>
                                     <div class="input-group shadow-sm rounded-pill overflow-hidden">
                                         <input :type="passwordFieldType.password_confirmation" class="form-control border-0" id="password_confirmation" v-model="form.password_confirmation" placeholder="Ulangi Password Baru">
                                         <button type="button" class="btn btn-outline-secondary border-0" @click="togglePassword('password_confirmation')">
-                                            <!-- Ikon diperbaiki ke Font Awesome (fa) -->
                                             <i class="fa" :class="passwordFieldType.password_confirmation === 'password' ? 'bi-eye' : 'bi-eye-slash'"></i>
                                         </button>
                                     </div>
@@ -96,8 +94,7 @@
                     </div>
                 </div>
 
-                <!-- 2. DATA KHUSUS KATEKUMEN/BAPTIS BAYI -->
-                <div v-if="user.group == 1">
+                <div v-if="user.group == 1 && user.data_katekumen">
                     <div class="card shadow-sm border-0 rounded-4 mb-4 fade-in">
                         <div class="card-body p-4">
                             <h5 class="fw-bold text-navy mb-4 border-bottom pb-2"><i class="fa fa-book me-2"></i> 2. Data Khusus Katekumen</h5>
@@ -106,50 +103,109 @@
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label fw-bold text-navy">Pendidikan Terakhir</label>
-                                    <p class="form-control-static detail-value">{{ user.data_katekumen?.education || '-' }}</p>
+                                    <p class="form-control-static detail-value">{{ user.data_katekumen.education || '-' }}</p>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label fw-bold text-navy">Nama Penjamin</label>
-                                    <p class="form-control-static detail-value">{{ user.data_katekumen?.namePenjamin || '-' }}</p>
+                                    <p class="form-control-static detail-value">{{ user.data_katekumen.namePenjamin || '-' }}</p>
                                 </div>
                                 <div class="col-12 mb-3">
                                     <label class="form-label fw-bold text-navy">Alamat</label>
-                                    <p class="form-control-static detail-value">{{ user.data_katekumen?.address || 'Belum diisi' }}</p>
+                                    <p class="form-control-static detail-value">{{ user.data_katekumen.address || 'Belum diisi' }}</p>
                                 </div>
                             </div>
                             
-                            <h6 class="fw-bold text-secondary mb-3 pt-3 border-top">Detail Riwayat</h6>
-                            <div class="row">
+                            <h6 class="fw-bold text-secondary mb-3 pt-3 border-top">Detail Riwayat ({{ determineHistoryTypeLabel(user.data_riwayat) }})</h6>
+                            <div v-if="user.data_riwayat" class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label fw-bold text-navy">Nama Guru</label>
-                                    <p class="form-control-static detail-value">{{ user.data_riwayat?.nameGuru || 'Belum diisi' }}</p>
+                                    <label class="form-label fw-bold text-navy">Agama</label>
+                                    <p class="form-control-static detail-value">{{ user.data_riwayat.religion || '-' }}</p>
                                 </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label fw-bold text-navy">Tanggal Mulai</label>
-                                    <p class="form-control-static detail-value">{{ user.data_riwayat?.dateStart ? formatDate(user.data_riwayat.dateStart) : '-' }}</p>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label fw-bold text-navy">Tanggal Selesai</label>
-                                    <p class="form-control-static detail-value">{{ user.data_riwayat?.dateEnd ? formatDate(user.data_riwayat.dateEnd) : '-' }}</p>
-                                </div>
+                                <template v-if="determineHistoryTypeLabel(user.data_riwayat) === 'I. Pelajaran Katolik'">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-bold text-navy">Lokasi / Hari</label>
+                                        <p class="form-control-static detail-value">{{ user.data_riwayat.location || '-' }} / {{ user.data_riwayat.schedule || '-' }}</p>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-bold text-navy">Guru Pengajar</label>
+                                        <p class="form-control-static detail-value">{{ user.data_riwayat.nameGuru || '-' }}</p>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-bold text-navy">Mulai / Selesai</label>
+                                        <p class="form-control-static detail-value">{{ formatDate(user.data_riwayat.dateStart) || '-' }} / {{ formatDate(user.data_riwayat.dateEnd) || '-' }}</p>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-bold text-navy">Pernah Ikut di</label>
+                                        <p class="form-control-static detail-value">{{ user.data_riwayat.participateBefore || '-' }}</p>
+                                    </div>
+                                </template>
+                                <template v-else-if="determineHistoryTypeLabel(user.data_riwayat) === 'II. Baptis Kristen'">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-bold text-navy">Gereja / Alamat</label>
+                                        <p class="form-control-static detail-value">{{ user.data_riwayat.nameGereja || '-' }} / {{ user.data_riwayat.addressGereja || '-' }}</p>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-bold text-navy">Dibaptis Oleh / Tgl</label>
+                                        <p class="form-control-static detail-value">{{ user.data_riwayat.namePriest || '-' }} / {{ formatDate(user.data_riwayat.dateBaptis) || '-' }}</p>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-bold text-navy">No. Surat Baptis</label>
+                                        <p class="form-control-static detail-value">{{ user.data_riwayat.numberBaptis || '-' }}</p>
+                                    </div>
+                                </template>
+                                <template v-else>
+                                    <div class="col-12">
+                                        <p class="text-muted fst-italic detail-value">Tidak ada detail riwayat yang terisi.</p>
+                                    </div>
+                                </template>
                             </div>
-                            
-                            <h6 class="fw-bold text-secondary mb-3 pt-3 border-top">Detail Menikah</h6>
+                            <div v-else class="col-12">
+                                <p class="text-muted fst-italic detail-value">Data Riwayat Agama belum diisi.</p>
+                            </div>
+
+
+                            <h6 class="fw-bold text-secondary mb-3 pt-3 border-top">Detail Status Pernikahan</h6>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label fw-bold text-navy">Status Menikah</label>
-                                    <p class="form-control-static detail-value">{{ user.data_menikah?.statusMarried || '-' }}</p>
+                                    <label class="form-label fw-bold text-navy">Status Pernikahan</label>
+                                    <p class="form-control-static detail-value">{{ user.data_menikah?.statusMarried || 'Belum diisi' }}</p>
                                 </div>
-                                <div class="col-md-6 mb-3">
+                                <div v-if="user.data_menikah && user.data_menikah.statusMarried && user.data_menikah.statusMarried !== 'Belum Menikah' && user.data_menikah.statusMarried !== 'Pernah Menikah'" class="col-md-6 mb-3">
                                     <label class="form-label fw-bold text-navy">Nama Pasangan</label>
-                                    <p class="form-control-static detail-value">{{ user.data_menikah?.namePasangan || '-' }}</p>
+                                    <p class="form-control-static detail-value">{{ user.data_menikah.namePasangan || '-' }}</p>
                                 </div>
                             </div>
+                            <div v-if="user.data_menikah && user.data_menikah.statusMarried && user.data_menikah.statusMarried !== 'Belum Menikah'" class="p-3 border rounded bg-light-subtle mt-3">
+                                <h6 class="fw-bold mb-3 text-secondary border-bottom pb-2">Detail {{ user.data_menikah.statusMarried }}</h6>
+                                
+                                <div v-if="user.data_menikah.statusMarried === 'Menikah Katolik'">
+                                    <p class="mb-1 small"><strong class="text-muted me-2" style="width: 150px; display: inline-block;">Gereja/Kota:</strong> {{ user.data_menikah.placeMarried1 || '-' }} / {{ user.data_menikah.cityMarried1 || '-' }}</p>
+                                    <p class="mb-1 small"><strong class="text-muted me-2" style="width: 150px; display: inline-block;">Tanggal Nikah:</strong> {{ formatDate(user.data_menikah.dateMarried1) || '-' }}</p>
+                                    <p class="mb-1 small"><strong class="text-muted me-2" style="width: 150px; display: inline-block;">No. Surat:</strong> {{ user.data_menikah.numberMarried1 || '-' }}</p>
+                                </div>
+                                <div v-else-if="user.data_menikah.statusMarried === 'Menikah Kristen'">
+                                    <p class="mb-1 small"><strong class="text-muted me-2" style="width: 150px; display: inline-block;">Tempat/Kota:</strong> {{ user.data_menikah.placeMarried2 || '-' }} / {{ user.data_menikah.cityMarried2 || '-' }}</p>
+                                    <p class="mb-1 small"><strong class="text-muted me-2" style="width: 150px; display: inline-block;">Tanggal Nikah:</strong> {{ formatDate(user.data_menikah.dateMarried2) || '-' }}</p>
+                                    <p class="mb-1 small"><strong class="text-muted me-2" style="width: 150px; display: inline-block;">No. Surat:</strong> {{ user.data_menikah.numberMarried2 || '-' }}</p>
+                                </div>
+                                <div v-else-if="user.data_menikah.statusMarried === 'Menikah Sipil'">
+                                    <p class="mb-1 small"><strong class="text-muted me-2" style="width: 150px; display: inline-block;">Kota:</strong> {{ user.data_menikah.cityMarried3 || '-' }}</p>
+                                    <p class="mb-1 small"><strong class="text-muted me-2" style="width: 150px; display: inline-block;">Tanggal Nikah:</strong> {{ formatDate(user.data_menikah.dateMarried3) || '-' }}</p>
+                                    <p class="mb-1 small"><strong class="text-muted me-2" style="width: 150px; display: inline-block;">No. Surat:</strong> {{ user.data_menikah.numberMarried3 || '-' }}</p>
+                                </div>
+                                <div v-else-if="user.data_menikah.statusMarried === 'Pernah Menikah'">
+                                    <p class="mb-1 small"><strong class="text-muted me-2" style="width: 150px; display: inline-block;">Mantan Pasangan:</strong> {{ user.data_menikah.nameMantan || '-' }}</p>
+                                    <p class="mb-1 small"><strong class="text-muted me-2" style="width: 150px; display: inline-block;">Status Berakhir:</strong> {{ user.data_menikah.statusMantan || '-' }}</p>
+                                    <p class="mb-1 small"><strong class="text-muted me-2" style="width: 150px; display: inline-block;">Tahun Berakhir:</strong> {{ user.data_menikah.yearMantan || '-' }}</p>
+                                </div>
+                                <div v-else class="text-muted fst-italic small mt-3">Detail pernikahan lanjutan tidak tersedia.</div>
+                            </div>
+
                         </div>
                     </div>
                 </div>
 
-                <div v-else-if="user.group == 0">
+                <div v-else-if="user.group == 0 && user.data_baptis">
                     <div class="card shadow-sm border-0 rounded-4 mb-4 fade-in">
                         <div class="card-body p-4">
                             <h5 class="fw-bold text-navy mb-4 border-bottom pb-2"><i class="fa fa-hands-holding-child me-2"></i> 2. Data Khusus Baptis Bayi</h5>
@@ -158,22 +214,28 @@
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label fw-bold text-navy">Nama Calon Baptis</label>
-                                    <p class="form-control-static detail-value">{{ user.data_baptis?.name || 'Belum diisi' }}</p>
+                                    <p class="form-control-static detail-value">{{ user.data_baptis.name || user.name || 'Belum diisi' }}</p>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold text-navy">Nama Wali Baptis</label>
+                                    <p class="form-control-static detail-value">{{ user.data_baptis.nameWali || '-' }}</p>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold text-navy">Status Wali Baptis</label>
+                                    <p class="form-control-static detail-value">{{ user.data_baptis.baptisStatus || '-' }}</p>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label fw-bold text-navy">Nama Pastoor</label>
-                                    <p class="form-control-static detail-value">{{ user.data_baptis?.namePastoor || '-' }}</p>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label fw-bold text-navy">Status</label>
-                                    <p class="form-control-static detail-value">{{ user.data_baptis?.status || '-' }}</p>
+                                    <p class="form-control-static detail-value">{{ user.data_baptis.namePastoor || '-' }}</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+                <div v-else-if="user.group != 0 && user.group != 1" class="text-center mt-4">
+                    <p class="text-muted fst-italic">Tidak ada data khusus kelompok untuk peserta ini.</p>
+                </div>
                 
-                <!-- 3. DATA ANGGOTA KELUARGA -->
                 <div class="card shadow-sm border-0 rounded-4 mb-4">
                     <div class="card-body p-4">
                         <h5 class="fw-bold text-navy mb-4 border-bottom pb-2"><i class="fa fa-users me-2"></i> 3. Data Anggota Keluarga</h5>
@@ -182,7 +244,7 @@
                             <div v-for="(family, fIndex) in user.data_keluarga" :key="fIndex" class="col-md-6 mb-3">
                                 <div class="card card-body bg-light h-100 p-3 shadow-sm border-0">
                                     <span class="fw-bold text-dark">{{ family.name }}</span>
-                                    <small class="text-secondary mb-2">Hubungan: {{ family.relation }} | Agama: {{ family.religion || '-' }}</small>
+                                    <small class="text-secondary mb-2">Hubungan: {{ family.relation || '-' }} | Agama: {{ family.religion || '-' }}</small>
                                     <small class="text-muted">Kontak: {{ family.contact || '-' }}</small>
                                     <small class="text-muted">Alamat: {{ family.address || 'Alamat tidak tersedia' }}</small>
                                 </div>
@@ -205,72 +267,129 @@
 <script setup>
 import { Head } from '@inertiajs/inertia-vue3';
 import LayoutWebsite from '../../../Layouts/User.vue';
-// Tambahkan impor yang diperlukan untuk fungsionalitas ganti password
-import { reactive, ref } from 'vue'; // ref untuk isSubmitting
-import { Inertia } from '@inertiajs/inertia'; // Digunakan untuk mengirim data form
-import Swal from 'sweetalert2'; // Digunakan untuk notifikasi
+import { reactive, ref } from 'vue';
+import { Inertia } from '@inertiajs/inertia';
+import Swal from 'sweetalert2'; 
 
-// PROPS yang diterima dari ProfileDetailController
+// PROPS yang diterima
 const props = defineProps({
     registrationData: {
         type: Object,
         default: () => ({})
     },
-    user: {
+    user: { // Prop 'user' diasumsikan membawa data utama dan relasi yang sama dengan 'data' di kode pertama
         type: Object,
         required: true
     },
-    // Tambahkan props errors untuk menampilkan validasi (diperlukan dari controller)
     errors: {
         type: Object,
         default: () => ({})
     }
 });
 
-// Helper: Format Tanggal (diambil dari DashboardController)
+// =================================================================
+// === FUNGSI HELPER YANG DIADAPTASI DARI KODE PERTAMA =============
+// =================================================================
+
+// Helper: Format Tanggal (diambil dari kode awal)
 const formatDate = (dateString) => {
-    if (!dateString) return '-';
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    if (!dateString) return null;
     try {
-        const date = new Date(dateString);
-        if (dateString.length === 10) {
-            return new Date(dateString + 'T00:00:00Z').toLocaleDateString('id-ID', options);
+        if (dateString && dateString.length > 10 && !/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+            return new Date(dateString).toISOString().slice(0, 10);
         }
-        return date.toLocaleDateString('id-ID', options);
+        if (dateString) {
+            return dateString.substring(0, 10); // Pastikan hanya ambil bagian tanggal
+        }
+        return null;
     } catch (e) {
-        return dateString;
+        return dateString; // Kembalikan string asli jika gagal
     }
 };
 
 
+// Fungsi untuk menentukan tipe riwayat
+const determineHistoryTypeLabel = (dataRiwayat) => {
+    if (!dataRiwayat) return 'Tidak Ada Riwayat';
+    // Cek Riwayat Pelajaran Katolik (I) - Menggunakan field yang relevan
+    if (dataRiwayat.location || dataRiwayat.schedule || dataRiwayat.dateStart || dataRiwayat.nameGuru || dataRiwayat.participateBefore) {
+        return 'I. Pelajaran Katolik';
+    }
+    // Cek Riwayat Baptis Kristen (II) - Menggunakan field yang relevan
+    if (dataRiwayat.nameGereja || dataRiwayat.namePriest || dataRiwayat.dateBaptis || dataRiwayat.numberBaptis) {
+        return 'II. Baptis Kristen';
+    }
+    
+    return 'Riwayat Lain';
+};
 
-// Form state untuk password
+// Fungsi helper Kelompok (dari kode pertama)
+const getGroupName = (groupValue) => {
+    if (groupValue === 1) {
+        return 'Katekumen';
+    } else if (groupValue === 0) {
+        return 'Sakramen Baptis Bayi';
+    }
+    return 'Tidak Ditentukan';
+};
+
+// Fungsi helper untuk badge status
+const getStatusBadgeClass = (status) => {
+    switch (status) {
+        case 'verified':
+        case 'lunas':
+            return 'text-success'; 
+        case 'confirm':
+        case 'perlu_verifikasi':
+            return 'text-warning';
+        case 'pending':
+            return 'text-secondary';
+        default:
+            return 'text-muted';
+    }
+};
+
+// Fungsi helper untuk format status
+const formatStatus = (status) => {
+    switch (status) {
+        case 'verified':
+            return 'Terverifikasi';
+        case 'confirm':
+            return 'Menunggu Konfirmasi';
+        case 'pending':
+            return 'Tertunda';
+        case 'lunas':
+            return 'Lunas';
+        default:
+            return status;
+    }
+};
+
+// =================================================================
+// === LOGIKA GANTI PASSWORD (TIDAK BERUBAH) =======================
+// =================================================================
+
 const form = reactive({
     password: '',
     password_confirmation: '',
 });
 
-// Objek untuk tipe input password
 const passwordFieldType = reactive({
     password: 'password',
     password_confirmation: 'password'
 });
 
-// Status pengiriman form
 const isSubmitting = ref(false);
 
-// Fungsi untuk toggle tipe input password
 const togglePassword = (fieldType) => {
     if (fieldType in passwordFieldType) {
         passwordFieldType[fieldType] = passwordFieldType[fieldType] === 'password' ? 'text' : 'password';
     }
 };
 
-// Metode submit untuk ganti password (Diselaraskan dengan route: /user/data-profile/{id}/update-password)
 const submitPasswordChange = () => {
     if (isSubmitting.value) return;
 
-    // Klien-side check untuk memastikan password match (sesuai referensi)
     if ((form.password || form.password_confirmation) && form.password !== form.password_confirmation) {
         Swal.fire({
             title: "Gagal!",
@@ -293,9 +412,8 @@ const submitPasswordChange = () => {
 
     isSubmitting.value = true;
 
-    // *** PERBAIKAN ROUTE URL DI SINI ***
     Inertia.put(
-        `/user/data-profile/${props.user.id}/update-password`, // Menggunakan path yang sesuai dengan Canvas route
+        `/user/data-profile/${props.user.id}/update-password`,
         {
             password: form.password,
             password_confirmation: form.password_confirmation,
@@ -304,7 +422,6 @@ const submitPasswordChange = () => {
             preserveScroll: true,
             onSuccess: () => {
                 isSubmitting.value = false;
-                // Bersihkan kolom password
                 form.password = '';
                 form.password_confirmation = '';
                 
@@ -319,14 +436,13 @@ const submitPasswordChange = () => {
             },
             onError: (errors) => {
                 isSubmitting.value = false;
-                // SweetAlert untuk error umum (jika validasi server gagal)
                 if (Object.keys(errors).length > 0) {
                      Swal.fire({
-                        title: "Gagal Update",
-                        text: "Terdapat kesalahan validasi. Silakan periksa kolom.",
-                        icon: "error",
-                        confirmButtonColor: '#003366',
-                    });
+                         title: "Gagal Update",
+                         text: "Terdapat kesalahan validasi. Silakan periksa kolom.",
+                         icon: "error",
+                         confirmButtonColor: '#003366',
+                     });
                 }
             },
             onFinish: () => {
@@ -339,9 +455,7 @@ const submitPasswordChange = () => {
 
 <script>
 export default { 
-    // Menggunakan Layout yang sama seperti Dashboard
     layout: LayoutWebsite,
-    // Menambahkan nama route ke sini agar bisa diakses di template
     methods: {
         route(name) {
             return window.route(name);

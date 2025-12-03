@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('number')->nullable();
             $table->string('religion')->nullable();
             $table->string('location')->nullable();
-            $table->date('schedule')->nullable();
+            $table->string('schedule')->nullable();
             $table->date('dateStart')->nullable();
             $table->date('dateEnd')->nullable();
             $table->string('participateBefore')->nullable();
