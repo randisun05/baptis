@@ -95,28 +95,28 @@ class RegistrationController extends Controller
             $rules['namePenjamin'] = 'required|string|max:255';
 
             // DataRiwayat (Disederhanakan: religion wajib, sisanya nullable)
-            $rules['religion'] = 'required|string|max:50'; 
-            
+            $rules['religion'] = 'required|string|max:50';
+
             // Semua field Riwayat dijadikan nullable karena tidak ada historyType yang mengaturnya
             $rules['location'] = 'nullable|string|max:255';
             $rules['dateStart'] = 'nullable|date';
-            $rules['schedule'] = 'nullable|string|max:255';
+            $rules['schedule'] = 'nullable|date|max:255';
             $rules['dateEnd'] = 'nullable|date';
-            $rules['participateBefore'] = 'nullable|string|max:255'; 
+            $rules['participateBefore'] = 'nullable|string|max:255';
             $rules['nameGuru'] = 'nullable|string|max:255';
             $rules['nameGereja'] = 'nullable|string|max:255';
             $rules['addressGereja'] = 'nullable|string';
             $rules['namePriest'] = 'nullable|string|max:255';
             $rules['dateBaptis'] = 'nullable|date';
             $rules['numberBaptis'] = 'nullable|string|max:50';
-            
+
             // DataMenikah
             $rules['statusMarried'] = 'required|string|max:50';
 
             // Validasi detail pernikahan kondisional
             if ($request->statusMarried && $request->statusMarried !== 'Belum Menikah') {
-                $rules['namePasangan'] = 'required|string|max:255';
-                $rules['religionPasangan'] = 'required_if:statusMarried,Menikah Kristen,Menikah Lain|string|max:50';
+                $rules['namePasangan'] = 'nullable|string|max:255';
+                $rules['religionPasangan'] = 'nullable|string|max:50';
 
                 // Hanya wajibkan input dasar jika statusMarried bukan 'Belum Menikah' atau 'Pernah Menikah'
                 if ($request->statusMarried !== 'Pernah Menikah') {
@@ -227,33 +227,33 @@ class RegistrationController extends Controller
                     'statusMarried' => $request->statusMarried,
                     'namePasangan' => $request->namePasangan ?? null,
                     'religionPasangan' => $request->religionPasangan ?? null,
-                    
+
                     // Detail Katolik
                     'placeMarried1' => $request->statusMarried === 'Menikah Katolik' ? $request->placeMarried1 : null,
                     'cityMarried1' => $request->statusMarried === 'Menikah Katolik' ? $request->cityMarried1 : null,
                     'dateMarried1' => $request->statusMarried === 'Menikah Katolik' ? $request->dateMarried1 : null,
                     'namePeneguh1' => $request->statusMarried === 'Menikah Katolik' ? $request->namePeneguh1 : null,
                     'numberMarried1' => $request->statusMarried === 'Menikah Katolik' ? $request->numberMarried1 : null,
-                    
+
                     // Detail Kristen
                     'placeMarried2' => $request->statusMarried === 'Menikah Kristen' ? $request->placeMarried2 : null,
                     'cityMarried2' => $request->statusMarried === 'Menikah Kristen' ? $request->cityMarried2 : null,
                     'dateMarried2' => $request->statusMarried === 'Menikah Kristen' ? $request->dateMarried2 : null,
                     'namePeneguh2' => $request->statusMarried === 'Menikah Kristen' ? $request->namePeneguh2 : null,
                     'numberMarried2' => $request->statusMarried === 'Menikah Kristen' ? $request->numberMarried2 : null,
-                    
+
                     // Detail Sipil
                     'cityMarried3' => $request->statusMarried === 'Menikah Sipil' ? $request->cityMarried3 : null,
                     'dateMarried3' => $request->statusMarried === 'Menikah Sipil' ? $request->dateMarried3 : null,
                     'numberMarried3' => $request->statusMarried === 'Menikah Sipil' ? $request->numberMarried3 : null,
-                    
+
                     // Detail Lain (Hanya mencantumkan yang tidak Sipil/Katolik/Kristen)
                     'placeMarried4' => $request->statusMarried === 'Menikah Lain' ? $request->placeMarried4 : null,
                     'cityMarried4' => $request->statusMarried === 'Menikah Lain' ? $request->cityMarried4 : null,
                     'dateMarried4' => $request->statusMarried === 'Menikah Lain' ? $request->dateMarried4 : null,
                     'namePeneguh4' => $request->statusMarried === 'Menikah Lain' ? $request->namePeneguh4 : null,
                     'numberMarried4' => $request->statusMarried === 'Menikah Lain' ? $request->numberMarried4 : null,
-                    
+
                     // Detail Pernah Menikah
                     'nameMantan' => $request->statusMarried === 'Pernah Menikah' ? $request->nameMantan : null,
                     'cityMantan' => $request->statusMarried === 'Pernah Menikah' ? $request->cityMantan : null,
@@ -283,13 +283,13 @@ class RegistrationController extends Controller
                 ]);
             }
 
-            
+
             DB::commit(); // Commit (Simpan Permanen)
 
             // Mengirim email dengan password yang baru dibuat
             Mail::to($request->email)->send(new \App\Mail\SendEmailRegistration($registration, $password));
-    
-            // 7. Respon ke Vue/Inertia
+
+            // // 7. Respon ke Vue/Inertia
             return Redirect::route('admin.registration.index')->with('success', 'Pendaftaran baru berhasil diproses dan disimpan.');
 
         } catch (\Exception $e) {
@@ -377,14 +377,14 @@ class RegistrationController extends Controller
             $rules['namePenjamin'] = 'required|string|max:255';
 
             // DataRiwayat (Disederhanakan: religion wajib, sisanya nullable)
-            $rules['religion'] = 'required|string|max:50'; 
-            
+            $rules['religion'] = 'required|string|max:50';
+
             // Semua field Riwayat dijadikan nullable
             $rules['location'] = 'nullable|string|max:255';
             $rules['dateStart'] = 'nullable|date';
             $rules['schedule'] = 'nullable|string|max:255';
             $rules['dateEnd'] = 'nullable|date';
-            $rules['participateBefore'] = 'nullable|string|max:255'; 
+            $rules['participateBefore'] = 'nullable|string|max:255';
             $rules['nameGuru'] = 'nullable|string|max:255';
             $rules['nameGereja'] = 'nullable|string|max:255';
             $rules['addressGereja'] = 'nullable|string';
@@ -487,21 +487,21 @@ class RegistrationController extends Controller
                     'statusMarried' => $request->statusMarried,
                     'namePasangan' => $request->namePasangan ?? null,
                     'religionPasangan' => $request->religionPasangan ?? null,
-                    
+
                     // Detail Katolik (Clear if not Catholic)
                     'placeMarried1' => $request->statusMarried === 'Menikah Katolik' ? $request->placeMarried1 : null,
                     'cityMarried1' => $request->statusMarried === 'Menikah Katolik' ? $request->cityMarried1 : null,
                     'dateMarried1' => $request->statusMarried === 'Menikah Katolik' ? $request->dateMarried1 : null,
                     'namePeneguh1' => $request->statusMarried === 'Menikah Katolik' ? $request->namePeneguh1 : null,
                     'numberMarried1' => $request->statusMarried === 'Menikah Katolik' ? $request->numberMarried1 : null,
-                    
+
                     // Detail Kristen (Clear if not Kristen)
                     'placeMarried2' => $request->statusMarried === 'Menikah Kristen' ? $request->placeMarried2 : null,
                     'cityMarried2' => $request->statusMarried === 'Menikah Kristen' ? $request->cityMarried2 : null,
                     'dateMarried2' => $request->statusMarried === 'Menikah Kristen' ? $request->dateMarried2 : null,
                     'namePeneguh2' => $request->statusMarried === 'Menikah Kristen' ? $request->namePeneguh2 : null,
                     'numberMarried2' => $request->statusMarried === 'Menikah Kristen' ? $request->numberMarried2 : null,
-                    
+
                     // Detail Sipil (Clear if not Sipil)
                     'cityMarried3' => $request->statusMarried === 'Menikah Sipil' ? $request->cityMarried3 : null,
                     'dateMarried3' => $request->statusMarried === 'Menikah Sipil' ? $request->dateMarried3 : null,
@@ -513,7 +513,7 @@ class RegistrationController extends Controller
                     'dateMarried4' => $request->statusMarried === 'Menikah Lain' ? $request->dateMarried4 : null,
                     'namePeneguh4' => $request->statusMarried === 'Menikah Lain' ? $request->namePeneguh4 : null,
                     'numberMarried4' => $request->statusMarried === 'Menikah Lain' ? $request->numberMarried4 : null,
-                    
+
                     // Detail Pernah Menikah (Clear if not Pernah Menikah)
                     'nameMantan' => $request->statusMarried === 'Pernah Menikah' ? $request->nameMantan : null,
                     'cityMantan' => $request->statusMarried === 'Pernikahan' ? $request->cityMantan : null, // Fixed cityMantan

@@ -24,7 +24,7 @@
                 </div>
 
                 <form @submit.prevent="submit">
-                    
+
                     <div class="card shadow-sm border-0 rounded-4 mb-4">
                         <div class="card-body p-4">
                             <h5 class="fw-bold text-navy mb-4 border-bottom pb-2">1. Informasi Data Diri Utama</h5>
@@ -32,12 +32,12 @@
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="number" class="form-label fw-bold text-navy">Tahun/Nomor Registrasi</label>
-                                    <input 
-                                        type="text" 
-                                        class="form-control input-tegas" 
-                                        :class="{ 'is-invalid': form.errors.number }" 
-                                        id="number" 
-                                        v-model="form.number" 
+                                    <input
+                                        type="text"
+                                        class="form-control input-tegas"
+                                        :class="{ 'is-invalid': form.errors.number }"
+                                        id="number"
+                                        v-model="form.number"
                                         placeholder="Contoh: 2025/024"
                                     >
                                     <div v-if="form.errors.number" class="invalid-feedback">{{ form.errors.number }}</div>
@@ -45,12 +45,12 @@
 
                                 <div class="col-md-6 mb-3">
                                     <label for="name" class="form-label fw-bold text-navy">Nama Lengkap Peserta</label>
-                                    <input 
-                                        type="text" 
-                                        class="form-control input-tegas" 
-                                        :class="{ 'is-invalid': form.errors.name }" 
-                                        id="name" 
-                                        v-model="form.name" 
+                                    <input
+                                        type="text"
+                                        class="form-control input-tegas"
+                                        :class="{ 'is-invalid': form.errors.name }"
+                                        id="name"
+                                        v-model="form.name"
                                         placeholder="Contoh: Budi Santoso"
                                     >
                                     <div v-if="form.errors.name" class="invalid-feedback">{{ form.errors.name }}</div>
@@ -58,10 +58,10 @@
 
                                 <div class="col-md-6 mb-3">
                                     <label for="gender" class="form-label fw-bold text-navy">Jenis Kelamin</label>
-                                    <select 
-                                        class="form-select input-tegas" 
-                                        :class="{ 'is-invalid': form.errors.gender }" 
-                                        id="gender" 
+                                    <select
+                                        class="form-select input-tegas"
+                                        :class="{ 'is-invalid': form.errors.gender }"
+                                        id="gender"
                                         v-model="form.gender"
                                     >
                                         <option value="" disabled>-- Pilih Jenis Kelamin --</option>
@@ -70,13 +70,13 @@
                                     </select>
                                     <div v-if="form.errors.gender" class="invalid-feedback">{{ form.errors.gender }}</div>
                                 </div>
-                                
+
                                 <div class="col-md-6 mb-3">
                                     <label for="kelompok" class="form-label fw-bold text-navy">Kelompok Katekese</label>
-                                    <select 
-                                        class="form-select input-tegas" 
-                                        :class="{ 'is-invalid': form.errors.kelompok }" 
-                                        id="kelompok" 
+                                    <select
+                                        class="form-select input-tegas"
+                                        :class="{ 'is-invalid': form.errors.kelompok }"
+                                        id="kelompok"
                                         v-model="form.kelompok"
                                     >
                                         <option value="" disabled>-- Pilih Kelompok Pelayanan --</option>
@@ -89,12 +89,12 @@
 
                                 <div class="col-md-6 mb-3">
                                     <label for="email" class="form-label fw-bold text-navy">Alamat Email</label>
-                                    <input 
-                                        type="email" 
-                                        class="form-control input-tegas" 
-                                        :class="{ 'is-invalid': form.errors.email }" 
-                                        id="email" 
-                                        v-model="form.email" 
+                                    <input
+                                        type="email"
+                                        class="form-control input-tegas"
+                                        :class="{ 'is-invalid': form.errors.email }"
+                                        id="email"
+                                        v-model="form.email"
                                         placeholder="nama@email.com"
                                     >
                                     <div v-if="form.errors.email" class="invalid-feedback">{{ form.errors.email }}</div>
@@ -102,12 +102,12 @@
 
                                 <div class="col-md-6 mb-3">
                                     <label for="contact" class="form-label fw-bold text-navy">No. Telepon / WhatsApp</label>
-                                    <input 
-                                        type="text" 
-                                        class="form-control input-tegas" 
-                                        :class="{ 'is-invalid': form.errors.contact }" 
-                                        id="contact" 
-                                        v-model="form.contact" 
+                                    <input
+                                        type="text"
+                                        class="form-control input-tegas"
+                                        :class="{ 'is-invalid': form.errors.contact }"
+                                        id="contact"
+                                        v-model="form.contact"
                                         placeholder="08123xxxx"
                                     >
                                     <div v-if="form.errors.contact" class="invalid-feedback">{{ form.errors.contact }}</div>
@@ -115,7 +115,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div v-if="form.kelompok === 'Katekumen'" class="card shadow-sm border-0 rounded-4 mb-4 fade-in">
                         <div class="card-body p-4">
                             <h5 class="fw-bold text-navy mb-4 border-bottom pb-2">2. Data Tambahan Katekumen</h5>
@@ -123,10 +123,10 @@
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="address" class="form-label fw-bold text-navy">Alamat Lengkap</label>
-                                    <textarea 
-                                        class="form-control input-tegas" 
-                                        :class="{ 'is-invalid': form.errors.address }" 
-                                        id="address" 
+                                    <textarea
+                                        class="form-control input-tegas"
+                                        :class="{ 'is-invalid': form.errors.address }"
+                                        id="address"
                                         v-model="form.address"
                                         placeholder="Alamat tempat tinggal saat ini"
                                     ></textarea>
@@ -135,11 +135,11 @@
                                 <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="education" class="form-label fw-bold text-navy">Pendidikan Terakhir</label>
-                                        <input 
-                                            type="text" 
-                                            class="form-control input-tegas" 
-                                            :class="{ 'is-invalid': form.errors.education }" 
-                                            id="education" 
+                                        <input
+                                            type="text"
+                                            class="form-control input-tegas"
+                                            :class="{ 'is-invalid': form.errors.education }"
+                                            id="education"
                                             v-model="form.education"
                                             placeholder="Contoh: S1 Teknik"
                                         >
@@ -147,11 +147,11 @@
                                     </div>
                                     <div class="mb-3">
                                         <label for="namePenjamin" class="form-label fw-bold text-navy">Nama Penjamin</label>
-                                        <input 
-                                            type="text" 
-                                            class="form-control input-tegas" 
-                                            :class="{ 'is-invalid': form.errors.namePenjamin }" 
-                                            id="namePenjamin" 
+                                        <input
+                                            type="text"
+                                            class="form-control input-tegas"
+                                            :class="{ 'is-invalid': form.errors.namePenjamin }"
+                                            id="namePenjamin"
                                             v-model="form.namePenjamin"
                                             placeholder="Nama penjamin baptis/wali"
                                         >
@@ -159,31 +159,31 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <h6 class="fw-bold text-navy mt-4 mb-3 border-bottom pb-1">2b. Riwayat Agama & Kegiatan</h6>
-                            
+
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="religion" class="form-label fw-bold text-navy">Agama Awal Peserta</label>
-                                    <input 
-                                        type="text" 
-                                        class="form-control input-tegas" 
-                                        :class="{ 'is-invalid': form.errors.religion }" 
-                                        v-model="form.religion" 
-                                        id="religion" 
+                                    <input
+                                        type="text"
+                                        class="form-control input-tegas"
+                                        :class="{ 'is-invalid': form.errors.religion }"
+                                        v-model="form.religion"
+                                        id="religion"
                                         placeholder="Contoh: Islam, Hindu, Buddha, Protestan"
                                     >
                                     <div v-if="form.errors.religion" class="invalid-feedback">{{ form.errors.religion }}</div>
                                 </div>
                             </div>
-                            
+
                             <div class="p-3 border rounded bg-white mt-3 fade-in">
                                 <h6 class="fw-bold mb-3 text-secondary border-bottom pb-2">Detail Riwayat (Isi yang Relevan)</h6>
-                                
+
                                 <div class="row">
                                     <p class="text-muted small mb-3">Silakan isi bagian yang relevan dengan riwayat agama peserta saat ini (misalnya jika pernah dibaptis Kristen, isi detail Gereja Kristen).</p>
                                 </div>
-                                
+
                                 <!-- Kelompok Detail Pelajaran Agama Katolik -->
                                 <h6 class="fw-bold mt-3 mb-2 text-primary small">I. Riwayat Pelajaran Agama Katolik:</h6>
                                 <div class="row">
@@ -193,7 +193,7 @@
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label for="schedule" class="form-label small fw-bold">Hari (Opsional)</label>
-                                        <input type="text" class="form-control input-tegas" v-model="form.schedule" id="schedule">
+                                        <input type="date" class="form-control input-tegas" v-model="form.schedule" id="schedule">
                                     </div>
                                 </div>
                                 <div class="row">
@@ -247,15 +247,15 @@
                                 </div>
 
                             </div>
-                            
+
                             <h6 class="fw-bold text-navy mt-4 mb-3 border-bottom pb-1">2c. Status Pernikahan</h6>
                             <div class="row">
                                 <div class="col-md-12 mb-3">
                                     <label for="statusMarried" class="form-label fw-bold text-navy">Status Nikah</label>
-                                    <select 
-                                        class="form-select input-tegas" 
-                                        :class="{ 'is-invalid': form.errors.statusMarried }" 
-                                        id="statusMarried" 
+                                    <select
+                                        class="form-select input-tegas"
+                                        :class="{ 'is-invalid': form.errors.statusMarried }"
+                                        id="statusMarried"
                                         v-model="form.statusMarried"
                                     >
                                         <option value="" disabled>-- Pilih Status Nikah --</option>
@@ -269,9 +269,9 @@
                                     <div v-if="form.errors.statusMarried" class="invalid-feedback">{{ form.errors.statusMarried }}</div>
                                 </div>
                             </div>
-                            
+
                             <!-- Detail Pernikahan (Tampil jika sudah menikah) -->
-                            <div v-if="form.statusMarried && form.statusMarried !== 'Belum Menikah' && form.statusMarried !== 'Pernah Menikah'" 
+                            <div v-if="form.statusMarried && form.statusMarried !== 'Belum Menikah' && form.statusMarried !== 'Pernah Menikah'"
                                 class="p-3 border rounded bg-white mt-3 fade-in">
                                 <h6 class="fw-bold mb-3 text-secondary">Data Pasangan</h6>
                                 <div class="row">
@@ -280,20 +280,20 @@
                                         <input type="text" class="form-control input-tegas" v-model="form.namePasangan" :class="{ 'is-invalid': form.errors.namePasangan }" id="namePasangan">
                                         <div v-if="form.errors.namePasangan" class="invalid-feedback">{{ form.errors.namePasangan }}</div>
                                     </div>
-                                    <div class="col-md-6 mb-3" v-if="form.statusMarried !== 'Menikah Sipil'">
+                                    <div class="col-md-6 mb-3">
                                         <label for="religionPasangan" class="form-label small fw-bold">Agama Pasangan</label>
-                                        <input 
-                                            type="text" 
-                                            class="form-control input-tegas" 
-                                            v-model="form.religionPasangan" 
-                                            :class="{ 'is-invalid': form.errors.religionPasangan }" 
+                                        <input
+                                            type="text"
+                                            class="form-control input-tegas"
+                                            v-model="form.religionPasangan"
+                                            :class="{ 'is-invalid': form.errors.religionPasangan }"
                                             id="religionPasangan"
-                                            :readonly="form.statusMarried === 'Menikah Katolik' || form.statusMarried === 'Menikah Kristen'" 
+                                            :readonly="form.statusMarried === 'Menikah Katolik' || form.statusMarried === 'Menikah Kristen'"
                                         >
                                         <div v-if="form.errors.religionPasangan" class="invalid-feedback">{{ form.errors.religionPasangan }}</div>
                                     </div>
                                 </div>
-                                
+
                                 <!-- Detail Pernikahan Katolik -->
                                 <div v-if="form.statusMarried === 'Menikah Katolik'" class="mt-3 fade-in">
                                     <h6 class="fw-bold mt-3 mb-3 text-secondary border-bottom pb-2">Detail Pernikahan Katolik</h6>
@@ -357,7 +357,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                
+
                                 <!-- Detail Pernikahan Sipil -->
                                 <div v-else-if="form.statusMarried === 'Menikah Sipil'" class="mt-3 fade-in">
                                     <h6 class="fw-bold mt-3 mb-3 text-secondary border-bottom pb-2">Detail Pernikahan Sipil</h6>
@@ -381,7 +381,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                
+
                                 <!-- Detail Pernikahan Lain -->
                                 <div v-else-if="form.statusMarried === 'Menikah Lain'" class="mt-3 fade-in">
                                     <h6 class="fw-bold mt-3 mb-3 text-secondary border-bottom pb-2">Detail Pernikahan Lain (Adat, Hindu, Budha, dll.)</h6>
@@ -415,7 +415,7 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <!-- Detail Pernah Menikah -->
                             <div v-else-if="form.statusMarried === 'Pernah Menikah'" class="p-3 border rounded bg-white mt-3 fade-in">
                                 <h6 class="fw-bold mt-3 mb-3 text-secondary border-bottom pb-2">Detail Pernah Menikah (Janda/Duda)</h6>
@@ -433,10 +433,10 @@
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label for="statusMantan" class="form-label small fw-bold">Status Hubungan Berakhir</label>
-                                        <select 
-                                            class="form-select input-tegas" 
+                                        <select
+                                            class="form-select input-tegas"
                                             v-model="form.statusMantan"
-                                            id="statusMantan" 
+                                            id="statusMantan"
                                             :class="{ 'is-invalid': form.errors.statusMantan }"
                                         >
                                             <option value="" disabled>-- Pilih Status --</option>
@@ -454,7 +454,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div v-else-if="form.kelompok === 'Sakramen Baptis Bayi'" class="card shadow-sm border-0 rounded-4 mb-4 fade-in">
                         <div class="card-body p-4">
                             <h5 class="fw-bold text-navy mb-4 border-bottom pb-2">2. Data Sakramen Baptis Bayi</h5>
@@ -462,23 +462,23 @@
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="nameWali" class="form-label fw-bold text-navy">Nama Wali Baptis</label>
-                                    <input 
-                                        type="text" 
-                                        class="form-control input-tegas" 
-                                        :class="{ 'is-invalid': form.errors.nameWali }" 
-                                        id="nameWali" 
+                                    <input
+                                        type="text"
+                                        class="form-control input-tegas"
+                                        :class="{ 'is-invalid': form.errors.nameWali }"
+                                        id="nameWali"
                                         v-model="form.nameWali"
                                         placeholder="Nama salah satu orang tua/wali"
                                     >
                                     <div v-if="form.errors.nameWali" class="invalid-feedback">{{ form.errors.nameWali }}</div>
                                 </div>
-                                
+
                                 <div class="col-md-6 mb-3">
                                     <label for="status" class="form-label fw-bold text-navy">Status Wali Baptis</label>
-                                    <select 
-                                        class="form-select input-tegas" 
-                                        :class="{ 'is-invalid': form.errors.status }" 
-                                        id="status" 
+                                    <select
+                                        class="form-select input-tegas"
+                                        :class="{ 'is-invalid': form.errors.status }"
+                                        id="status"
                                         v-model="form.status"
                                     >
                                         <option value="" disabled>-- Pilih Status Wali Baptis --</option>
@@ -489,11 +489,11 @@
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="namePastoor" class="form-label fw-bold text-navy">Nama Pastoor</label>
-                                    <input 
-                                        type="text" 
-                                        class="form-control input-tegas" 
-                                        :class="{ 'is-invalid': form.errors.namePastoor }" 
-                                        id="namePastoor" 
+                                    <input
+                                        type="text"
+                                        class="form-control input-tegas"
+                                        :class="{ 'is-invalid': form.errors.namePastoor }"
+                                        id="namePastoor"
                                         v-model="form.namePastoor"
                                         placeholder="Nama pastoor yang bertugas"
                                     >
@@ -502,11 +502,11 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div v-if="form.kelompok" class="card shadow-sm border-0 rounded-4 mb-4 fade-in">
                         <div class="card-body p-4">
                             <h5 class="fw-bold text-navy mb-4 border-bottom pb-2">3. Data Anggota Keluarga (Ayah, Ibu, dll.)</h5>
-                            
+
                             <p v-if="form.family_members.length === 0" class="text-muted text-center small">
                                 Belum ada anggota keluarga ditambahkan. Anggota keluarga wajib diisi.
                             </p>
@@ -559,7 +559,7 @@
                             <div v-if="form.errors.family_members" class="text-danger small mt-2">{{ form.errors.family_members }}</div>
                         </div>
                     </div>
-                    
+
                     <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top">
                         <button type="button" @click="form.reset()" class="btn btn-link text-danger text-decoration-none px-0">
                             <i class="bi bi-arrow-counterclockwise me-1"></i> Reset Form
@@ -594,11 +594,11 @@ const form = useForm({
     // Basic Info (Registration & Member)
     number: '',
     name: '',
-    gender: '',    
+    gender: '',
     email: '',
-    contact: '',    
-    kelompok: '', 
-    
+    contact: '',
+    kelompok: '',
+
     // Data Katekumen (DataKatekumen)
     address: '',
     education: '',
@@ -618,19 +618,19 @@ const form = useForm({
     namePriest: '', // Dibaptis oleh
     dateBaptis: '', // Tanggal Baptis
     numberBaptis: '', // Nomor Surat Baptis
-    
+
     // Data Menikah (DataMenikah)
     statusMarried: '',
-    namePasangan: '', 
+    namePasangan: '',
     religionPasangan: '',
     // Detail Katolik
-    placeMarried1: '', cityMarried1: '', dateMarried1: '', namePeneguh1: '', numberMarried1: '', 
+    placeMarried1: '', cityMarried1: '', dateMarried1: '', namePeneguh1: '', numberMarried1: '',
     // Detail Kristen
-    placeMarried2: '', cityMarried2: '', dateMarried2: '', namePeneguh2: '', numberMarried2: '', 
+    placeMarried2: '', cityMarried2: '', dateMarried2: '', namePeneguh2: '', numberMarried2: '',
     // Detail Sipil
-    cityMarried3: '', dateMarried3: '', numberMarried3: '', 
+    cityMarried3: '', dateMarried3: '', numberMarried3: '',
     // Detail Lain
-    placeMarried4: '', cityMarried4: '', dateMarried4: '', namePeneguh4: '', numberMarried4: '', 
+    placeMarried4: '', cityMarried4: '', dateMarried4: '', namePeneguh4: '', numberMarried4: '',
     // Detail Pernah Menikah (Janda/Duda)
     nameMantan: '', cityMantan: '', statusMantan: '', yearMantan: '',
 
@@ -650,13 +650,13 @@ const form = useForm({
 // === WATCHER UNTUK STATUS PERNIKAHAN (Tidak ada perubahan) ===
 watch(() => form.statusMarried, (newStatus) => {
     // 1. Clear conditional fields on status change
-    
+
     // Clear Catholic marriage details
     if (newStatus !== 'Menikah Katolik') {
         form.placeMarried1 = ''; form.cityMarried1 = ''; form.dateMarried1 = '';
         form.namePeneguh1 = ''; form.numberMarried1 = '';
     }
-    
+
     // Clear Kristen marriage details
     if (newStatus !== 'Menikah Kristen') {
         form.placeMarried2 = ''; form.cityMarried2 = ''; form.dateMarried2 = '';
@@ -664,21 +664,21 @@ watch(() => form.statusMarried, (newStatus) => {
     }
 
     // Clear Civil marriage details
-    if (newStatus !== 'Menikah Sipil') { 
+    if (newStatus !== 'Menikah Sipil') {
         form.cityMarried3 = ''; form.dateMarried3 = ''; form.numberMarried3 = '';
     }
 
     // Clear Lain marriage details
-    if (newStatus !== 'Menikah Lain') { 
+    if (newStatus !== 'Menikah Lain') {
         form.placeMarried4 = ''; form.cityMarried4 = ''; form.dateMarried4 = '';
         form.namePeneguh4 = ''; form.numberMarried4 = '';
     }
-    
+
     // Clear Pernah Menikah details
     if (newStatus !== 'Pernah Menikah') {
-        form.nameMantan = ''; 
-        form.cityMantan = ''; 
-        form.statusMantan = ''; 
+        form.nameMantan = '';
+        form.cityMantan = '';
+        form.statusMantan = '';
         form.yearMantan = '';
     }
 
@@ -693,8 +693,8 @@ watch(() => form.statusMarried, (newStatus) => {
         form.religionPasangan = 'Katolik';
     } else if (newStatus === 'Menikah Kristen') {
         form.religionPasangan = 'Kristen';
-    } else if (newStatus === 'Menikah Sipil' || newStatus === 'Menikah Lain') { 
-        form.religionPasangan = ''; 
+    } else if (newStatus === 'Menikah Sipil' || newStatus === 'Menikah Lain') {
+        form.religionPasangan = '';
     } else if (newStatus !== 'Belum Menikah' && newStatus !== 'Pernah Menikah') {
         form.religionPasangan = '';
     }
@@ -743,8 +743,8 @@ const submit = () => {
 
 <script>
 import LayoutAdmin from '../../../Layouts/Admin.vue';
-export default { 
-    layout: LayoutAdmin 
+export default {
+    layout: LayoutAdmin
 };
 </script>
 
@@ -768,8 +768,8 @@ export default {
 /* --- Input Style (Tegas & Rapi) --- */
 .input-tegas {
     border: 1px solid #b0b8c4;
-    border-radius: 8px;    
-    padding: 0.7rem 1rem;  
+    border-radius: 8px;
+    padding: 0.7rem 1rem;
     font-size: 0.95rem;
     background-color: #fcfcfc;
     transition: all 0.3s ease;
@@ -781,8 +781,8 @@ export default {
 }
 
 .input-tegas:focus {
-    border-color: #003366;  
-    box-shadow: 0 0 0 4px rgba(0, 51, 102, 0.1); 
+    border-color: #003366;
+    box-shadow: 0 0 0 4px rgba(0, 51, 102, 0.1);
     background-color: #ffffff;
     outline: none;
 }

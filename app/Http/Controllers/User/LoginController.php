@@ -52,13 +52,9 @@ class LoginController extends Controller
         $member = Member::where('nip',auth()->guard('member')->user()->nip)
         ->first();
 
-
         return inertia('User/Setting/Index', [
             'member' => $member,
          ]);
-
-
-
     }
 
     public function resetPassword(Request $request)

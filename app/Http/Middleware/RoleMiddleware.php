@@ -38,7 +38,6 @@ class RoleMiddleware
                 break; // Hentikan iterasi
             }
         }
-
         // 2. Jika tidak ada pengguna yang terotentikasi di guard manapun
         if (!$authenticatedUser) {
             return redirect('login');
