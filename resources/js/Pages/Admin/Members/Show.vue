@@ -12,7 +12,7 @@
                     <!-- CARD 1: Data Profil Utama -->
                     <div class="card shadow-lg border-0 mb-4">
                         <div class="card-header bg-navy text-white py-3">
-                            <h4 class="mb-0"><i class="fa fa-user me-2"></i> Detail Profil Peserta</h4>
+                            <h4 class="mb-0"><i class="bi bi-person-fill fs-5"></i> Detail Profil Peserta</h4>
                         </div>
                         <div class="card-body p-4">
                             <h5 class="fw-bold mb-3 text-navy">{{ form.name }}</h5>
@@ -28,11 +28,6 @@
                                         <td class="fw-bold text-muted">Nomor Registrasi</td>
                                         <td>:</td>
                                         <td>{{ form.number || '-' }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="fw-bold text-muted">Jenis Kelamin</td>
-                                        <td>:</td>
-                                        <td>{{ form.gender || '-' }}</td>
                                     </tr>
                                     <tr>
                                         <td class="fw-bold text-muted">Email</td>
@@ -78,7 +73,7 @@
                     <!-- CARD 2: DATA KONDISIONAL BERDASARKAN KELOMPOK -->
                     <div class="card shadow-lg border-0 mt-4 mb-4" v-if="getGroupName(form.kelompok)">
                         <div class="card-header" :class="getGroupHeaderClass(form.kelompok)">
-                            <h5 class="mb-0"><i class="fa fa-book me-2"></i> Detail Kelompok: {{ getGroupName(form.kelompok) }}</h5>
+                            <h5 class="mb-0"><i class="bi bi-card-list fs-5"></i> Detail Kelompok: {{ getGroupName(form.kelompok) }}</h5>
                         </div>
                         
                         <div class="card-body p-4">
@@ -206,7 +201,7 @@
                     <!-- CARD 3: Data Keluarga -->
                     <div class="card shadow-lg border-0 mt-4 mb-4">
                         <div class="card-header bg-secondary text-white py-3">
-                            <h5 class="mb-0"><i class="fa fa-users me-2"></i> 3. Data Anggota Keluarga</h5>
+                            <h5 class="mb-0"><i class="bi bi-people fs-5"></i> 3. Data Anggota Keluarga</h5>
                         </div>
                         <div class="card-body p-4">
                             <div v-if="form.family_members.length === 0" class="text-muted text-center">
@@ -271,7 +266,6 @@ export default {
         };
 
         // Fungsi untuk menentukan tipe riwayat (sesuai logika Edit.vue)
-        // Menggunakan form data yang sudah diratakan (flattened)
         const determineHistoryTypeLabel = (formData) => {
             // Kita cek berdasarkan data yang paling mungkin diisi di form edit
             
@@ -286,32 +280,20 @@ export default {
             
             return 'Riwayat Lain';
         };
-        
-        // =================================================================
-        // === MAPPING DATA UTAMA UNTUK KONSISTENSI DENGAN EDIT.VUE ===
-        // Mengakses data relasi dengan nama yang benar (dataKatekumen, dll)
-        // =================================================================
-        
-        // 1. Mapping Jenis Kelamin (Gender)
-        // Logika di edit.vue: typeof boolean -> true=Laki-laki, false=Perempuan. Jika string, pakai stringnya.
-        const rawGender = props.data.gender;
-        let mappedGender;
-        if (typeof rawGender === 'boolean') {
-             mappedGender = rawGender ? 'Laki-laki' : 'Perempuan';
-        } else {
-             mappedGender = rawGender || '-';
-        }
 
-        // 2. Mapping Kelompok Katekese (Group)
-        // Logika di edit.vue: typeof boolean -> true=Katekumen, false=Sakramen Baptis Bayi. Jika string, pakai stringnya.
-        const rawGroup = props.data.group;
-        let mappedGroup;
-        if (typeof rawGroup === 'boolean') {
-             mappedGroup = props.data.group? 'Katekumen' : 'Sakramen Baptis Bayi';
-        } else {
-             mappedGroup = rawGroup || null;
-        }
-
+        // --- Perubahan Utama: Pemetaan Nilai Kelompok/Group ke Numerik (0 dan 1) ---
+        // 0 = Sakramen Baptis Bayi, 1 = Katekumen
+        const rawGroupValue = props.data.group; 
+        const mappedGroup = (() => {
+            if (rawGroupValue === 1) {
+                return 1; // Katekumen
+            } else if (rawGroupValue === 0) {
+                return 0; // Sakramen Baptis Bayi
+            }
+            return null; // Tidak Ditentukan
+        })();
+        
+     
 
         // Define form state using data from props.data (FLATTENED structure, matching edit.vue)
         const form = reactive({
@@ -320,10 +302,9 @@ export default {
             name: props.data.name || '-',
             email: props.data.email || '-',
             contact: props.data.contact || '-',
-            gender: mappedGender, // MENGGUNAKAN NILAI YANG SUDAH DI-MAP
             number: props.data.number || '-',
-            status: props.data.status || 'pending', // Status Registrasi Utama
-            kelompok: mappedGroup, // MENGGUNAKAN NILAI YANG SUDAH DI-MAP (dulu 'group')
+            status: props.data.status || 'pending', 
+            kelompok: mappedGroup, // MENGGUNAKAN NILAI NUMERIK HASIL PEMETAAN
 
             // Data Keluarga (Mapping dataKeluarga ke family_members)
             family_members: props.data.data_keluarga || [], 
@@ -369,31 +350,31 @@ export default {
 
 
         // =================================================================
-        // === FUNGSI HELPER KELOMPOK KATEKESE (Disalin dari Edit/Create) ==
+        // === FUNGSI HELPER KELOMPOK KATEKESE (DIMODIFIKASI BERDASARKAN REQUEST BARU) ==
+        // 0 = Sakramen Baptis Bayi, 1 = Katekumen
         // =================================================================
         const getGroupName = (groupValue) => {
-             // Menangani nilai string sesuai yang dikirim dari form/DB (Katekumen/Sakramen Baptis Bayi)
-             if (groupValue === 'Katekumen' || groupValue === 'KATEKUMEN') {
+             if (groupValue === 1) {
                  return 'Katekumen';
-             } else if (groupValue === 'Sakramen Baptis Bayi' || groupValue === 'SAKRAMEN BAPTIS BAYI') {
+             } else if (groupValue === 0) {
                  return 'Sakramen Baptis Bayi';
              }
              return null;
         };
 
         const getGroupBadgeClass = (groupValue) => {
-             if (groupValue === 'Katekumen' || groupValue === 'KATEKUMEN') {
+             if (groupValue === 1) {
                  return 'badge bg-info-subtle text-info-emphasis border border-info-subtle fw-normal px-3 py-2';
-             } else if (groupValue === 'Sakramen Baptis Bayi' || groupValue === 'SAKRAMEN BAPTIS BAYI') {
+             } else if (groupValue === 0) {
                  return 'badge bg-primary-subtle text-primary-emphasis border border-primary-subtle fw-normal px-3 py-2';
              }
              return 'badge bg-light text-muted border border-secondary-subtle fw-normal px-3 py-2';
         };
 
         const getGroupHeaderClass = (groupValue) => {
-             if (groupValue === 'Katekumen' || groupValue === 'KATEKUMEN') {
+             if (groupValue === 1) {
                  return 'bg-info text-white';
-             } else if (groupValue === 'Sakramen Baptis Bayi' || groupValue === 'SAKRAMEN BAPTIS BAYI') {
+             } else if (groupValue === 0) {
                  return 'bg-primary text-white';
              }
              return 'bg-secondary text-white';
