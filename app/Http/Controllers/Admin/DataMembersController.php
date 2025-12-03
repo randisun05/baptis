@@ -74,7 +74,6 @@ class DataMembersController extends Controller
            'data' => $data
         ]);
 
-
     }
 
       public function export()

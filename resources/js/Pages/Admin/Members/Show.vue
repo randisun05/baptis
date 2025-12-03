@@ -9,19 +9,6 @@
             <div class="row d-flex justify-content-center">
                 
                 <div class="col-md-10 col-lg-10">
-                    
-                    <!-- === Tombol Kembali & Edit === -->
-                    <div class="row mb-4">
-                        <div class="col-12 d-flex justify-content-between align-items-center">
-                            <Link href="/admin/registration" class="btn btn-sm btn-outline-navy shadow-sm">
-                                <i class="bi bi-arrow-left me-2"></i> Kembali ke Daftar Registrasi
-                            </Link>
-                            <Link :href="`/admin/registration/${form.id}/edit`" class="btn btn-sm btn-navy shadow-sm">
-                                <i class="bi bi-pencil-square me-2"></i> Edit Data
-                            </Link>
-                        </div>
-                    </div>
-
                     <!-- CARD 1: Data Profil Utama -->
                     <div class="card shadow-lg border-0 mb-4">
                         <div class="card-header bg-navy text-white py-3">
