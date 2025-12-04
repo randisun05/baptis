@@ -185,6 +185,7 @@ class RegistrationController extends Controller
             Member::create([
                 'number' => $request->number,
                 'name' => $request->name,
+                'gender' => $isMale,
                 'password' => $passwordHashed,
                 'email' => $request->email,
                 'contact' => $request->contact,
