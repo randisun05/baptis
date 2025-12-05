@@ -14,8 +14,8 @@
                 <Link href="/" class="navbar-brand d-flex align-items-center">
                     <i class="fas fa-church me-2 fa-lg text-warning"></i>
                     <div class="d-flex flex-column lh-sm">
-                        <span class="fw-bold text-white">Paroki Santa Melania</span>
-                        <span class="fs-7 text-white-50" style="font-size: 0.75rem;">Sistem Informasi Katekumen dan Baptis
+                        <span class="fw-bold text-white small-brand-title">Paroki Santa Melania</span>
+                        <span class="fs-7 text-white-50 small-brand-subtitle">Sistem Informasi Katekumen dan Baptis
                             Bayi</span>
                     </div>
                 </Link>
@@ -28,58 +28,57 @@
 
         <section class="sub-hero d-flex align-items-center">
             <div class="overlay"></div>
-            <div class="container position-relative text-center text-white z-1">
-                <p class="lead mb-4 text-white-50 mx-auto" style="max-width: 600px;">
-
+            <div class="container position-relative text-center text-white z-1 py-5">
+                <h1 class="display-5 fw-bold mb-2">Daftar Kegiatan</h1>
+                <p class="lead mb-0 text-white-50 mx-auto small-text" style="max-width: 600px; font-size: 1rem;">
+                    Informasi dan jadwal kegiatan katekumen dan sakramen baptis bayi yang tersedia.
                 </p>
-                
             </div>
         </section>
 
         <div class="container pt-4">
-            <Link href="/" class="btn btn-outline-secondary border-0 shadow-sm mb-4">
+            <Link href="/" class="btn btn-outline-secondary border-0 shadow-sm mb-4 btn-sm">
                 <i class="fas fa-arrow-left me-1"></i> Kembali ke Beranda
             </Link>
         </div>
-        <section class="py-5 bg-light" id="warta">
-            <div class="container py-4">
+
+        <section class="pb-5 bg-light" id="warta">
+            <div class="container">
                 <div class="row">
                     <div class="col-lg-12">
-                        <h2 class="fw-bold text-navy mb-4">Daftar Kegiatan Paroki</h2>
                         <div class="card shadow-sm border-0">
                             <div class="card-body p-0">
                                 <div class="list-group list-group-flush">
 
-                                    <div class="list-group-item p-4 d-flex align-items-center justify-content-between"
+                                    <div class="list-group-item p-4 d-flex align-items-center justify-content-between event-list-item"
                                         v-for="(event, index) in events.data" :key="index">
 
-                                        <div class="d-flex align-items-center">
+                                        <div class="d-flex align-items-start event-main-info">
 
-                                            <div class="date-box bg-primary-subtle text-primary rounded p-2 text-center me-3"
-                                                style="min-width: 60px;">
+                                            <div class="date-box bg-primary-subtle text-primary rounded p-2 text-center me-3 date-box-md">
                                                 <span class="d-block fw-bold h5 mb-0">{{ formatDate(event.date, 'day') }}</span>
                                                 <span class="d-block small fw-bold">{{ formatDate(event.date, 'month') }}</span>
                                             </div>
 
-                                            <div>
-                                                <h5 class="fw-bold mb-1 text-navy">{{ event.title }}</h5>
-                                                <p class="mb-0 text-muted small">
+                                            <div class="event-details">
+                                                <h5 class="fw-bold mb-1 text-navy event-title">{{ event.title }}</h5>
+                                                <p class="mb-0 text-muted small small-info">
                                                     <i class="far fa-calendar-alt me-1"></i>
                                                     Tanggal: {{ formatDate(event.date, 'full') }}
                                                 </p>
-                                                <p class="mb-0 text-muted small">
+                                                <p class="mb-0 text-muted small small-info">
                                                     <i class="fas fa-map-marker-alt me-1"></i>
                                                     Lokasi: {{ event.place }}
                                                 </p>
                                             </div>
                                         </div>
 
-                                        <div class="d-flex flex-column align-items-end gap-2">
-                                            <span v-if="event.ref_event" class="badge rounded-pill px-3 py-2 bg-info-subtle text-info-emphasis">
+                                        <div class="d-flex flex-column align-items-end gap-2 event-badges">
+                                            <span v-if="event.ref_event" class="badge rounded-pill px-3 py-2 bg-info-subtle text-info-emphasis event-ref-badge">
                                                 {{ event.ref_event.title }}
                                             </span>
                                             
-                                            <span class="badge rounded-pill px-3 py-2"
+                                            <span class="badge rounded-pill px-3 py-2 event-status-badge"
                                                 :class="event.status === 'active' ? 'bg-success' : 'bg-secondary'">
                                                 {{ event.status === 'active' ? 'Aktif' : 'Ditutup' }}
                                             </span>
@@ -94,7 +93,9 @@
                                 </div>
                             </div>
 
-                            <Pagination :links="events.links" align="end" />
+                            <div class="card-footer bg-white border-top p-3">
+                                <Pagination :links="events.links" align="end" />
+                            </div>
 
                         </div>
                     </div>
@@ -107,25 +108,27 @@
                 <div class="row g-4">
                     <div class="col-lg-6">
                         <h5 class="fw-bold text-warning mb-3">Paroki Santa Melania</h5>
-                        <p class="small opacity-75">
+                        <p class="small opacity-75 footer-contact">
                             Jl. Melania No.1-3, Cihaur Geulis, Kec. Cibeunying Kaler, Kota Bandung, Jawa Barat 40122<br>
                             Telp: (022) 20463790<br>
-                            Email: sekretariat@stmelania.org
+                            <a href="mailto:sekretariat@stmelania.org" class="text-white opacity-75 text-decoration-none">
+                                Email: sekretariat@stmelania.org
+                            </a>
                         </p>
                     </div>
                     <div class="col-lg-6">
                         <h5 class="fw-bold text-warning mb-3">Jam Sekretariat</h5>
-                        <ul class="list-unstyled small opacity-75">
+                        <ul class="list-unstyled small opacity-75 footer-hours">
                             <li class="d-flex justify-content-between mb-2"><span>Senin:</span> <span>08.00 –
-                                        16.00</span></li>
+                                    16.00</span></li>
                             <li class="d-flex justify-content-between mb-2"><span>Selasa:</span> <span>08.00 –
-                                        16.00</span></li>
+                                    16.00</span></li>
                             <li class="d-flex justify-content-between mb-2"><span>Rabu:</span> <span>08.00 –
-                                        16.00</span></li>
+                                    16.00</span></li>
                             <li class="d-flex justify-content-between mb-2"><span>Kamis & Libur Nasional:</span>
                                 <span>LIBUR</span></li>
                             <li class="d-flex justify-content-between mb-2"><span>Jumat:</span> <span>08.00 –
-                                        16.00</span></li>
+                                    16.00</span></li>
                             <li class="d-flex justify-content-between mb-2"><span>Jumat Pertama & Sabtu:</span>
                                 <span>08.00-14.00 & 16.00-18.00</span></li>
                             <li class="d-flex justify-content-between"><span>Minggu:</span> <span>07.00 – 12.00</span>
@@ -166,6 +169,9 @@ export default {
             if (!dateString) return '';
             const date = new Date(dateString);
 
+            // Menggunakan 'id-ID' untuk format bahasa Indonesia (nama bulan)
+            const fullOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+
             if (formatType === 'day') {
                 return date.getDate().toString().padStart(2, '0');
             }
@@ -173,11 +179,7 @@ export default {
                 return date.toLocaleDateString('id-ID', { month: 'short' }).toUpperCase();
             }
             if (formatType === 'full') {
-                return date.toLocaleDateString('id-ID', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                });
+                return date.toLocaleDateString('id-ID', fullOptions);
             }
             return dateString;
         };
@@ -186,11 +188,7 @@ export default {
         const isScrolled = ref(false);
 
         const handleScroll = () => {
-            if (window.scrollY > 50) {
-                isScrolled.value = true;
-            } else {
-                isScrolled.value = false;
-            }
+            isScrolled.value = window.scrollY > 50;
         };
 
         onMounted(() => {
@@ -443,5 +441,73 @@ export default {
     background-color: var(--navy-primary);
     /* Pastikan tombol Masuk tetap navy */
     border-color: var(--navy-primary);
+}
+
+/* =======================================
+    RESPONSIVE/MOBILE ADJUSTMENTS (<= 768px)
+    ======================================= */
+@media (max-width: 768px) {
+    /* --- Navbar --- */
+    .navbar { padding: 0.75rem 0; }
+    .navbar-brand .fa-church { font-size: 1.25rem; }
+    .small-brand-title { font-size: 0.85rem; }
+    .small-brand-subtitle { font-size: 0.65rem !important; } 
+
+    /* --- Sub Hero --- */
+    .sub-hero { min-height: 200px; height: 25vh; }
+    .sub-hero .container { padding-top: 3rem !important; }
+    .sub-hero .display-5 { font-size: 1.75rem; }
+    .sub-hero .small-text { font-size: 0.875rem !important; }
+
+    /* --- List Kegiatan --- */
+    .event-list-item { 
+        padding: 1rem !important; 
+        flex-direction: column; /* Mengubah layout utama menjadi vertikal */
+        align-items: flex-start !important;
+        gap: 0.75rem; /* Memberi jarak antara info utama dan badges */
+    } 
+
+    .event-main-info {
+        width: 100%;
+        display: flex;
+        align-items: flex-start !important;
+        order: 1; /* Paling atas */
+    }
+
+    /* Kotak Tanggal menyesuaikan */
+    .date-box-md {
+        min-width: 50px !important;
+        padding: 0.5rem !important;
+        margin-right: 0.75rem !important;
+    }
+    .date-box-md .h5 { font-size: 1rem !important; }
+    .date-box-md .small { font-size: 0.65rem !important; }
+
+    /* Judul Kegiatan */
+    .event-details {
+        flex-grow: 1;
+        width: 100%; /* Agar detail bisa mengisi ruang jika tanggal kecil */
+    }
+    .event-title { font-size: 1rem !important; }
+    .small-info { font-size: 0.75rem !important; } 
+
+    /* Badge Status (dipindahkan ke bawah info utama) */
+    .event-badges {
+        width: 100%;
+        align-items: flex-start !important; /* Pindah ke kiri */
+        flex-direction: row; /* Ubah badges menjadi horizontal */
+        border-top: 1px solid #eee;
+        padding-top: 0.75rem;
+        margin-top: 0.75rem;
+        order: 2; /* Setelah info utama */
+    }
+    .event-ref-badge, .event-status-badge {
+        font-size: 0.75rem !important;
+    }
+    
+    /* --- Footer --- */
+    .footer-contact, .footer-hours {
+        font-size: 0.8rem; /* Font footer lebih kecil */
+    }
 }
 </style>

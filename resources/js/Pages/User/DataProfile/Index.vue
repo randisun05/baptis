@@ -5,15 +5,15 @@
         <div class="row justify-content-center fade-in">
             <div class="col-lg-10">
                 
-                <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-4 header-mobile-stack">
                     <div>
-                        <h2 class="fs-3 fw-bold text-navy mb-0">Detail Data Profil: {{ user.name }}</h2>
-                        <p class="text-muted small mb-0">
+                        <h2 class="fs-3 fw-bold text-navy mb-0 mobile-fs-large">Detail Data Profil: {{ user.name }}</h2>
+                        <p class="text-muted small mb-0 mobile-fs-small">
                             Grup Katekese: 
                             <span class="badge bg-info text-dark ms-1 fw-bold">{{ getGroupName(user.group) }}</span>
                         </p>
                     </div>
-                    <div>
+                    <div class="mobile-status-block">
                         <p class="text-muted mb-0 small text-end">
                             Status Akun: 
                             <span :class="getStatusBadgeClass(user.status)" class="fw-bold">
@@ -86,7 +86,7 @@
                             </div>
                             
                             <div class="d-flex justify-content-end pt-2">
-                                <button type="submit" class="btn btn-primary rounded-pill px-4 shadow-sm" :disabled="isSubmitting">
+                                <button type="submit" class="btn btn-primary rounded-pill px-4 shadow-sm w-100-mobile" :disabled="isSubmitting">
                                     <i class="fa fa-save me-1"></i> Simpan
                                 </button>
                             </div>
@@ -179,28 +179,27 @@
                                 <h6 class="fw-bold mb-3 text-secondary border-bottom pb-2">Detail {{ user.data_menikah.statusMarried }}</h6>
                                 
                                 <div v-if="user.data_menikah.statusMarried === 'Menikah Katolik'">
-                                    <p class="mb-1 small"><strong class="text-muted me-2" style="width: 150px; display: inline-block;">Gereja/Kota:</strong> {{ user.data_menikah.placeMarried1 || '-' }} / {{ user.data_menikah.cityMarried1 || '-' }}</p>
-                                    <p class="mb-1 small"><strong class="text-muted me-2" style="width: 150px; display: inline-block;">Tanggal Nikah:</strong> {{ formatDate(user.data_menikah.dateMarried1) || '-' }}</p>
-                                    <p class="mb-1 small"><strong class="text-muted me-2" style="width: 150px; display: inline-block;">No. Surat:</strong> {{ user.data_menikah.numberMarried1 || '-' }}</p>
+                                    <p class="mb-1 small"><strong class="text-muted me-2 mobile-label-width">Gereja/Kota:</strong> {{ user.data_menikah.placeMarried1 || '-' }} / {{ user.data_menikah.cityMarried1 || '-' }}</p>
+                                    <p class="mb-1 small"><strong class="text-muted me-2 mobile-label-width">Tanggal Nikah:</strong> {{ formatDate(user.data_menikah.dateMarried1) || '-' }}</p>
+                                    <p class="mb-1 small"><strong class="text-muted me-2 mobile-label-width">No. Surat:</strong> {{ user.data_menikah.numberMarried1 || '-' }}</p>
                                 </div>
                                 <div v-else-if="user.data_menikah.statusMarried === 'Menikah Kristen'">
-                                    <p class="mb-1 small"><strong class="text-muted me-2" style="width: 150px; display: inline-block;">Tempat/Kota:</strong> {{ user.data_menikah.placeMarried2 || '-' }} / {{ user.data_menikah.cityMarried2 || '-' }}</p>
-                                    <p class="mb-1 small"><strong class="text-muted me-2" style="width: 150px; display: inline-block;">Tanggal Nikah:</strong> {{ formatDate(user.data_menikah.dateMarried2) || '-' }}</p>
-                                    <p class="mb-1 small"><strong class="text-muted me-2" style="width: 150px; display: inline-block;">No. Surat:</strong> {{ user.data_menikah.numberMarried2 || '-' }}</p>
+                                    <p class="mb-1 small"><strong class="text-muted me-2 mobile-label-width">Tempat/Kota:</strong> {{ user.data_menikah.placeMarried2 || '-' }} / {{ user.data_menikah.cityMarried2 || '-' }}</p>
+                                    <p class="mb-1 small"><strong class="text-muted me-2 mobile-label-width">Tanggal Nikah:</strong> {{ formatDate(user.data_menikah.dateMarried2) || '-' }}</p>
+                                    <p class="mb-1 small"><strong class="text-muted me-2 mobile-label-width">No. Surat:</strong> {{ user.data_menikah.numberMarried2 || '-' }}</p>
                                 </div>
                                 <div v-else-if="user.data_menikah.statusMarried === 'Menikah Sipil'">
-                                    <p class="mb-1 small"><strong class="text-muted me-2" style="width: 150px; display: inline-block;">Kota:</strong> {{ user.data_menikah.cityMarried3 || '-' }}</p>
-                                    <p class="mb-1 small"><strong class="text-muted me-2" style="width: 150px; display: inline-block;">Tanggal Nikah:</strong> {{ formatDate(user.data_menikah.dateMarried3) || '-' }}</p>
-                                    <p class="mb-1 small"><strong class="text-muted me-2" style="width: 150px; display: inline-block;">No. Surat:</strong> {{ user.data_menikah.numberMarried3 || '-' }}</p>
+                                    <p class="mb-1 small"><strong class="text-muted me-2 mobile-label-width">Kota:</strong> {{ user.data_menikah.cityMarried3 || '-' }}</p>
+                                    <p class="mb-1 small"><strong class="text-muted me-2 mobile-label-width">Tanggal Nikah:</strong> {{ formatDate(user.data_menikah.dateMarried3) || '-' }}</p>
+                                    <p class="mb-1 small"><strong class="text-muted me-2 mobile-label-width">No. Surat:</strong> {{ user.data_menikah.numberMarried3 || '-' }}</p>
                                 </div>
                                 <div v-else-if="user.data_menikah.statusMarried === 'Pernah Menikah'">
-                                    <p class="mb-1 small"><strong class="text-muted me-2" style="width: 150px; display: inline-block;">Mantan Pasangan:</strong> {{ user.data_menikah.nameMantan || '-' }}</p>
-                                    <p class="mb-1 small"><strong class="text-muted me-2" style="width: 150px; display: inline-block;">Status Berakhir:</strong> {{ user.data_menikah.statusMantan || '-' }}</p>
-                                    <p class="mb-1 small"><strong class="text-muted me-2" style="width: 150px; display: inline-block;">Tahun Berakhir:</strong> {{ user.data_menikah.yearMantan || '-' }}</p>
+                                    <p class="mb-1 small"><strong class="text-muted me-2 mobile-label-width">Mantan Pasangan:</strong> {{ user.data_menikah.nameMantan || '-' }}</p>
+                                    <p class="mb-1 small"><strong class="text-muted me-2 mobile-label-width">Status Berakhir:</strong> {{ user.data_menikah.statusMantan || '-' }}</p>
+                                    <p class="mb-1 small"><strong class="text-muted me-2 mobile-label-width">Tahun Berakhir:</strong> {{ user.data_menikah.yearMantan || '-' }}</p>
                                 </div>
                                 <div v-else class="text-muted fst-italic small mt-3">Detail pernikahan lanjutan tidak tersedia.</div>
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -243,10 +242,10 @@
                         <div v-if="user.data_keluarga && user.data_keluarga.length > 0" class="row">
                             <div v-for="(family, fIndex) in user.data_keluarga" :key="fIndex" class="col-md-6 mb-3">
                                 <div class="card card-body bg-light h-100 p-3 shadow-sm border-0">
-                                    <span class="fw-bold text-dark">{{ family.name }}</span>
-                                    <small class="text-secondary mb-2">Hubungan: {{ family.relation || '-' }} | Agama: {{ family.religion || '-' }}</small>
-                                    <small class="text-muted">Kontak: {{ family.contact || '-' }}</small>
-                                    <small class="text-muted">Alamat: {{ family.address || 'Alamat tidak tersedia' }}</small>
+                                    <span class="fw-bold text-dark family-name-mobile">{{ family.name }}</span>
+                                    <small class="text-secondary mb-2 family-detail-mobile">Hubungan: {{ family.relation || '-' }} | Agama: {{ family.religion || '-' }}</small>
+                                    <small class="text-muted family-detail-mobile">Kontak: {{ family.contact || '-' }}</small>
+                                    <small class="text-muted family-detail-mobile">Alamat: {{ family.address || 'Alamat tidak tersedia' }}</small>
                                 </div>
                             </div>
                         </div>
@@ -255,7 +254,7 @@
                 </div>
 
                 <div class="mt-4 text-center">
-                    <a href="/user/dashboard" class="btn btn-outline-secondary ">
+                    <a href="/user/dashboard" class="btn btn-outline-secondary w-100-mobile">
                         <i class="fa fa-arrow-left me-2"></i> Kembali ke Dashboard
                     </a>
                 </div>
@@ -288,10 +287,10 @@ const props = defineProps({
 });
 
 // =================================================================
-// === FUNGSI HELPER YANG DIADAPTASI DARI KODE PERTAMA =============
+// === FUNGSI HELPER ===============================================
 // =================================================================
 
-// Helper: Format Tanggal (diambil dari kode awal)
+// Helper: Format Tanggal
 const formatDate = (dateString) => {
     if (!dateString) return null;
     try {
@@ -323,7 +322,7 @@ const determineHistoryTypeLabel = (dataRiwayat) => {
     return 'Riwayat Lain';
 };
 
-// Fungsi helper Kelompok (dari kode pertama)
+// Fungsi helper Kelompok
 const getGroupName = (groupValue) => {
     if (groupValue === 1) {
         return 'Katekumen';
@@ -338,6 +337,7 @@ const getStatusBadgeClass = (status) => {
     switch (status) {
         case 'verified':
         case 'lunas':
+        case 'confirmed': // Menggunakan confirmed sesuai formatStatus
             return 'text-success'; 
         case 'confirm':
         case 'perlu_verifikasi':
@@ -364,7 +364,7 @@ const formatStatus = (status) => {
 };
 
 // =================================================================
-// === LOGIKA GANTI PASSWORD (TIDAK BERUBAH) =======================
+// === LOGIKA GANTI PASSWORD =======================================
 // =================================================================
 
 const form = reactive({
@@ -456,6 +456,7 @@ export default {
     layout: LayoutWebsite,
     methods: {
         route(name) {
+            // Asumsi fungsi route() global tersedia di window
             return window.route(name);
         }
     }
@@ -463,81 +464,47 @@ export default {
 </script>
 
 <style scoped>
-/* CSS dari komponen awal */
+/* CSS DASAR */
 .fade-in { animation: fadeIn 0.8s ease-in-out; }
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* CSS Kustom yang dipindahkan dari mounted() dan disesuaikan */
 :root {
     --navy-primary: #003366;
+    --navy-hover: #002244;
 }
 .text-navy { 
     color: var(--navy-primary); 
 }
 .card { 
-    border-radius: 16px; 
-}
-.card-header { /* Kelas ini tidak digunakan lagi, tapi dipertahankan untuk referensi */
-    border-bottom: none; 
-    border-radius: 15px 15px 0 0 !important; 
+    border-radius: 1rem; 
 }
 
-/* Gaya baru untuk meniru tampilan form yang non-aktif */
+/* Gaya nilai statis (read-only) */
 .form-control-static {
     display: block;
     padding: 0.7rem 1rem;
     font-size: 0.95rem;
     line-height: 1.5;
-    color: #495057; /* Warna teks yang jelas */
-    background-color: #f8f9fa; /* Warna latar belakang ringan */
-    border: 1px solid #e9ecef; /* Border lembut */
+    color: #495057; 
+    background-color: #f8f9fa; 
+    border: 1px solid #e9ecef; 
     border-radius: 8px;
     margin-top: 0.2rem;
     word-wrap: break-word; 
 }
 .form-label {
     margin-bottom: 0.1rem;
-    font-size: 0.9rem; /* Lebih kecil untuk label */
+    font-size: 0.9rem; 
 }
 .detail-value {
-    min-height: calc(1.5em + 1.4rem + 2px); /* Menjaga konsistensi tinggi */
+    min-height: calc(1.5em + 1.4rem + 2px); 
 }
 
-/* Tambahan CSS untuk form password (dari referensi) */
-/* --- Theme Variables --- */
-:root {
-    --navy-primary: #003366;
-    --navy-hover: #002244;
-}
-
-.text-navy { color: #003366; }
-.card { border-radius: 1rem; }
-
-/* --- Form Control Consistency (Matching the Index Page Look) --- */
-.form-control, .form-select {
-    border-color: #e0e0e0;
-    transition: all 0.2s ease;
-}
-.form-control:focus, .form-select:focus {
-    border-color: #003366;
-    box-shadow: 0 0 0 0.25rem rgba(0, 51, 102, 0.25);
-}
-
-/* For input-group to maintain rounded appearance */
-.input-group.rounded-pill > .form-control {
-    border-top-left-radius: 50rem !important;
-    border-bottom-left-radius: 50rem !important;
-}
-.input-group.rounded-pill > .btn {
-    border-top-right-radius: 50rem !important;
-    border-bottom-right-radius: 50rem !important;
-}
-
-/* --- Button Styles --- */
-.btn-primary { /* Mengubah .btn-navy menjadi .btn-primary */
+/* Button Styles */
+.btn-primary { 
     background-color: #003366;
     color: white;
     border: none;
@@ -551,13 +518,107 @@ export default {
     box-shadow: 0 4px 8px rgba(0, 51, 102, 0.3) !important;
 }
 
-/* --- Error Message Styles --- */
+/* Error Message Styles */
 .error-message {
-    color: #dc3545; /* Bootstrap Red */
-    background-color: #f8d7da; /* Light Red background */
+    color: #dc3545; 
+    background-color: #f8d7da; 
     border: 1px solid #f5c6cb;
     padding: 0.5rem 1rem;
     border-radius: 0.5rem;
     font-size: 0.875rem;
+}
+
+/* --- Penyesuaian Responsif untuk Perangkat Seluler (Mobile-Friendly) --- */
+
+@media (max-width: 767.98px) {
+    /* 1. Container Utama dan Padding */
+    .container-fluid.px-4.py-4 {
+        padding: 1rem !important; /* Kurangi padding utama */
+    }
+
+    /* 2. Header dan Info Utama */
+    .d-flex.justify-content-between.align-items-center.mb-4.header-mobile-stack {
+        flex-direction: column; /* Tumpuk header dan status */
+        align-items: flex-start !important;
+        margin-bottom: 1rem !important;
+    }
+
+    .fs-3.fw-bold.text-navy.mb-0.mobile-fs-large {
+        font-size: 1.5rem !important; /* Perkecil ukuran judul */
+    }
+    
+    .mobile-fs-small {
+        font-size: 0.85rem !important;
+    }
+
+    /* Penyesuaian Status Akun */
+    .mobile-status-block {
+        width: 100%; /* Ambil lebar penuh agar status terpisah jelas */
+    }
+    .text-muted.mb-0.small.text-end {
+        text-align: left !important;
+        margin-top: 0.5rem;
+        padding-top: 0.5rem;
+        border-top: 1px solid #eee;
+    }
+    
+    /* 3. Card Styling */
+    .card-body.p-4 {
+        padding: 1.25rem !important; /* Kurangi padding card */
+    }
+    
+    .fw-bold.text-navy.mb-4.border-bottom.pb-2 {
+        font-size: 1.1rem; /* Perkecil sub-heading (1, 2, 3) */
+        padding-bottom: 0.5rem !important;
+        margin-bottom: 1rem !important;
+    }
+    
+    /* 4. Detail Value (Non-Input) */
+    .form-label.fw-bold.text-navy {
+        font-size: 0.8rem; /* Perkecil label */
+    }
+
+    .form-control-static.detail-value {
+        padding: 0.5rem 0.7rem;
+        font-size: 0.875rem; /* Perkecil nilai detail */
+        min-height: auto; 
+    }
+    
+    /* 5. Detail Khusus Katekumen & Pernikahan */
+    .fw-bold.text-secondary.mb-3.pt-3 {
+        font-size: 1rem;
+        margin-top: 1rem !important;
+    }
+
+    /* Detail Pernikahan yang Rapi */
+    .p-3.border.rounded.bg-light-subtle.mt-3 {
+        padding: 1rem !important;
+    }
+    .p-3.border.rounded.bg-light-subtle.mt-3 p.small {
+        font-size: 0.85rem; 
+        line-height: 1.4;
+    }
+    /* Label pernikahan di mobile tumpuk */
+    .mobile-label-width {
+        width: auto !important; 
+        display: block !important;
+        margin-bottom: 0 !important;
+    }
+
+    /* 6. Form Ganti Password */
+    .w-100-mobile {
+        width: 100% !important; /* Tombol Simpan penuh */
+    }
+    
+    /* 7. Data Keluarga */
+    .card.card-body.bg-light.h-100.p-3 {
+        padding: 1rem !important;
+    }
+    .family-name-mobile {
+        font-size: 0.9rem;
+    }
+    .family-detail-mobile {
+        font-size: 0.75rem; /* Perkecil teks info keluarga */
+    }
 }
 </style>

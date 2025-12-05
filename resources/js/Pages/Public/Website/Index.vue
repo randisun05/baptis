@@ -13,30 +13,30 @@
                 <Link href="/" class="navbar-brand d-flex align-items-center">
                     <i class="fas fa-church me-2 fa-lg text-warning"></i>
                     <div class="d-flex flex-column lh-sm">
-                        <span class="fw-bold text-white">Paroki Santa Melania</span>
-                        <span class="fs-7 text-white-50" style="font-size: 0.75rem;">Sistem Informasi Katekumen dan Baptis Bayi</span>
+                        <span class="fw-bold text-white small-brand-title">Paroki Santa Melania</span>
+                        <span class="fs-7 text-white-50" style="font-size: 0.7rem;">Sistem Informasi Katekumen & Baptis Bayi</span>
                     </div>
                 </Link>
 
                 <div class="d-flex gap-2 align-items-center ms-auto">
-                    <Link href="/user/login" class="btn btn-outline-light btn-sm px-4">Masuk</Link>
+                    <Link href="/user/login" class="btn btn-outline-light btn-sm px-3">Masuk</Link>
                 </div>
             </div>
         </nav>
 
         <section class="hero d-flex align-items-center">
             <div class="overlay"></div>
-            <div class="container position-relative text-center text-white z-1">
+            <div class="container position-relative text-center text-white z-1 py-5">
                 <span class="badge bg-warning text-dark mb-3 px-3 py-2 rounded-pill">Selamat Datang Umat Allah</span>
-                <h1 class="display-4 fw-bold mb-3">Pelayanan Sakramen <br> Kini Lebih Mudah</h1>
-                <p class="lead mb-4 text-white-50 mx-auto" style="max-width: 600px;">
+                <h1 class="display-5 fw-bold mb-3">Pelayanan Sakramen <br> Kini Lebih Mudah</h1>
+                <p class="lead mb-4 text-white-50 mx-auto small-text" style="max-width: 600px;">
                     Sistem Informasi Katekumen dan Sakramen Bapstis bayi untuk Anda atau buah hati Anda untuk Sakramen Baptis dan Kelas Katekumen secara online. Terintegrasi, transparan, dan efisien.
                 </p>
-                <div class="d-flex justify-content-center gap-3">
-                    <Link href="/user/login" class="btn btn-primary btn-lg px-5 shadow-lg">
+                <div class="d-flex justify-content-center flex-wrap gap-3">
+                    <Link href="/user/login" class="btn btn-primary btn-md px-4 shadow-lg">
                         <i class="fas fa-sign-in-alt me-2"></i> Login
                     </Link>
-                    <a href="#jadwal" class="btn btn-outline-light btn-lg px-5">
+                    <a href="#jadwal" class="btn btn-outline-light btn-md px-4">
                         Lihat Jadwal
                     </a>
                 </div>
@@ -103,22 +103,22 @@
                 <div class="row text-center position-relative process-row">
                     <div class="process-line d-none d-md-block"></div>
 
-                    <div class="col-md-3 mb-4 position-relative">
+                    <div class="col-md-3 col-6 mb-4 position-relative">
                         <div class="step-icon bg-navy text-white mx-auto mb-3">1</div>
                         <h5 class="fw-bold">Pendaftaran</h5>
                         <p class="small text-muted">Daftarkan diri Anda dengan datang ke Sekretariat.</p>
                     </div>
-                    <div class="col-md-3 mb-4 position-relative">
+                    <div class="col-md-3 col-6 mb-4 position-relative">
                         <div class="step-icon bg-navy text-white mx-auto mb-3">2</div>
                         <h5 class="fw-bold">Penyerahan Dokumen</h5>
                         <p class="small text-muted">Isi dokumen yang diberikan oleh sekretariat dan serahkan untuk pendataan.</p>
                     </div>
-                    <div class="col-md-3 mb-4 position-relative">
+                    <div class="col-md-3 col-6 mb-4 position-relative">
                         <div class="step-icon bg-navy text-white mx-auto mb-3">3</div>
                         <h5 class="fw-bold">Verifikasi Akun</h5>
                         <p class="small text-muted">Verifikasi data pada akun Anda yang diberikan oleh sekretariat via email berupa username dan password.</p>
                     </div>
-                    <div class="col-md-3 mb-4 position-relative">
+                    <div class="col-md-3 col-6 mb-4 position-relative">
                         <div class="step-icon bg-success text-white mx-auto mb-3"><i class="fas fa-check"></i></div>
                         <h5 class="fw-bold">Berhasil</h5>
                         <p class="small text-muted">Anda memiliki akses untuk masuk ke sistem untuk keperluan kegiatan katekumen atau sakramen baptis bayi.</p>
@@ -142,30 +142,30 @@
                             <div class="card-body p-0">
                                 <div class="list-group list-group-flush">
 
-                                    <div class="list-group-item p-4 d-flex align-items-center justify-content-between"
+                                    <div class="list-group-item p-3 d-flex align-items-center justify-content-between"
                                         v-for="event in events"
                                         :key="event.id">
 
                                         <div class="d-flex align-items-center">
 
-                                            <div class="date-box bg-primary-subtle text-primary rounded p-2 text-center me-3" style="min-width: 60px;">
-                                                <span class="d-block fw-bold h5 mb-0">{{ formatDate(event.date, 'day') }}</span>
+                                            <div class="date-box bg-primary-subtle text-primary rounded p-2 text-center me-3 date-box-sm">
+                                                <span class="d-block fw-bold h6 mb-0">{{ formatDate(event.date, 'day') }}</span>
                                                 <span class="d-block small fw-bold">{{ formatDate(event.date, 'month') }}</span>
                                             </div>
 
                                             <div>
-                                                <h5 class="fw-bold mb-1 text-navy">{{ event.title }}</h5>
-                                                <p class="mb-0 text-muted small">
+                                                <h6 class="fw-bold mb-1 text-navy event-title-sm">{{ event.title }}</h6>
+                                                <p class="mb-0 text-muted small-info">
                                                     <i class="fas fa-map-marker-alt me-1"></i> {{ event.place }}
-                                                    <span v-if="event.ref_event" class="ms-2 badge bg-info-subtle text-info-emphasis">
+                                                    <span v-if="event.ref_event" class="ms-2 badge bg-info-subtle text-info-emphasis event-badge-sm">
                                                         {{ event.ref_event.title }}
                                                     </span>
                                                 </p>
                                             </div>
                                         </div>
 
-                                        <div class="d-flex flex-column align-items-end gap-2">
-                                            <span class="badge rounded-pill px-3"
+                                        <div class="d-flex flex-column align-items-end gap-2 ms-2">
+                                            <span class="badge rounded-pill px-3 py-1 event-status-sm"
                                                 :class="event.status === 'active' ? 'bg-success' : 'bg-secondary'">
                                                 {{ event.status === 'active' ? 'Aktif' : 'Ditutup' }}
                                             </span>
@@ -187,6 +187,7 @@
                 </div>
             </div>
         </section>
+        
         <section class="py-5 bg-light" id="warta">
             <div class="container py-4">
                 <div class="row align-items-center">
@@ -198,7 +199,7 @@
 
                         <div class="card bg-navy text-white p-4 border-0 rounded-3">
                             <h4><i class="fas fa-bullhorn me-2"></i> Keterangan</h4>
-                            <p class="mb-0 small opacity-75">Klik tombol "Lihat Warta" di samping untuk membaca warta selengkapnya.</p>
+                            <p class="mb-0 small opacity-75">Klik tombol "Lihat Post" di samping untuk membaca warta selengkapnya.</p>
                         </div>
                     </div>
 
@@ -207,26 +208,26 @@
                             <div class="card-body p-0">
                                 <div class="list-group list-group-flush">
 
-                                    <div class="list-group-item p-4 d-flex align-items-center justify-content-between"
+                                    <div class="list-group-item p-3 d-flex align-items-center justify-content-between"
                                         v-for="post in posts"
                                         :key="post.id">
 
                                         <div class="d-flex align-items-center">
-                                            <div class="date-box bg-primary-subtle text-primary rounded p-2 text-center me-3" style="min-width: 60px;">
-                                                <span class="d-block fw-bold h5 mb-0">{{ formatDate(post.created_at, 'day') }}</span>
+                                            <div class="date-box bg-primary-subtle text-primary rounded p-2 text-center me-3 date-box-sm">
+                                                <span class="d-block fw-bold h6 mb-0">{{ formatDate(post.created_at, 'day') }}</span>
                                                 <span class="d-block small fw-bold">{{ formatDate(post.created_at, 'month') }}</span>
                                             </div>
 
                                             <div>
-                                                <h5 class="fw-bold mb-1 text-navy">{{ post.title }}</h5>
-                                                <p class="mb-0 text-muted small">
+                                                <h6 class="fw-bold mb-1 text-navy event-title-sm">{{ post.title }}</h6>
+                                                <p class="mb-0 text-muted small-info">
                                                     <i class="far fa-calendar-alt me-1"></i>
                                                     Diterbitkan: {{ formatDate(post.created_at, 'full') }}
                                                 </p>
                                             </div>
                                         </div>
 
-                                        <Link :href="`/warta/${post.slug}`" class="btn btn-sm btn-outline-primary border-0 shadow" type="button">
+                                        <Link :href="`/warta/${post.slug}`" class="btn btn-sm btn-outline-primary border-0 shadow ms-2" type="button">
                                             <i class="fas fa-eye me-1"></i> Lihat Post
                                         </Link>
                                     </div>
@@ -260,8 +261,7 @@
                             <iframe
                                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3959.327942890694!2d107.6212273!3d-6.9003616!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e68e7b306147b35%3A0x44c48d0d2a9d2f59!2sGereja%20Katolik%20Santa%20Melania%2C%20Cihaur%20Geulis!5e0!3m2!1sid!2sid!4v1727260000000!5m2!1sid!2sid"
                                 width="100%"
-                                height="450"
-                                style="border:0;"
+                                height="350" style="border:0;"
                                 allowfullscreen=""
                                 loading="lazy"
                                 referrerpolicy="no-referrer-when-downgrade">
@@ -275,15 +275,15 @@
         <section class="py-5 bg-navy text-white" id="dokumen">
             <div class="container text-center">
                 <h3 class="fw-bold mb-4 text-white">Butuh Formulir Fisik?</h3>
-                <p class="mb-5 opacity-75">Anda dapat mengunduh formulir pendaftaran manual di bawah ini jika diperlukan.</p>
+                <p class="mb-5 opacity-75 small-text">Anda dapat mengunduh formulir pendaftaran manual di bawah ini jika diperlukan.</p>
                 <div class="d-flex justify-content-center flex-wrap gap-3">
-                    <a href="/assets/document/formulirSakramenBaptisBayi.pdf" download class="btn btn-outline-light px-4 py-2">
+                    <a href="/assets/document/formulirSakramenBaptisBayi.pdf" download class="btn btn-outline-light btn-sm px-3 py-2">
                         <i class="fas fa-file-pdf me-2"></i> Form Baptis Bayi
                     </a>
-                    <a href="/assets/document/formKatekumen.pdf" download class="btn btn-outline-light px-4 py-2">
+                    <a href="/assets/document/formKatekumen.pdf" download class="btn btn-outline-light btn-sm px-3 py-2">
                         <i class="fas fa-file-pdf me-2"></i> Form Katekumen
                     </a>
-                    <a href="/assets/document/formDataUmat.pdf" download class="btn btn-outline-light px-4 py-2">
+                    <a href="/assets/document/formDataUmat.pdf" download class="btn btn-outline-light btn-sm px-3 py-2">
                         <i class="fas fa-file-pdf me-2"></i> Form Data Umat
                     </a>
                 </div>
@@ -295,12 +295,12 @@
                 <div class="row g-4">
                     <div class="col-lg-6">
                         <h5 class="fw-bold text-warning mb-3">Paroki Santa Melania</h5>
-                        <p class="small opacity-75">
+                        <p class="small opacity-75 footer-contact">
                             Jl. Melania No.1-3, Cihaur Geulis, Kec. Cibeunying Kaler, Kota Bandung, Jawa Barat 40122<br>
                             Telp: (022) 20463790<br>
-                           <a href="mailto:parokimelaniabdg@gmail.com" class="text-white opacity-75 text-decoration-none">
-                        Email: parokimelaniabdg@gmail.com
-                        </a>
+                            <a href="mailto:parokimelaniabdg@gmail.com" class="text-white opacity-75 text-decoration-none">
+                            Email: parokimelaniabdg@gmail.com
+                            </a>
                             <br>
                             <a href="https://wa.me/6281321272634" target="_blank" class="text-white opacity-75 text-decoration-none">
                                 <i class="fab fa-whatsapp me-1"></i> WhatsApp: +62 813-2127-2634
@@ -309,7 +309,7 @@
                     </div>
                     <div class="col-lg-6">
                         <h5 class="fw-bold text-warning mb-3">Jam Sekretariat</h5>
-                        <ul class="list-unstyled small opacity-75">
+                        <ul class="list-unstyled small opacity-75 footer-hours">
                             <li class="d-flex justify-content-between mb-2"><span>Senin:</span> <span>08.00 – 16.00</span></li>
                             <li class="d-flex justify-content-between mb-2"><span>Selasa:</span> <span>08.00 – 16.00</span></li>
                             <li class="d-flex justify-content-between mb-2"><span>Rabu:</span> <span>08.00 – 16.00</span></li>
@@ -537,5 +537,82 @@ footer a.text-white:hover {
     opacity: 1 !important; 
     /* Mengubah warna menjadi warna aksen orange-accent saat di-hover */
     color: var(--orange-accent) !important;
+}
+
+/* =======================================
+   RESPONSIVE/MOBILE ADJUSTMENTS (<= 768px)
+   ======================================= */
+@media (max-width: 768px) {
+    
+    /* --- Navbar --- */
+    .navbar {
+        padding: 0.75rem 0; /* Padding lebih kecil */
+    }
+    .navbar-brand .fa-church {
+        font-size: 1.25rem;
+    }
+    .small-brand-title {
+        font-size: 0.85rem; /* Judul lebih kecil */
+    }
+
+    /* --- Hero Section --- */
+    .hero {
+        height: 60vh; /* Tinggi hero dikurangi di mobile */
+        min-height: 400px;
+        margin-top: -55px; /* Sesuaikan dengan tinggi navbar yang baru */
+    }
+    .hero .container {
+        padding-top: 8rem !important;
+        padding-bottom: 2rem !important;
+    }
+    .display-5 {
+        font-size: 1.75rem; /* H1 lebih kecil */
+    }
+    .small-text {
+        font-size: 0.875rem; /* Paragraf lebih kecil */
+    }
+
+    /* --- Process Flow --- */
+    .process-line {
+        display: none !important; /* Sembunyikan garis horizontal */
+    }
+    /* Pastikan step-icon tetap di tengah kolom 6 */
+    .col-6 .step-icon {
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+
+    /* --- Jadwal & Warta Card List --- */
+    .list-group-item {
+        padding: 0.75rem !important; /* Padding lebih kecil */
+    }
+    .date-box-sm {
+        min-width: 50px !important; /* Kotak tanggal lebih kecil */
+    }
+    .date-box-sm .h6 {
+        font-size: 1rem !important;
+    }
+    .event-title-sm {
+        font-size: 0.9rem; /* Judul kegiatan lebih kecil */
+    }
+    .small-info {
+        font-size: 0.75rem !important; /* Info lebih kecil */
+    }
+    .event-badge-sm {
+        font-size: 0.6rem; /* Badge lebih kecil */
+    }
+    .event-status-sm {
+        font-size: 0.7rem; /* Status badge lebih kecil */
+    }
+
+    /* --- Lokasi (Map) --- */
+    .map-responsive iframe {
+        height: 300px; /* Tinggi peta dikurangi di mobile */
+    }
+    
+    /* --- Footer --- */
+    .footer-contact, .footer-hours {
+        font-size: 0.8rem; /* Font footer lebih kecil */
+    }
 }
 </style>
