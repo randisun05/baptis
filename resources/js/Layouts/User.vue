@@ -17,7 +17,7 @@
                 <slot />
             </main>
 
-           <footer class="bg-dark text-white py-5">
+            <footer class="bg-dark text-white py-5">
             <div class="container">
                 <div class="row g-4">
                     <div class="col-lg-6">
@@ -25,7 +25,10 @@
                         <p class="small opacity-75">
                             Jl. Melania No.1-3, Cihaur Geulis, Kec. Cibeunying Kaler, Kota Bandung, Jawa Barat 40122<br>
                             Telp: (022) 20463790<br>
-                            Email: sekretariat@stmelania.org<br>
+                           <a href="mailto:parokimelaniabdg@gmail.com" class="text-white opacity-75 text-decoration-none">
+                        Email: parokimelaniabdg@gmail.com
+                        </a>
+                            <br>
                             <a href="https://wa.me/6281321272634" target="_blank" class="text-white opacity-75 text-decoration-none">
                                 <i class="fab fa-whatsapp me-1"></i> WhatsApp: +62 813-2127-2634
                             </a>

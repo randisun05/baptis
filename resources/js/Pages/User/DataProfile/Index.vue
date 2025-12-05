@@ -352,14 +352,12 @@ const getStatusBadgeClass = (status) => {
 // Fungsi helper untuk format status
 const formatStatus = (status) => {
     switch (status) {
-        case 'verified':
+        case 'confirmed':
             return 'Terverifikasi';
         case 'confirm':
             return 'Menunggu Konfirmasi';
         case 'pending':
             return 'Tertunda';
-        case 'lunas':
-            return 'Lunas';
         default:
             return status;
     }

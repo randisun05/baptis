@@ -26,7 +26,7 @@
                                         <div v-if="form.errors.title" class="invalid-feedback">{{ form.errors.title }}</div>
                                     </div>
                                     
-                                    <div class="mb-3">
+                                    <!-- <div class="mb-3">
                                         <label class="form-label fw-bold">Referensi Kegiatan</label>
                                         <select class="form-select" v-model="form.ref_event_id" :class="{ 'is-invalid': form.errors.ref_event_id }">
                                             <option value="" disabled>-- Pilih Kategori Referensi --</option>
@@ -35,7 +35,7 @@
                                             </option>
                                         </select>
                                         <div v-if="form.errors.ref_event_id" class="invalid-feedback">{{ form.errors.ref_event_id }}</div>
-                                    </div>
+                                    </div> -->
 
                                 </div>
 
@@ -108,7 +108,7 @@ const props = defineProps({
 const form = useForm({
     _method: 'PUT', // Penting untuk PUT request
     title: props.event.title,
-    ref_event_id: props.event.ref_event_id,
+    // ref_event_id: props.event.ref_event_id,
     date: props.event.date,
     place: props.event.place,
     body: props.event.body, // Sesuai dengan kolom 'body'

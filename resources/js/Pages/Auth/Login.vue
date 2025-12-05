@@ -20,14 +20,14 @@
               </div>
 
               <div v-if="$page.props.flash?.message || $page.props.flash?.error || form.errors.email" 
-                   class="alert alert-danger bg-danger-subtle text-danger-emphasis border-0 rounded-3 mb-4 fade show" 
-                   role="alert">
-                   <div class="d-flex align-items-center">
-                        <i class="bi bi-exclamation-circle-fill me-2"></i>
-                        <div>
-                            {{ $page.props.flash?.message || $page.props.flash?.error || form.errors.email }}
-                        </div>
-                   </div>
+                  class="alert alert-danger bg-danger-subtle text-danger-emphasis border-0 rounded-3 mb-4 fade show" 
+                  role="alert">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-exclamation-circle-fill me-2"></i>
+                    <div>
+                      {{ $page.props.flash?.message || $page.props.flash?.error || form.errors.email }}
+                    </div>
+                </div>
               </div>
 
               <form @submit.prevent="submit">
@@ -44,21 +44,31 @@
                   <label for="email" class="text-muted">Alamat Email</label>
                 </div>
 
-                <div class="form-floating mb-4">
+                <div class="form-floating mb-4 position-relative">
                   <input
                     class="form-control input-cantik"
                     :class="{ 'is-invalid': form.errors.password }"
                     id="password"
-                    type="password"
+                    :type="passwordFieldType"
                     v-model="form.password"
                     placeholder="Password"
                   />
                   <label for="password" class="text-muted">Password</label>
+                  
+                  <button 
+                    type="button" 
+                    @click="togglePasswordVisibility" 
+                    class="btn btn-sm text-muted position-absolute end-0 top-50 translate-middle-y me-3 p-0"
+                    style="z-index: 1000;"
+                    aria-label="Toggle Password Visibility"
+                  >
+                      <i :class="['bi', isPasswordVisible ? 'bi-eye-slash-fill' : 'bi-eye-fill']"></i>
+                  </button>
+
                   <div v-if="form.errors.password" class="invalid-feedback">
                     {{ form.errors.password }}
                   </div>
                 </div>
-
                 <div class="d-grid">
                   <button
                     class="btn btn-navy btn-lg py-3 fw-bold shadow-sm"
@@ -67,11 +77,11 @@
                     type="submit">
                     
                     <span v-if="form.processing">
-                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                        Memproses...
+                      <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                      Memproses...
                     </span>
                     <span v-else>
-                        Login <i class="bi bi-arrow-right ms-2"></i>
+                      Login <i class="bi bi-arrow-right ms-2"></i>
                     </span>
 
                   </button>
@@ -99,6 +109,7 @@
 
 <script setup>
 import { Head, useForm } from '@inertiajs/inertia-vue3'
+import { ref, computed } from 'vue' // Import ref dan computed dari vue
 
 const form = useForm({
   email: '',
@@ -109,6 +120,17 @@ const submit = () => {
   form.post('/login', {
     onFinish: () => form.reset('password'),
   })
+}
+
+// Logika Toggle Password
+const isPasswordVisible = ref(false)
+
+const passwordFieldType = computed(() => {
+  return isPasswordVisible.value ? 'text' : 'password'
+})
+
+const togglePasswordVisibility = () => {
+  isPasswordVisible.value = !isPasswordVisible.value
 }
 </script>
 
@@ -147,6 +169,14 @@ export default {
 }
 .form-floating > .form-control {
     padding-left: 1.2rem;
+    /* Tambahkan padding kanan agar tidak tertutup tombol mata */
+    padding-right: 3rem; 
+}
+
+/* Penyesuaian untuk tombol toggle agar tidak mengganggu label/input */
+.form-floating > .form-control:not(:placeholder-shown) ~ button {
+    /* Hanya untuk memastikan posisi relatif terhadap input terisi */
+    right: 0; 
 }
 
 /* --- Button Styles --- */
