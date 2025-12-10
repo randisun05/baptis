@@ -1,28 +1,26 @@
 <template>
-  <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm px-4 py-3 sticky-top">
+  <nav class="navbar navbar-expand navbar-light bg-white border-bottom shadow-sm px-3 px-lg-4 py-3 sticky-top">
     <div class="container-fluid p-0">
       
-      <button class="btn btn-light text-navy border-0 d-lg-none me-3" @click="toggleSidebar" title="Tampilkan/Sembunyikan Menu">
+      <button class="btn btn-light text-navy border-0 d-lg-none me-3" @click="toggleSidebar" title="Tampilkan Menu">
         <i class="bi bi-list fs-4"></i>
       </button>
-
-      <div class="d-lg-none small fw-bold text-navy">Admin Panel</div>
       
       <div class="ms-auto">
-        <ul class="navbar-nav align-items-center gap-3">
+        <ul class="navbar-nav flex-row align-items-center gap-3">
           
-          <li class="nav-item d-none d-lg-block">
+          <li class="nav-item">
             <Link class="nav-link icon-link" href="/admin/dashboard" title="Dashboard">
               <i class="bi bi-house-door-fill fs-5"></i>
             </Link>
           </li>
 
-          <li class="nav-item dropdown">
+          <li class="nav-item dropdown position-relative">
             <a href="#" class="nav-link icon-link p-2" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false" title="Menu Pengguna">
                 <i class="bi bi-person-circle fs-5"></i> 
             </a>
             
-            <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end text-small shadow border-0" aria-labelledby="dropdownUser1" style="background-color: #002244;">
+            <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end text-small shadow border-0" aria-labelledby="dropdownUser1" style="background-color: #002244; position: absolute;">
               <li class="dropdown-header">
                   <span class="fw-bold">{{ $page.props.auth?.user?.name || 'Administrator' }}</span>
                   <div class="small text-white opacity-75">{{ $page.props.auth?.user?.email || '' }}</div>
@@ -43,8 +41,9 @@
 <script setup>
 import { Link } from '@inertiajs/inertia-vue3';
 
-// Asumsi fungsi toggleSidebar ada di sini
+// Fungsi untuk membuka sidebar dengan memanipulasi class DOM
 const toggleSidebar = () => {
+    // Pastikan ID ini sesuai dengan ID di komponen Sidebar Anda
     const sidebar = document.getElementById('sidebar-menu');
     const overlay = document.getElementById('sidebar-menu-overlay');
 
@@ -65,8 +64,10 @@ const toggleSidebar = () => {
 
 /* --- Navbar Styles --- */
 .navbar {
-    height: 70px; /* Tinggi tetap */
-    z-index: 999;
+    height: 70px;
+    /* PENTING: Z-index Navbar harus LEBIH KECIL dari Sidebar (misal Sidebar 1050) */
+    z-index: 990; 
+    top: 0;
 }
 
 /* --- Icon Links --- */
@@ -82,7 +83,7 @@ const toggleSidebar = () => {
     justify-content: center;
 }
 
-.icon-link:hover {
+.icon-link:hover, .icon-link:focus, .show > .icon-link {
     color: #003366; 
     background-color: #e6f0ff; 
     transform: translateY(-2px);
@@ -94,5 +95,10 @@ const toggleSidebar = () => {
 }
 .btn-light.text-navy:active {
   background-color: #e2e6ea;
+}
+
+/* --- Dropdown Fix --- */
+.dropdown-menu {
+    margin-top: 10px !important;
 }
 </style>

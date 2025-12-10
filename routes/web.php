@@ -85,6 +85,8 @@ Route::prefix('admin')->group(function() {
         Route::post('/events/{id}', [\App\Http\Controllers\Admin\EventController::class, 'update'])->name('admin.events.update')->middleware('role:administrator,ketua_wakil_subseksi');
         Route::get('/events/{id}/enroll', [\App\Http\Controllers\Admin\EventController::class, 'enroll'])->name('admin.events.enroll')->middleware('role:administrator,ketua_wakil_subseksi');
         Route::post('/events/{id}/enroll', [\App\Http\Controllers\Admin\EventController::class, 'Storeenroll'])->name('admin.events.Storeenroll')->middleware('role:administrator,ketua_wakil_subseksi');
+        Route::get('/events/{id}/unenroll', [\App\Http\Controllers\Admin\EventController::class, 'unenroll'])->name('admin.events.unenroll')->middleware('role:administrator,ketua_wakil_subseksi');
+        Route::post('/events/{id}/unenroll', [\App\Http\Controllers\Admin\EventController::class, 'storeunenroll'])->name('admin.events.storeunenroll')->middleware('role:administrator,ketua_wakil_subseksi');
         Route::resource('/events', \App\Http\Controllers\Admin\EventController::class, ['as' => 'admin']);
 
         //route setting

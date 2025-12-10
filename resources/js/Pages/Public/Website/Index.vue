@@ -27,10 +27,10 @@
         <section class="hero d-flex align-items-center">
             <div class="overlay"></div>
             <div class="container position-relative text-center text-white z-1 py-5">
-                <span class="badge bg-warning text-dark mb-3 px-3 py-2 rounded-pill">Selamat Datang Umat Allah</span>
+                <span class="badge bg-warning text-dark mb-3 px-3 py-2 rounded-pill">Selamat Datang</span>
                 <h1 class="display-5 fw-bold mb-3">Pelayanan Sakramen <br> Kini Lebih Mudah</h1>
                 <p class="lead mb-4 text-white-50 mx-auto small-text" style="max-width: 600px;">
-                    Sistem Informasi Katekumen dan Sakramen Bapstis bayi untuk Anda atau buah hati Anda untuk Sakramen Baptis dan Kelas Katekumen secara online. Terintegrasi, transparan, dan efisien.
+                    Sistem Informasi Katekumen dan Sakramen Baptis bayi untuk Anda atau buah hati Anda untuk Sakramen Baptis dan Kelas Katekumen secara online. Terintegrasi, transparan, dan efisien.
                 </p>
                 <div class="d-flex justify-content-center flex-wrap gap-3">
                     <Link href="/user/login" class="btn btn-primary btn-md px-4 shadow-lg">
@@ -47,7 +47,7 @@
             <div class="container py-4">
                 <div class="text-center mb-5">
                     <h6 class="text-primary fw-bold text-uppercase ls-1">Layanan Kami</h6>
-                    <h2 class="fw-bold text-navy">Pendaftaran Sakramen</h2>
+                    <h2 class="fw-bold text-navy">Pendaftaran Katekese</h2>
                     <div class="divider mx-auto"></div>
                 </div>
 
@@ -58,7 +58,7 @@
                                 <div class="icon-box bg-primary-subtle text-primary mb-3 mx-auto">
                                     <i class="fas fa-baby fa-2x"></i>
                                 </div>
-                                <h4 class="card-title fw-bold text-navy">Baptis Bayi</h4>
+                                <h4 class="card-title fw-bold text-navy">Sakramen Baptis Bayi</h4>
                                 <p class="card-text text-muted">Pendaftaran khusus untuk orang tua yang ingin membaptiskan putera-puterinya (usia di bawah 7 tahun).</p>
                             </div>
                         </div>
@@ -92,7 +92,7 @@
             </div>
         </section>
 
-        <section class="py-5 bg-white">
+        <section class="py-5 bg-white" style="overflow-x: hidden;">
             <div class="container py-4">
                 <div class="text-center mb-5">
                     <h6 class="text-primary fw-bold text-uppercase">Prosedur</h6>
@@ -116,7 +116,7 @@
                     <div class="col-md-3 col-6 mb-4 position-relative">
                         <div class="step-icon bg-navy text-white mx-auto mb-3">3</div>
                         <h5 class="fw-bold">Verifikasi Akun</h5>
-                        <p class="small text-muted">Verifikasi data pada akun Anda yang diberikan oleh sekretariat via email berupa username dan password.</p>
+                        <p class="small text-muted">Verifikasi data pada akun Anda dengan melakukan login pada akun yang telah diberikan oleh sekretariat via email berupa username dan password.</p>
                     </div>
                     <div class="col-md-3 col-6 mb-4 position-relative">
                         <div class="step-icon bg-success text-white mx-auto mb-3"><i class="fas fa-check"></i></div>
@@ -169,7 +169,7 @@
                                                 :class="event.status === 'active' ? 'bg-success' : 'bg-secondary'">
                                                 {{ event.status === 'active' ? 'Aktif' : 'Ditutup' }}
                                             </span>
-                                            </div>
+                                        </div>
                                     </div>
 
                                     <div v-if="events.length === 0" class="list-group-item text-center text-muted p-4">
@@ -494,12 +494,19 @@ export default {
     z-index: 2;
     position: relative;
 }
-/* Garis horizontal penghubung step */
+
+/* Garis horizontal penghubung step (MODIFIKASI FULL WIDTH) */
 .process-line {
     position: absolute;
     top: 25px; 
-    left: 15%;
-    right: 15%;
+    
+    /* Membuat garis selebar viewport (layar browser) */
+    width: 100vw;
+    
+    /* Memposisikan di tengah-tengah relatif parent */
+    left: 50%;
+    transform: translateX(-50%);
+    
     height: 2px;
     background-color: #e9ecef;
     z-index: 1;

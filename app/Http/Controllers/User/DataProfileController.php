@@ -45,7 +45,6 @@ class DataProfileController extends Controller
 
         // 3. Mengambil data registrasi (untuk detail tambahan seperti jabatan/role)
         $registrationData = Registration::where('email', $loggedInUser->email)->first();
-
         // 4. Kirim data yang dibutuhkan ke frontend
         return inertia('User/DataProfile/Index', [ 
             'registrationData' => $registrationData, // Data Registrasi

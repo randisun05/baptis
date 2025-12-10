@@ -1,13 +1,14 @@
 <template>
-    <Head title="Enroll Peserta" />
+    <Head title="Unenroll Peserta" />
 
-    <div class="container-fluid px-3 px-md-4 py-3 py-md-4 mb-5 mb-md-0"> <div class="row justify-content-center">
+    <div class="container-fluid px-3 px-md-4 py-3 py-md-4 mb-5 mb-md-0">
+        <div class="row justify-content-center">
             <div class="col-md-12">
 
                 <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
                     <div>
-                        <h2 class="fs-4 fs-md-3 fw-bold mb-0 text-navy">Enroll Peserta Baru</h2>
-                        <p class="text-muted mb-0 small-md">Event: <span class="fw-bold text-primary">{{ event.title }}</span></p>
+                        <h2 class="fs-4 fs-md-3 fw-bold mb-0 text-danger">Hapus Peserta Event</h2>
+                        <p class="text-muted mb-0 small-md">Event: <span class="fw-bold text-navy">{{ event.title }}</span></p>
                     </div>
                     <Link :href="`/admin/events/${event.id}`" class="btn btn-outline-secondary border-0 shadow-sm w-100 w-md-auto text-start text-md-center">
                         <i class="fa fa-arrow-left me-2"></i> Kembali
@@ -19,10 +20,10 @@
 
                         <div class="row mb-3 align-items-end g-3">
                             <div class="col-12 col-md-6">
-                                <label class="form-label fw-bold d-none d-md-block">Cari Member</label>
+                                <label class="form-label fw-bold d-none d-md-block">Cari Peserta Terdaftar</label>
                                 <div class="input-group">
                                     <span class="input-group-text border-0 bg-light ps-3"><i class="fa fa-search text-muted"></i></span>
-                                    <input type="text" class="form-control border-0 bg-light py-2" v-model="search" placeholder="Cari nama peserta...">
+                                    <input type="text" class="form-control border-0 bg-light py-2" v-model="search" placeholder="Cari nama peserta untuk dihapus...">
                                 </div>
                             </div>
                             
@@ -31,9 +32,9 @@
                                     <span class="text-muted small" v-if="form.member_ids.length > 0">
                                         {{ form.member_ids.length }} peserta dipilih
                                     </span>
-                                    <button @click="submit" :disabled="form.processing || form.member_ids.length === 0" class="btn btn-primary px-4 shadow-sm">
-                                        <i class="fa fa-user-plus me-1"></i>
-                                        {{ form.processing ? 'Menyimpan...' : 'Enroll Sekarang' }}
+                                    <button @click="submit" :disabled="form.processing || form.member_ids.length === 0" class="btn btn-danger px-4 shadow-sm">
+                                        <i class="fa fa-trash me-1"></i>
+                                        {{ form.processing ? 'Menghapus...' : 'Hapus Peserta' }}
                                     </button>
                                 </div>
                             </div>
@@ -45,16 +46,16 @@
                                         Pilih Semua Tampil
                                     </label>
                                 </div>
-                                <span class="badge bg-primary-subtle text-primary rounded-pill" v-if="form.member_ids.length > 0">
+                                <span class="badge bg-danger-subtle text-danger rounded-pill" v-if="form.member_ids.length > 0">
                                     {{ form.member_ids.length }} Dipilih
                                 </span>
                             </div>
                         </div>
 
-                        <div v-if="filteredMembers.length === 0" class="alert alert-info text-center border-0 bg-info-subtle text-info-emphasis">
+                        <div v-if="filteredMembers.length === 0" class="alert alert-light text-center border bg-light text-muted">
                             <i class="bi bi-info-circle me-2"></i>
-                            <span v-if="members.length === 0">Semua member sudah terdaftar di event ini.</span>
-                            <span v-else>Member dengan kata kunci "<strong>{{ search }}</strong>" tidak ditemukan.</span>
+                            <span v-if="members.length === 0">Belum ada peserta yang terdaftar di event ini.</span>
+                            <span v-else>Peserta dengan kata kunci "<strong>{{ search }}</strong>" tidak ditemukan.</span>
                         </div>
 
                         <div v-else class="table-responsive d-none d-md-block">
@@ -72,7 +73,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr v-for="member in filteredMembers" :key="member.id" :class="{'table-active-custom': form.member_ids.includes(member.id)}">
+                                    <tr v-for="member in filteredMembers" :key="member.id" :class="{'table-danger-custom': form.member_ids.includes(member.id)}">
                                         <td class="text-center">
                                             <input type="checkbox" class="form-check-input"
                                                 :value="member.id"
@@ -97,8 +98,9 @@
                         <div class="d-md-none mt-2">
                             <div v-for="member in filteredMembers" :key="member.id" 
                                 class="card mb-3 border shadow-sm member-card"
-                                :class="{'border-primary bg-primary-subtle-light': form.member_ids.includes(member.id)}"
-                                @click="toggleMember(member.id)"> <div class="card-body p-3">
+                                :class="{'border-danger bg-danger-subtle-light': form.member_ids.includes(member.id)}"
+                                @click="toggleMember(member.id)">
+                                <div class="card-body p-3">
                                     <div class="d-flex align-items-start gap-3">
                                         <div class="pt-1">
                                             <input type="checkbox" class="form-check-input fs-5" :checked="form.member_ids.includes(member.id)" readonly>
@@ -132,10 +134,10 @@
 
         <div class="fixed-bottom p-3 bg-white border-top shadow d-md-none" v-if="form.member_ids.length > 0">
             <div class="d-grid">
-                <button @click="submit" :disabled="form.processing" class="btn btn-primary btn-lg shadow">
+                <button @click="submit" :disabled="form.processing" class="btn btn-danger btn-lg shadow">
                     <span v-if="form.processing">Processing...</span>
                     <span v-else>
-                        Enroll {{ form.member_ids.length }} Peserta <i class="fa fa-arrow-right ms-2"></i>
+                        Hapus {{ form.member_ids.length }} Peserta <i class="fa fa-trash ms-2"></i>
                     </span>
                 </button>
             </div>
@@ -150,7 +152,7 @@ import Swal from 'sweetalert2';
 import LayoutAdmin from '../../../Layouts/Admin.vue';
 
 const props = defineProps({
-    members: Array,
+    members: Array, // Ini adalah member yang SUDAH terdaftar
     event: Object,
 });
 
@@ -159,7 +161,7 @@ const form = useForm({
     member_ids: [],
 });
 
-// === Helper Functions ===
+// === Helper Functions (Sama seperti Enroll) ===
 const getGroupName = (groupValue) => {
     if (groupValue === true || groupValue === 'Katekumen' || groupValue === 1) return 'Katekumen';
     if (groupValue === false || groupValue === 'Sakramen Baptis Bayi' || groupValue === 0) return 'Sakramen Baptis Bayi';
@@ -201,7 +203,6 @@ const toggleSelectAll = () => {
     }
 };
 
-// Helper khusus mobile untuk toggle checkbox saat card diklik
 const toggleMember = (id) => {
     if (form.member_ids.includes(id)) {
         form.member_ids = form.member_ids.filter(memberId => memberId !== id);
@@ -210,27 +211,31 @@ const toggleMember = (id) => {
     }
 };
 
+// === SUBMIT LOGIC (BERBEDA DENGAN ENROLL) ===
 const submit = () => {
     if (form.member_ids.length === 0) {
-        Swal.fire('Peringatan', 'Pilih setidaknya satu peserta.', 'warning');
+        Swal.fire('Peringatan', 'Pilih setidaknya satu peserta untuk dihapus.', 'warning');
         return;
     }
 
     Swal.fire({
-        title: 'Konfirmasi Enroll',
-        text: `Apakah Anda yakin ingin mendaftarkan ${form.member_ids.length} peserta ini?`,
-        icon: 'question',
+        title: 'Hapus Peserta?',
+        text: `Apakah Anda yakin ingin menghapus ${form.member_ids.length} peserta ini dari event?`,
+        icon: 'warning', // Icon warning karena destruktif
         showCancelButton: true,
-        confirmButtonText: 'Ya, Simpan',
+        confirmButtonColor: '#d33', // Warna merah
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Ya, Hapus!',
         cancelButtonText: 'Batal'
     }).then((result) => {
         if (result.isConfirmed) {
-            form.post(`/admin/events/${props.event.id}/enroll`, {
+            // Post ke route unenroll
+            form.post(`/admin/events/${props.event.id}/unenroll`, {
                 onSuccess: () => {
-                    Swal.fire('Berhasil', 'Peserta berhasil didaftarkan.', 'success');
+                    Swal.fire('Berhasil', 'Peserta berhasil dihapus dari event.', 'success');
                     form.reset();
-                    // Reset search juga opsional
-                    // search.value = ''; 
+                    // Jika ingin auto uncheck / reset search:
+                    form.member_ids = []; 
                 }
             });
         }
@@ -245,7 +250,10 @@ export default { layout: LayoutAdmin }
 <style scoped>
 .text-navy { color: #003366; }
 .text-primary { color: #003366 !important; }
-.bg-primary-subtle-light { background-color: #f0f7ff !important; } /* Lebih soft dari standard bootstrap */
+
+/* Custom styles for Danger/Unenroll context */
+.bg-danger-subtle-light { background-color: #fff5f5 !important; } 
+.table-danger-custom { background-color: #fff5f5; }
 
 /* Badge Colors Helpers */
 .bg-success-subtle { background-color: #d1e7dd !important; }
@@ -254,10 +262,11 @@ export default { layout: LayoutAdmin }
 .text-info-emphasis { color: #055160 !important; }
 .bg-primary-subtle { background-color: #cfe2ff !important; }
 .text-primary-emphasis { color: #0a58ca !important; }
+.bg-danger-subtle { background-color: #f8d7da !important; }
+.text-danger { color: #dc3545 !important; }
 
 /* Table Style */
 .table-centered th, .table-centered td { vertical-align: middle; }
-.table-active-custom { background-color: #f0f7ff; }
 
 /* Mobile Card Style */
 .member-card { transition: all 0.2s; cursor: pointer; }
@@ -270,7 +279,6 @@ export default { layout: LayoutAdmin }
 }
 @media (max-width: 767px) {
     .small-md { font-size: 0.9rem; }
-    /* Padding adjustments for badges on mobile */
     .badge-sm { font-size: 0.75rem; }
 }
 </style>

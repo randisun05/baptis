@@ -1,24 +1,29 @@
 <template>
     <Head :title="`Edit Kegiatan: ${form.title}`" />
 
-    <div class="container-fluid px-4 py-4">
+    <div class="container-fluid px-3 px-md-4 py-3 py-md-4">
         <div class="row justify-content-center">
-            <div class="col-md-10">
+            <div class="col-12 col-md-10">
 
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h2 class="fs-3 fw-bold mb-0">Edit Kegiatan: **{{ event.title }}**</h2> 
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
+                    <div>
+                        <h2 class="fs-4 fs-md-3 fw-bold mb-0">Edit Kegiatan</h2>
+                        <p class="text-muted mb-0 small text-truncate" style="max-width: 300px;">
+                            {{ event.title }}
+                        </p>
+                    </div>
                     
-                    <Link href="/admin/events" class="btn btn-outline-secondary border-0 shadow-sm">
+                    <Link href="/admin/events" class="btn btn-outline-secondary border-0 shadow-sm w-100 w-md-auto text-center">
                         <i class="fa fa-arrow-left me-1"></i> Kembali
                     </Link>
                 </div>
 
-                <div class="card border-0 shadow">
-                    <div class="card-body p-4">
+                <div class="card border-0 shadow rounded-3">
+                    <div class="card-body p-3 p-md-4">
                         <form @submit.prevent="submit">
 
                             <div class="row">
-                                <div class="col-md-6">
+                                <div class="col-12 col-md-6">
 
                                     <div class="mb-3">
                                         <label class="form-label fw-bold">Nama Kegiatan</label>
@@ -26,20 +31,9 @@
                                         <div v-if="form.errors.title" class="invalid-feedback">{{ form.errors.title }}</div>
                                     </div>
                                     
-                                    <!-- <div class="mb-3">
-                                        <label class="form-label fw-bold">Referensi Kegiatan</label>
-                                        <select class="form-select" v-model="form.ref_event_id" :class="{ 'is-invalid': form.errors.ref_event_id }">
-                                            <option value="" disabled>-- Pilih Kategori Referensi --</option>
-                                            <option v-for="ref in refevents" :key="ref.id" :value="ref.id">
-                                                {{ ref.title }}
-                                            </option>
-                                        </select>
-                                        <div v-if="form.errors.ref_event_id" class="invalid-feedback">{{ form.errors.ref_event_id }}</div>
-                                    </div> -->
-
                                 </div>
 
-                                <div class="col-md-6">
+                                <div class="col-12 col-md-6">
 
                                     <div class="mb-3">
                                         <label class="form-label fw-bold">Tanggal Pelaksanaan</label>
@@ -57,7 +51,7 @@
                             </div>
                             
                             <div class="row">
-                                <div class="col-md-12">
+                                <div class="col-12">
                                     <div class="mb-4">
                                         <label class="form-label fw-bold">Deskripsi Kegiatan</label>
                                         <textarea class="form-control" v-model="form.body" rows="6" :class="{ 'is-invalid': form.errors.body }" placeholder="Masukkan detail lengkap dan isi kegiatan..."></textarea>
@@ -67,7 +61,7 @@
                             </div>
 
                             <div class="row">
-                                <div class="col-md-6">
+                                <div class="col-12 col-md-6">
                                     <div class="mb-3">
                                         <label class="form-label fw-bold">Status Kegiatan</label>
                                         <select class="form-select" v-model="form.status" :class="{ 'is-invalid': form.errors.status }">
@@ -79,12 +73,15 @@
                                 </div>
                             </div>
 
+                            <hr class="my-4 border-light">
 
-                            <div class="d-flex justify-content-end gap-2">
-                                <button type="reset" class="btn btn-light shadow-sm">Reset</button>
-                                <button type="submit" class="btn btn-primary shadow-sm" :disabled="form.processing">
+                            <div class="d-flex flex-column flex-md-row justify-content-end gap-2">
+                                <button type="reset" class="btn btn-light shadow-sm w-100 w-md-auto order-1 order-md-0">
+                                    Reset
+                                </button>
+                                <button type="submit" class="btn btn-primary shadow-sm w-100 w-md-auto order-0 order-md-1" :disabled="form.processing">
                                     <i class="fa fa-save me-1"></i>
-                                    {{ form.processing ? 'Menyimpan Perubahan...' : 'Update Kegiatan' }}
+                                    {{ form.processing ? 'Menyimpan...' : 'Update Kegiatan' }}
                                 </button>
                             </div>
 
@@ -106,23 +103,19 @@ const props = defineProps({
 });
 
 const form = useForm({
-    _method: 'PUT', // Penting untuk PUT request
+    _method: 'PUT',
     title: props.event.title,
-    // ref_event_id: props.event.ref_event_id,
     date: props.event.date,
     place: props.event.place,
-    body: props.event.body, // Sesuai dengan kolom 'body'
+    body: props.event.body,
     status: props.event.status, 
 });
 
-
 const createSlug = () => {
-    // Fungsi ini bisa diabaikan karena controller yang menangani slug unik
+    // Logic slug
 };
 
-
 const submit = () => {
-    // Menggunakan form.put() untuk proses update data
     form.put(`/admin/events/${props.event.id}`);
 };
 </script>
@@ -133,3 +126,10 @@ export default {
     layout: LayoutAdmin 
 }
 </script>
+
+<style scoped>
+/* Utility tambahan untuk responsivitas */
+@media (min-width: 768px) {
+    .w-md-auto { width: auto !important; }
+}
+</style>

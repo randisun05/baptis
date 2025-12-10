@@ -329,4 +329,55 @@ class EventController extends Controller
 
             return redirect()->route('admin.events.show', $id)->with('success', 'Peserta berhasil didaftarkan!');
         }
+
+        // ===============================================
+    //           FUNGSI UNENROLL / HAPUS PESERTA
+    // ===============================================
+
+    public function unenroll($id)
+    {
+        $this->cekAuth();
+        $event = Event::findOrFail($id);
+
+        // Cek Status: Jika closed, tidak boleh mengubah data
+        if ($event->status === 'closed') {
+            return redirect()->route('admin.events.show', $id)
+                            ->with('error', 'Event sudah ditutup, tidak dapat mengubah data peserta.');
+        }
+        
+        // LOGIKA TERBALIK DARI ENROLL:
+        // Ambil ID member yang SUDAH terdaftar di event ini
+        $member_enroled_ids = DetailEvent::where('event_id', $id)->pluck('member_id')->toArray();
+        
+        // Ambil data member berdasarkan ID tersebut
+        $members = Member::whereIn('id', $member_enroled_ids)->get();
+
+        return inertia('Admin/Events/Unenroll', [
+            'members' => $members,
+            'event' => $event,
+        ]);
+    }
+
+    public function storeunenroll(Request $request, $id)
+    {
+        $this->cekAuth();
+        $event = Event::findOrFail($id);
+        
+        if ($event->status === 'closed') {
+            return redirect()->route('admin.events.show', $id)
+                            ->with('error', 'Event sudah ditutup.');
+        }
+
+        $request->validate([
+            'member_ids' => 'required|array',
+            'member_ids.*' => 'exists:members,id',
+        ]);
+
+        // Hapus data dari DetailEvent di mana event_id sesuai DAN member_id ada dalam list yang dipilih
+        DetailEvent::where('event_id', $id)
+                    ->whereIn('member_id', $request->member_ids)
+                    ->delete();
+
+        return redirect()->route('admin.events.show', $id)->with('success', 'Peserta berhasil dihapus dari event!');
+    }
 }

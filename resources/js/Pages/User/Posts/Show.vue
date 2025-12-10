@@ -6,24 +6,25 @@
             rel="stylesheet">
     </Head>
 
-    <div class="landing-wrapper">
-        <section class="py-5 bg-white">
-            <div class="container py-4">
+    <div class="landing-wrapper container-fluid px-4 py-4 fade-in">
+        <section class="py-lg-5 bg-white">
+            <div class="container py-md-4 px-0 px-md-3">
                 <div class="row justify-content-center">
                     <div class="col-lg-10">
 
-                        <div class="card shadow-lg border-0 mb-4">
-                            <div class="card-body p-5">
+                        <div class="card shadow-sm border-0 rounded-4 mb-4">
+                            <div class="card-body p-4 p-md-5">
 
-                                <div class="d-flex align-items-center mb-4 border-bottom pb-3">
-                                    <div class="date-box bg-warning-subtle text-warning rounded p-2 text-center me-3"
-                                        style="min-width: 60px;">
-                                        <span class="d-block fw-bold h5 mb-0">{{ formatDate(post.created_at, 'day') }}</span>
-                                        <span class="d-block small fw-bold">{{ formatDate(post.created_at, 'month') }}</span>
+                                <div class="d-flex align-items-start mb-4 border-bottom pb-3 header-mobile-stack">
+                                    
+                                    <div class="date-box bg-warning-subtle text-warning rounded p-2 text-center me-3 date-box-mobile">
+                                        <span class="d-block fw-bold h5 mb-0 date-day-mobile">{{ formatDate(post.created_at, 'day') }}</span>
+                                        <span class="d-block small fw-bold date-month-mobile">{{ formatDate(post.created_at, 'month') }}</span>
                                     </div>
-                                    <div>
-                                        <h1 class="h3 fw-bold text-navy mb-0">{{ post.title }}</h1>
-                                        <p class="mb-0 text-muted small">
+                                    
+                                    <div class="flex-grow-1">
+                                        <h1 class="h3 fw-bold text-navy mb-1 post-title-mobile">{{ post.title }}</h1>
+                                        <p class="mb-0 text-muted small post-date-mobile">
                                             <i class="far fa-calendar-alt me-1"></i>
                                             Diterbitkan: {{ formatDate(post.created_at, 'full') }}
                                         </p>
@@ -31,14 +32,15 @@
                                 </div>
                                 
                                 <div v-if="post.image" class="mb-4 post-image-wrapper">
-                                  <img :src="`/storage/${post.image}`" :alt="post.title" class="img-fluid rounded-lg post-image">
+                                    <img :src="`/storage/${post.image}`" :alt="post.title" class="img-fluid rounded-lg post-image">
                                 </div>
+                                
                                 <div class="post-content">
                                     <div v-html="post.body"></div>
                                 </div>
 
                                 <div class="mt-5 pt-3 border-top text-center">
-                                    <Link href="/user/posts/list" class="btn btn-outline-navy px-4">
+                                    <Link href="/user/posts/list" class="btn btn-outline-navy px-4 w-100-mobile">
                                         <i class="fas fa-arrow-left me-2"></i> Kembali ke Daftar Warta
                                     </Link>
                                 </div>
@@ -58,7 +60,7 @@ import { ref, onMounted, onUnmounted } from 'vue';
 import LayoutWebsite from '../../../Layouts/User.vue'; // Pastikan path ini benar
 
 export default {
-      // 1. OPSI LAYOUT DARI INERTIA
+    // 1. OPSI LAYOUT DARI INERTIA
     layout: LayoutWebsite, 
     // Nama komponen untuk halaman show
     name: 'ShowPost',
@@ -95,7 +97,6 @@ export default {
             return dateString;
         };
 
-        // Logika untuk Navbar berubah warna saat discroll
         const isScrolled = ref(false);
 
         const handleScroll = () => {
@@ -123,60 +124,53 @@ export default {
 </script>
 
 <style scoped>
-/* Variabel Warna Kustom */
+/* --- Custom Colors & Variables (Sama dengan kode sebelumnya) --- */
+:root {
+    --navy-primary: #003366;
+    --orange-accent: #ff9900;
+}
+
 .text-navy { color: #003366; }
 .bg-navy { background-color: #003366; }
 .btn-outline-navy { color: #003366; border-color: #003366; }
 .btn-outline-navy:hover { background-color: #003366; color: white; }
 
+.card { border-radius: 1rem; }
+
 /* Warna standar Bootstrap yang digunakan */
 .text-warning { color: #ffc107 !important; }
 .text-primary { color: #003366 !important; }
 .bg-primary-subtle { background-color: #cfe2ff !important; }
-.bg-warning-subtle { background-color: #fff3cd !important; } /* Digunakan di date-box */
+.bg-warning-subtle { background-color: #fff3cd !important; }
+
+/* --- Animasi Fade-In --- */
+.fade-in { animation: fadeIn 0.8s ease-in-out; }
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
 
 /* --- Layout dan Komponen Khusus --- */
 .landing-wrapper {
     font-family: 'Poppins', sans-serif;
 }
+
+/* Date Box Styling */
 .date-box {
-    width: 70px;
-    height: 70px;
+    min-width: 60px;
+    height: 60px;
     border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
-.fs-7 {
-    font-size: 0.85rem !important;
-}
-
-/* --- Hero Section --- */
-.sub-hero {
-    height: 30vh;
-    min-height: 300px;
-    background: url('/gambar/hero5.jpg') no-repeat center center/cover;
-    position: relative;
-    padding-top: 70px; /* Offset dari navbar */
-}
-.sub-hero .overlay {
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: linear-gradient(to bottom, rgba(0,51,102,0.8), rgba(0,0,0,0.6));
+.date-box .h5 {
+    font-size: 1.5rem;
 }
 
-/* --- Navbar Styling --- */
-.navbar { 
-    transition: all 0.3s ease-in-out; 
-    padding: 1rem 0; 
-    background: transparent; 
-}
-.navbar.scrolled { 
-    background: #003366; 
-    padding: 0.5rem 0; 
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
-}
-
-/* --- Post Content Styling --- */
+/* Post Content Styling (untuk konsistensi) */
 .post-content h1, .post-content h2, .post-content h3 {
-    color: #003366; /* Menggunakan .text-navy */
+    color: #003366;
     margin-top: 1.5rem;
     margin-bottom: 0.8rem;
     font-weight: 700;
@@ -187,21 +181,73 @@ export default {
     color: #343a40;
 }
 
-/* --- Gaya untuk Gambar Postingan (Baru Ditambahkan) --- */
+/* Gaya untuk Gambar Postingan */
 .post-image {
     width: 100%;
-    max-height: 500px; /* Batasi tinggi maksimum */
+    max-height: 500px;
     object-fit: cover;
     border-radius: 0.5rem !important;
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
 }
 
-/* --- Share Buttons --- */
-.d-flex.justify-content-center.gap-3 a.btn {
-    width: 45px;
-    height: 45px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+/* --- Penyesuaian Responsif untuk Perangkat Seluler (Mobile-Friendly) --- */
+
+@media (max-width: 767.98px) {
+    /* Container Utama & Padding */
+    .landing-wrapper.container-fluid.px-4.py-4 {
+        padding: 1rem !important;
+    }
+
+    /* Card & Padding */
+    .card-body.p-4.p-md-5 {
+        padding: 1.5rem !important; /* Kurangi padding card */
+    }
+
+    /* Header (Tanggal + Judul) */
+    .d-flex.align-items-start.mb-4.border-bottom.pb-3.header-mobile-stack {
+        /* Tidak perlu di-stack, hanya perkecil komponen */
+        align-items: flex-start !important; 
+    }
+
+    /* Date Box mobile */
+    .date-box-mobile {
+        min-width: 50px !important;
+        height: 50px;
+        padding: 0.5rem !important;
+    }
+
+    .date-day-mobile {
+        font-size: 1.2rem !important; /* Perkecil angka hari */
+    }
+    .date-month-mobile {
+        font-size: 0.6rem !important; /* Perkecil tulisan bulan */
+    }
+
+    /* Judul dan Tanggal Teks */
+    .post-title-mobile {
+        font-size: 1.2rem !important; /* Perkecil h1/h3 */
+    }
+    .post-date-mobile {
+        font-size: 0.75rem !important;
+    }
+    
+    /* Post Image */
+    .post-image {
+        max-height: 300px; /* Batasi tinggi gambar di mobile */
+    }
+
+    /* Post Content (memastikan teks mudah dibaca) */
+    .post-content {
+        font-size: 0.9rem;
+    }
+    .post-content p {
+        line-height: 1.6;
+        margin-bottom: 0.8rem;
+    }
+
+    /* Tombol Kembali */
+    .w-100-mobile {
+        width: 100% !important; /* Tombol kembali penuh */
+    }
 }
 </style>

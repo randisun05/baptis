@@ -1,5 +1,4 @@
 <template>
-
     <Head>
         <title>Warta - Paroki Santa Melania</title>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -7,38 +6,38 @@
             rel="stylesheet">
     </Head>
 
-    <div class="landing-wrapper">
+    <div class="landing-wrapper container-fluid px-4 py-4 fade-in">
         
-        <div class="container pt-4">
-            <Link href="/user/dashboard" class="btn btn-outline-secondary border-0 shadow-sm mb-4">
+        <div class="container pt-4 pt-md-0 px-0 px-md-3">
+            <Link href="/user/dashboard" class="btn btn-outline-secondary border-0 shadow-sm mb-4 w-100-mobile">
                 <i class="fas fa-arrow-left me-1"></i> Kembali ke Dashboard
             </Link>
         </div>
         
-        <section class="py-5 bg-light" id="warta">
-            <div class="container py-4">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <h2 class="fw-bold text-navy mb-4">Daftar Warta Paroki</h2>
-                        <div class="card shadow-sm border-0">
+        <section class="py-lg-5" id="warta">
+            <div class="container py-4 px-0 px-md-3">
+                <div class="row justify-content-center">
+                    <div class="col-lg-10">
+                        <h2 class="fw-bold text-navy mb-4 mobile-fs-large">Daftar Warta Paroki</h2>
+                        <div class="card shadow-sm border-0 rounded-4">
                             <div class="card-body p-0">
                                 <div class="list-group list-group-flush">
 
-                                    <div class="list-group-item p-4 d-flex flex-column"
+                                    <div class="list-group-item p-4 d-flex flex-column list-item-mobile"
                                         v-for="(post, index) in posts.data" :key="index">
 
-                                        <div class="d-flex align-items-center justify-content-between">
-                                            <div class="d-flex align-items-center">
+                                        <div class="d-flex align-items-center justify-content-between mb-3 mb-md-0">
+                                            
+                                            <div class="d-flex align-items-start align-items-md-center w-100">
 
-                                                <div class="date-box bg-primary-subtle text-primary rounded p-2 text-center me-3"
-                                                    style="min-width: 60px;">
-                                                    <span class="d-block fw-bold h5 mb-0">{{ formatDate(post.created_at, 'day') }}</span>
-                                                    <span class="d-block small fw-bold">{{ formatDate(post.created_at, 'month') }}</span>
+                                                <div class="date-box bg-primary-subtle text-primary rounded p-2 text-center me-3 date-box-mobile">
+                                                    <span class="d-block fw-bold h5 mb-0 date-day-mobile">{{ formatDate(post.created_at, 'day') }}</span>
+                                                    <span class="d-block small fw-bold date-month-mobile">{{ formatDate(post.created_at, 'month') }}</span>
                                                 </div>
 
-                                                <div>
-                                                    <h5 class="fw-bold mb-1 text-navy">{{ post.title }}</h5>
-                                                    <p class="mb-0 text-muted small">
+                                                <div class="flex-grow-1">
+                                                    <h5 class="fw-bold mb-1 text-navy post-title-mobile">{{ post.title }}</h5>
+                                                    <p class="mb-0 text-muted small post-date-mobile">
                                                         <i class="far fa-calendar-alt me-1"></i>
                                                         Diterbitkan: {{ formatDate(post.created_at, 'full') }}
                                                     </p>
@@ -46,24 +45,24 @@
                                             </div>
 
                                             <Link :href="`/user/posts/list/${post.slug}`"
-                                                class="btn btn-sm btn-outline-primary shadow ms-4 flex-shrink-0" type="button">
+                                                class="btn btn-sm btn-outline-primary shadow ms-4 flex-shrink-0 btn-action-mobile" type="button">
                                                 <i class="fas fa-eye me-1"></i> Lihat Post
                                             </Link>
                                         </div>
 
-                                        <div class="w-100 mt-2 pt-3 border-top">
-                                            <p class="small text-muted mb-0">
+                                        <div class="w-100 mt-3 pt-3 border-top preview-mobile">
+                                            <p class="small text-muted mb-0 post-excerpt-mobile">
                                                 {{ post.excerpt || 'Klik Lihat Post untuk membaca selengkapnya.' }}
                                             </p>
                                         </div>
                                     </div>
+                                    
                                     <div v-if="posts.data && posts.data.length === 0" class="list-group-item text-center text-muted p-4">
                                         Belum ada warta paroki terbaru yang diterbitkan.
                                     </div>
 
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -80,22 +79,18 @@ import { ref, onMounted, onUnmounted } from 'vue';
 import LayoutWebsite from '../../../Layouts/User.vue'; // Pastikan path ini benar
 
 export default {
-    // 1. OPSI LAYOUT DARI INERTIA
     layout: LayoutWebsite, 
     
-    // 2. OPSI COMPONENTS
     components: {
         Head,
         Link,
     },
 
-    // 3. OPSI PROPS
     props: {
         title: String,
         posts: Object, // Menggunakan Object untuk pagination data
     },
 
-    // 4. OPSI COMPOSITION API (setup)
     setup() {
         // --- Fungsi Pembantu untuk Format Tanggal ---
         const formatDate = (dateString, formatType) => {
@@ -118,7 +113,6 @@ export default {
             return dateString;
         };
 
-        // Logika untuk Navbar berubah warna saat discroll
         const isScrolled = ref(false);
 
         const handleScroll = () => {
@@ -162,20 +156,26 @@ export default {
     color: #003366;
 }
 
-.bg-navy {
-    background-color: #003366;
-}
-
-.text-warning {
-    color: #ff9900 !important;
+.bg-primary-subtle {
+    background-color: #cfe2ff !important;
 }
 
 .text-primary {
-    color: #003366 !important;
+    color: #0a58ca !important;
 }
 
-/* Menambahkan primary color */
+.card {
+    border-radius: 1rem; 
+}
 
+/* Animasi Fade-In */
+.fade-in { animation: fadeIn 0.8s ease-in-out; }
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Tombol Primary */
 .btn-primary {
     background-color: #003366;
     border-color: #003366;
@@ -186,196 +186,96 @@ export default {
     border-color: #002244;
 }
 
-/* --- Typography --- */
-.landing-wrapper {
-    font-family: 'Poppins', sans-serif;
+/* LIST GROUP ITEMS SPECIFIC STYLING */
+
+/* Date Box Styling */
+.date-box {
+    min-width: 60px;
+    height: 60px; /* Tambahkan tinggi agar kotak */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
-/* --- Navbar --- */
-.navbar {
-    transition: all 0.3s ease-in-out;
-    padding: 1rem 0;
-    background: transparent;
-    /* Transparan di awal */
-}
-
-.navbar.scrolled {
-    background: var(--navy-primary);
-    /* Navy saat discroll */
-    padding: 0.5rem 0;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-/* Penyesuaian Navbar Brand */
-.navbar-brand .fa-church {
+.date-box .h5 {
     font-size: 1.5rem;
 }
 
-.navbar-brand {
-    padding-top: 0;
-    padding-bottom: 0;
-}
+/* --- Penyesuaian Responsif untuk Perangkat Seluler (Mobile-Friendly) --- */
 
-.lh-sm {
-    line-height: 1.25;
-}
+@media (max-width: 767.98px) {
+    /* Container Utama */
+    .landing-wrapper.container-fluid.px-4.py-4 {
+        padding: 1rem !important; /* Kurangi padding utama */
+    }
 
-/* Bootstrap class */
+    /* Tombol Kembali */
+    .w-100-mobile {
+        width: 100% !important;
+    }
+    
+    /* Heading Section */
+    .mobile-fs-large {
+        font-size: 1.5rem !important; /* Perkecil ukuran judul */
+    }
 
-/* Navbar Links Styling (TIDAK DIGUNAKAN, tapi kelas style tetap ada) */
-.nav-link {
-    color: rgba(255, 255, 255, 0.8) !important;
-    font-weight: 500;
-    transition: color 0.2s ease;
-}
+    /* List Item Content (Mengubah flex direction pada layar kecil) */
+    .list-group-item.list-item-mobile {
+        padding: 1rem !important;
+    }
 
-.nav-link:hover,
-.nav-link:focus {
-    color: white !important;
-}
+    /* Header Judul + Tanggal + Tombol */
+    .list-group-item > .d-flex.align-items-center.justify-content-between {
+        flex-direction: column;
+        align-items: flex-start !important;
+        width: 100%;
+    }
 
-/* --- Hero Section --- */
-.hero {
-    height: 100vh;
-    /* Full Screen */
-    min-height: 600px;
-    background: url('/gambar/hero5.jpg') no-repeat center center/cover;
-    /* Pastikan path gambar benar */
-    position: relative;
-    margin-top: -76px;
-    /* Menarik ke atas agar di belakang navbar (adjust if necessary) */
-}
+    /* Bagian Tanggal dan Judul */
+    .d-flex.align-items-start.align-items-md-center.w-100 {
+        align-items: flex-start !important;
+        margin-bottom: 0.75rem;
+    }
 
-.sub-hero {
-    height: 20vh;
-    /* Full Screen */
-    min-height: 300px;
-    background: url('/gambar/hero5.jpg') no-repeat center center/cover;
-    /* Pastikan path gambar benar */
-    position: relative;
-}
+    /* Date Box mobile */
+    .date-box-mobile {
+        min-width: 50px !important;
+        height: 50px;
+        padding: 0.5rem !important;
+    }
 
-.sub-hero .overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(to bottom, rgba(0, 51, 102, 0.8), rgba(0, 0, 0, 0.6));
-}
+    .date-day-mobile {
+        font-size: 1.2rem !important; /* Perkecil angka hari */
+    }
+    .date-month-mobile {
+        font-size: 0.6rem !important; /* Perkecil tulisan bulan */
+    }
 
-.hero .overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(to bottom, rgba(0, 51, 102, 0.8), rgba(0, 0, 0, 0.6));
-}
+    /* Judul dan Tanggal Teks */
+    .post-title-mobile {
+        font-size: 1rem !important;
+    }
+    .post-date-mobile {
+        font-size: 0.75rem !important;
+    }
 
-/* --- Cards & Hover Effects --- */
-.hover-up {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
+    /* Tombol Aksi */
+    .btn-action-mobile {
+        width: 100%; /* Lebar penuh */
+        margin-left: 0 !important;
+        margin-top: 0.5rem;
+        padding: 0.5rem;
+        font-size: 0.85rem;
+        order: 3; /* Pindahkan ke baris paling bawah */
+    }
 
-.hover-up:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
-}
-
-.icon-box {
-    width: 70px;
-    height: 70px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.divider {
-    width: 60px;
-    height: 3px;
-    background-color: #ff9900;
-    margin-top: 1rem;
-}
-
-/* --- Process Flow --- */
-.step-icon {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    font-size: 1.2rem;
-    z-index: 2;
-    position: relative;
-}
-
-/* Garis horizontal penghubung step */
-.process-line {
-    position: absolute;
-    top: 25px;
-    /* Setengah dari tinggi step-icon */
-    left: 15%;
-    right: 15%;
-    height: 2px;
-    background-color: #e9ecef;
-    z-index: 1;
-}
-
-/* --- Utilities --- */
-.ls-1 {
-    letter-spacing: 1px;
-}
-
-/* Tambahan Warna Subtle untuk Section Layanan */
-.bg-primary-subtle {
-    background-color: #cfe2ff !important;
-}
-
-.text-primary {
-    color: #0a58ca !important;
-}
-
-.bg-success-subtle {
-    background-color: #d1e7dd !important;
-}
-
-.text-success {
-    color: #198754 !important;
-}
-
-.bg-warning-subtle {
-    background-color: #fff3cd !important;
-}
-
-.text-warning {
-    color: #ffc107 !important;
-}
-
-/* Mengubah ini agar lebih cerah */
-.bg-secondary-subtle {
-    background-color: #e2e3e5 !important;
-}
-
-.text-secondary {
-    color: #6c757d !important;
-}
-
-.bg-info-subtle { background-color: #cff4fc !important; }
-.text-info-emphasis { color: #055160 !important; }
-
-/* Menghapus background button kontak saat tidak discroll, karena sudah pakai btn-outline-light */
-.btn-outline-light:hover {
-    background-color: white;
-    color: var(--navy-primary);
-}
-
-.navbar:not(.scrolled) .btn-primary {
-    background-color: var(--navy-primary);
-    /* Pastikan tombol Masuk tetap navy */
-    border-color: var(--navy-primary);
+    /* Excerpt (Deskripsi Singkat) */
+    .preview-mobile {
+        padding-top: 0.75rem !important;
+        margin-top: 0.75rem !important;
+    }
+    .post-excerpt-mobile {
+        font-size: 0.8rem;
+    }
 }
 </style>
